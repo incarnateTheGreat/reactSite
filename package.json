@@ -1,7 +1,7 @@
 {
-  "name": "react-tutorials",
-  "version": "0.0.0",
-  "description": "",
+  "name": "react-GT",
+  "version": "0.1",
+  "description": "Learning ReactJS for me'self",
   "main": "webpack.config.js",
   "dependencies": {
     "babel-core": "^6.17.0",
