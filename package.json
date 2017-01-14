@@ -1,6 +1,6 @@
 {
   "name": "react-GT",
-  "version": "0.1",
+  "version": "0.0.1",
   "description": "Learning ReactJS for me'self",
   "main": "webpack.config.js",
   "dependencies": {
