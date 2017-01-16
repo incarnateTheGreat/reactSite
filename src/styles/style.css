@@ -1,8 +1,15 @@
 .navbar {
   margin: 0;
 }
+html, body {
+  height: 100%;
+  margin: 0;
+}
 h1 {
   text-decoration: none;
+}
+header {
+  background-color: #222222;
 }
 footer {
   position: absolute;
