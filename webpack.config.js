@@ -1,5 +1,6 @@
 var debug = process.env.NODE_ENV !== "production";
 var webpack = require('webpack');
+var _ = require('lodash');
 var path = require('path');
 
 module.exports = {
@@ -18,6 +19,9 @@ module.exports = {
         }
       }
     ]
+  },
+  externals: {
+      "lodash": "lodash"
   },
   output: {
     path: __dirname + "/src/",
