@@ -10,7 +10,7 @@ export default class Featured extends React.Component {
       "A Thing Happend",
       "When Oliver Sneezed",
       "Why People Talk"
-    ].map((title, i) => <Article key={i} title={title} /> );
+    ].map((title, i) => <Article key={i} title={title} />);
 
     return (
       <div>
