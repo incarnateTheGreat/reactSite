@@ -12,6 +12,8 @@ export default class Featured extends React.Component {
       "Why People Talk"
     ].map((title, i) => <Article key={i} title={title} />);
 
+    console.log(Articles);
+
     return (
       <div>
         <div class="row">{Articles}</div>

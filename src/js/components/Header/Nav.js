@@ -52,6 +52,7 @@ export default class Nav extends React.Component {
             <li><Link to="What" activeClassName="test">What</Link></li>
             <li><Link to="Where">Where</Link></li>
             <li><Link to="Featured">Featured</Link></li>
+            <li><Link to="Scores">Scores</Link></li>
           </ul>
         </div>
         <span style={logoStyle}>tsaconas.com</span>
