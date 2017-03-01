@@ -18,7 +18,7 @@ export default class Scores extends React.Component {
         this.setState({ posts });
 
         _.forEach(this.state.posts, function(o,i) {
-          console.log(o.teams.home, "and", o.teams.away);
+          console.log(o.scores);
         })
       });
   }
@@ -31,8 +31,9 @@ export default class Scores extends React.Component {
       <div>
         <h1>Scores</h1>
         <hr/>
-          {this.state.posts.map(post =>
-              <div key={post.id}>{post.teams.home} v. {post.teams.away}</div>
+          {this.state.posts.map((post, id) =>
+              <div key={id}>{post.teams.home} <strong>{post.scores[post.teams.home]}</strong> <br />
+              {post.teams.away} <strong>{post.scores[post.teams.home]}</strong></div>
             )}
       </div>
     );
