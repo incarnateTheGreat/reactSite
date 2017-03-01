@@ -21,3 +21,23 @@ footer {
 footer .container .text-muted {
   margin: 20px 0;
 }
+
+/*Scores*/
+.scoreTableContainer {
+  overflow: auto;
+}
+.scoreTable {
+  float: left;
+  background-color: #dadada;
+  padding: 10px;
+  margin: 5px;
+  width: 106px;
+}
+.scoreTable .team {
+  float: left;
+  width: 45px;
+}
+.scoreTable .score {
+  float: left;
+  font-weight: bold;
+}

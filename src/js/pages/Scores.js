@@ -18,7 +18,7 @@ export default class Scores extends React.Component {
         this.setState({ posts });
 
         _.forEach(this.state.posts, function(o,i) {
-          console.log(o.scores);
+          console.log(o);
         })
       });
   }
@@ -31,10 +31,15 @@ export default class Scores extends React.Component {
       <div>
         <h1>Scores</h1>
         <hr/>
+        <h2>NHL Scores</h2>
+        <div class="scoreTableContainer">
           {this.state.posts.map((post, id) =>
-              <div key={id}>{post.teams.home} <strong>{post.scores[post.teams.home]}</strong> <br />
-              {post.teams.away} <strong>{post.scores[post.teams.home]}</strong></div>
+              <div class="scoreTable" key={id}>
+                <div class="team">{post.teams.home}</div> <div class="score">{post.scores[post.teams.home]}</div> <br />
+                <div class="team">{post.teams.away}</div> <div class="score">{post.scores[post.teams.home]}</div>
+              </div>
             )}
+        </div>
       </div>
     );
   }
