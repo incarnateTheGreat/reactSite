@@ -59,6 +59,7 @@ export default class Scores extends React.Component {
 
         const gameData = jsonGameData.games;
 
+        //Add abbreviation key to game objects for display purposes.
         _.forEach(gameData, function(v,k) {
           v['abvr_atn'] = "",
           v['abvr_htn'] = "";
