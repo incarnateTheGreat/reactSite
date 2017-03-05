@@ -12,24 +12,6 @@ export default class Scores extends React.Component {
     };
   }
   componentDidMount() {
-    // axios.get('http://live.nhle.com/GameData/RegularSeasonScoreboardv3.jsonp')
-    //   .then(res => {
-    //     var params = getUrlVars(res.data);
-    //     console.log(params);
-    //
-    //     function getUrlVars(url) {
-    //         var hash;
-    //         var myJson = {};
-    //         var hashes = url.slice(url.indexOf('?') + 1).split('&');
-    //         for (var i = 0; i < hashes.length; i++) {
-    //             hash = hashes[i].split('=');
-    //             myJson[hash[0]] = decodeURIComponent(hash[1]);
-    //             // console.log(decodeURIComponent(myJson[hash[0]]));
-    //         }
-    //         return myJson;
-    //     }
-    //   });
-
     const teams = {
       ANA: 'Anaheim',
       ARI: 'Arizona',
@@ -95,8 +77,6 @@ export default class Scores extends React.Component {
             }
           });
         });
-
-        // console.log(gameData);
 
         this.setState({ gameData });
       });
