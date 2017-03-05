@@ -30,9 +30,12 @@ footer .container .text-muted {
   float: left;
   background-color: #dadada;
   padding: 10px;
-  margin: 5px;
   width: 175px;
   height: 60px;
+}
+.scoreContainer{
+  float: left;
+  margin: 5px;
 }
 .scoreTable .scores {
   float: left;

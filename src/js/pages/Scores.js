@@ -48,7 +48,8 @@ export default class Scores extends React.Component {
 
     axios.get('http://live.nhle.com/GameData/RegularSeasonScoreboardv3.jsonp')
       .then(res => {
-        let jsonGameData = res.data;
+        let jsonGameData = res.data,
+            dates = null;
 
         //Remove wrapping 'loadScoreboard()' method.
         jsonGameData = jsonGameData.replace('loadScoreboard(', '');
@@ -58,6 +59,9 @@ export default class Scores extends React.Component {
         jsonGameData = JSON.parse(jsonGameData);
 
         const gameData = jsonGameData.games;
+
+        //TODO: Separate games by dates, then display them. Use _.uniq() to create an array with the dates.
+        //dates = _.uniq(gameData)
 
         //Add abbreviation key to game objects for display purposes.
         _.forEach(gameData, function(v,k) {
@@ -96,8 +100,8 @@ export default class Scores extends React.Component {
         <h2>NHL Scores</h2>
         <div class="scoreTableContainer">
           {this.state.gameData.map((game, id) =>
-            <div key={id}>
-              {/* <h3>{game.ts}</h3> */}
+            <div key={id} class="scoreContainer">
+              <div>{game.ts}</div>
               <div class="scoreTable">
                 <div class="scores">
                   <div class="team">{game.abvr_atn}</div> <div class="score">{game.ats}</div> <br />
