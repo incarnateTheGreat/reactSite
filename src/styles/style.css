@@ -31,13 +31,20 @@ footer .container .text-muted {
   background-color: #dadada;
   padding: 10px;
   margin: 5px;
-  width: 106px;
+  width: 175px;
+  height: 60px;
 }
-.scoreTable .team {
+.scoreTable .scores {
   float: left;
-  width: 45px;
 }
-.scoreTable .score {
+.scoreTable .timeRemaining {
+  float: right;
+}
+.scoreTable .scores .team {
+  float: left;
+  width: 65px;
+}
+.scoreTable .scores .score {
   float: left;
   font-weight: bold;
 }

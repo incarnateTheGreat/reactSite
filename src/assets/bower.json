@@ -1,0 +1,21 @@
+{
+  "name": "assets",
+  "homepage": "https://github.com/incarnateTheGreat/reactSite",
+  "authors": [
+    "Garry Tsaconas <garrytsaconas@insightactioninc.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "lodash": "^4.17.4",
+    "moment": "^2.17.1"
+  }
+}

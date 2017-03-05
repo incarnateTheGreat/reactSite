@@ -8,18 +8,97 @@ export default class Scores extends React.Component {
     super(props);
 
     this.state = {
-      posts: []
+      gameData: []
     };
   }
   componentDidMount() {
-    axios.get('https://nhl-score-api.herokuapp.com/api/scores/latest')
-      .then(res => {
-        const posts = res.data.map((obj, num) => obj);
-        this.setState({ posts });
+    // axios.get('http://live.nhle.com/GameData/RegularSeasonScoreboardv3.jsonp')
+    //   .then(res => {
+    //     var params = getUrlVars(res.data);
+    //     console.log(params);
+    //
+    //     function getUrlVars(url) {
+    //         var hash;
+    //         var myJson = {};
+    //         var hashes = url.slice(url.indexOf('?') + 1).split('&');
+    //         for (var i = 0; i < hashes.length; i++) {
+    //             hash = hashes[i].split('=');
+    //             myJson[hash[0]] = decodeURIComponent(hash[1]);
+    //             // console.log(decodeURIComponent(myJson[hash[0]]));
+    //         }
+    //         return myJson;
+    //     }
+    //   });
 
-        _.forEach(this.state.posts, function(o,i) {
-          console.log(o);
-        })
+    const teams = {
+      ANA: 'Anaheim',
+      ARI: 'Arizona',
+      ATL: 'Atlanta',
+      BOS: 'Boston',
+      BUF: 'Buffalo',
+      CAL: 'Calgary',
+      CAR: 'Carolina',
+      CHI: 'Chicago',
+      COL: 'Colorado',
+      CBJ: 'Columbus',
+      DAL: 'Dallas',
+      DET: 'Detroit',
+      EDM: 'Edmonton',
+      FLO: 'Florida',
+      LA:  'Los Angeles',
+      MIN: 'Minnesota',
+      MTL: 'Montréal',
+      NAS: 'Nashville',
+      NJD: 'New Jersey',
+      NYI: 'NY Islanders',
+      NYR: 'NY Rangers',
+      OTT: 'Ottawa',
+      PHI: 'Philadelphia',
+      PIT: 'Pittsburgh',
+      SJ:  'San Jose',
+      STL: 'St Louis',
+      TB:  'Tampa Bay',
+      TOR: 'Toronto',
+      VAN: 'Vancouver',
+      WAS: 'Washington',
+      WPG: 'Winnipeg'
+    }
+
+    axios.get('http://live.nhle.com/GameData/RegularSeasonScoreboardv3.jsonp')
+      .then(res => {
+        let jsonGameData = res.data;
+
+        //Remove wrapping 'loadScoreboard()' method.
+        jsonGameData = jsonGameData.replace('loadScoreboard(', '');
+        jsonGameData = jsonGameData.substring(0, jsonGameData.length - 1);
+
+        //Convert to JSON.
+        jsonGameData = JSON.parse(jsonGameData);
+
+        const gameData = jsonGameData.games;
+
+        _.forEach(gameData, function(v,k) {
+          v['abvr_atn'] = "",
+          v['abvr_htn'] = "";
+
+          _.find(teams, function(val, key) {
+            if(v.atn === val) {
+              v['abvr_atn'] = key;
+              return false;
+            }
+          });
+
+          _.find(teams, function(val, key) {
+            if(v.htn === val) {
+              v['abvr_htn'] = key;
+              return false;
+            }
+          });
+        });
+
+        // console.log(gameData);
+
+        this.setState({ gameData });
       });
   }
   render() {
@@ -27,17 +106,25 @@ export default class Scores extends React.Component {
     //     return <Todo key={todo.id} {...todo}/>;
     // });
 
+    console.log(moment().format("dddd M/D"));
+
     return (
       <div>
         <h1>Scores</h1>
         <hr/>
         <h2>NHL Scores</h2>
         <div class="scoreTableContainer">
-          {this.state.posts.map((post, id) =>
-              <div class="scoreTable" key={id}>
-                <div class="team">{post.teams.home}</div> <div class="score">{post.scores[post.teams.home]}</div> <br />
-                <div class="team">{post.teams.away}</div> <div class="score">{post.scores[post.teams.home]}</div>
+          {this.state.gameData.map((game, id) =>
+            <div key={id}>
+              {/* <h3>{game.ts}</h3> */}
+              <div class="scoreTable">
+                <div class="scores">
+                  <div class="team">{game.abvr_atn}</div> <div class="score">{game.ats}</div> <br />
+                  <div class="team">{game.abvr_htn}</div> <div class="score">{game.hts}</div>
+                </div>
+                <div class="timeRemaining">{game.bs === 'FINAL' ? 'F' : game.bs}</div>
               </div>
+            </div>
             )}
         </div>
       </div>

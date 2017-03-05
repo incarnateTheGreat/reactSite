@@ -24,7 +24,9 @@
   },
   "devDependencies": {
     "axios": "^0.15.3",
-    "cors": "^2.8.1"
+    "cors": "^2.8.1",
+    "lodash": "^4.17.4",
+    "moment": "^2.17.1"
   },
   "scripts": {
     "dev": "webpack-dev-server --content-base src --inline --hot",
