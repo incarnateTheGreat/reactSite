@@ -9,10 +9,11 @@ export default class Scores extends React.Component {
 
     this.state = {
       gameData: [],
-      dates: []
+      dates: [],
+      objective: []
     };
   }
-  componentDidMount() {
+  componentWillMount() {
     const teams = {
       ANA: 'Anaheim',
       ARI: 'Arizona',
@@ -85,10 +86,19 @@ export default class Scores extends React.Component {
           });
         });
 
-        console.log("hurrrr");
-
         this.setState({ gameData });
+
+        // Filter different dates.
+        let objective = [];
+        _.forEach(this.state.dates, function(v,k){
+          objective.push(gameData.filter(date => date.ts == v));
+        })
+
+        this.setState({ objective });
       });
+  }
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps.gameData != this.props.gameData;
   }
   render() {
     // const gameComponent = todos.map((todo) => {
@@ -97,20 +107,13 @@ export default class Scores extends React.Component {
 
     // console.log(moment().format("dddd M/D"));
 
-    // Filter different dates.
-    console.log("render");
-    let objective = [];
-    _.forEach(this.state.dates, function(v,k){
-      objective.push(this.state.gameData.filter(date => date.ts == v));
-    })
-
     return (
       <div>
         <h1>Scores</h1>
         <hr/>
         <h2>NHL Scores</h2>
         <div class="scoreTableContainer">
-          {objective}
+          {this.state.objective}
 
           {/* {this.state.gameData.map((game, id) =>
             <div key={id} class="scoreContainer">
