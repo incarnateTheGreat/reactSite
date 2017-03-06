@@ -8,7 +8,8 @@ export default class Scores extends React.Component {
     super(props);
 
     this.state = {
-      gameData: []
+      gameData: [],
+      dates: []
     };
   }
   componentDidMount() {
@@ -49,7 +50,7 @@ export default class Scores extends React.Component {
     axios.get('http://live.nhle.com/GameData/RegularSeasonScoreboardv3.jsonp')
       .then(res => {
         let jsonGameData = res.data,
-            dates = null;
+            datesObjects = null;
 
         //Remove wrapping 'loadScoreboard()' method.
         jsonGameData = jsonGameData.replace('loadScoreboard(', '');
@@ -60,8 +61,9 @@ export default class Scores extends React.Component {
 
         const gameData = jsonGameData.games;
 
-        //TODO: Separate games by dates, then display them. Use _.uniq() to create an array with the dates.
-        //dates = _.uniq(gameData)
+        // Collect different dates for filtering.
+        datesObjects = _.uniqBy(gameData, "ts");
+        datesObjects.map(e => this.state.dates.push(e.ts))
 
         //Add abbreviation key to game objects for display purposes.
         _.forEach(gameData, function(v,k) {
@@ -83,6 +85,8 @@ export default class Scores extends React.Component {
           });
         });
 
+        console.log("hurrrr");
+
         this.setState({ gameData });
       });
   }
@@ -91,7 +95,14 @@ export default class Scores extends React.Component {
     //     return <Todo key={todo.id} {...todo}/>;
     // });
 
-    console.log(moment().format("dddd M/D"));
+    // console.log(moment().format("dddd M/D"));
+
+    // Filter different dates.
+    console.log("render");
+    let objective = [];
+    _.forEach(this.state.dates, function(v,k){
+      objective.push(this.state.gameData.filter(date => date.ts == v));
+    })
 
     return (
       <div>
@@ -99,7 +110,9 @@ export default class Scores extends React.Component {
         <hr/>
         <h2>NHL Scores</h2>
         <div class="scoreTableContainer">
-          {this.state.gameData.map((game, id) =>
+          {objective}
+
+          {/* {this.state.gameData.map((game, id) =>
             <div key={id} class="scoreContainer">
               <div>{game.ts}</div>
               <div class="scoreTable">
@@ -110,7 +123,7 @@ export default class Scores extends React.Component {
                 <div class="timeRemaining">{game.bs === 'FINAL' ? 'F' : game.bs}</div>
               </div>
             </div>
-            )}
+            )} */}
         </div>
       </div>
     );
