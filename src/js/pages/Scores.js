@@ -10,7 +10,8 @@ export default class Scores extends React.Component {
     this.state = {
       gameData: [],
       dates: [],
-      objective: []
+      objective: [],
+      scoreSection: null
     };
   }
   componentWillMount() {
@@ -95,39 +96,47 @@ export default class Scores extends React.Component {
         })
 
         this.setState({ objective });
+
+        this.renderScores();
       });
   }
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.gameData != this.props.gameData;
+  renderScores() {
+    const scoreSection = this.state.objective.map((game, id) => {
+      return (
+        <div key={id} className="dayContainer">
+          <h3>{game[id].ts}</h3>
+          {game.map((gameDetails, i) => {
+            return (
+              <div key={i} className="scoreContainer">
+                <div className="scoreTable">
+                  <div className="scores">
+                    <div className="team">{gameDetails.abvr_atn}</div> <div className="score">{gameDetails.ats}</div> <br />
+                  <div className="team">{gameDetails.abvr_htn}</div> <div className="score">{gameDetails.hts}</div>
+                  </div>
+                  <div className="timeRemaining">{gameDetails.bs === 'FINAL' ? 'F' : gameDetails.bs}</div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )
+    });
+
+    this.setState({ scoreSection });
   }
   render() {
     // const gameComponent = todos.map((todo) => {
     //     return <Todo key={todo.id} {...todo}/>;
     // });
 
-    // console.log(moment().format("dddd M/D"));
-
     return (
       <div>
         <h1>Scores</h1>
         <hr/>
         <h2>NHL Scores</h2>
-        <div class="scoreTableContainer">
-          {this.state.objective}
-
-          {/* {this.state.gameData.map((game, id) =>
-            <div key={id} class="scoreContainer">
-              <div>{game.ts}</div>
-              <div class="scoreTable">
-                <div class="scores">
-                  <div class="team">{game.abvr_atn}</div> <div class="score">{game.ats}</div> <br />
-                  <div class="team">{game.abvr_htn}</div> <div class="score">{game.hts}</div>
-                </div>
-                <div class="timeRemaining">{game.bs === 'FINAL' ? 'F' : game.bs}</div>
-              </div>
-            </div>
-            )} */}
-        </div>
+          <div className="scoreTableContainer">
+            {this.state.scoreSection}
+          </div>
       </div>
     );
   }
