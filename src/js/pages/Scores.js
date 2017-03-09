@@ -113,7 +113,7 @@ export default class Scores extends React.Component {
                     <div className="team">{gameDetails.abvr_atn}</div> <div className="score">{gameDetails.ats}</div> <br />
                   <div className="team">{gameDetails.abvr_htn}</div> <div className="score">{gameDetails.hts}</div>
                   </div>
-                  <div className="timeRemaining">{gameDetails.bs === 'FINAL' ? 'F' : gameDetails.bs}</div>
+                  <div className="timeRemaining">{this.adjustDate(gameDetails.bs)}</div>
                 </div>
               </div>
             )
@@ -123,6 +123,16 @@ export default class Scores extends React.Component {
     });
 
     this.setState({ scoreSection });
+  }
+  adjustDate(date) {
+    const dateFormat = 'h.mm a',
+          isDateValid = moment(moment(date, dateFormat).format(dateFormat), dateFormat,true).isValid();
+
+    if(isDateValid) {
+      return moment(date, dateFormat).add('3', 'hours').format(dateFormat);
+    } else {
+      return date;
+    }
   }
   render() {
     // const gameComponent = todos.map((todo) => {
