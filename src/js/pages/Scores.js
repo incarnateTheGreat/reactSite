@@ -101,6 +101,7 @@ export default class Scores extends React.Component {
       });
   }
   renderScores() {
+    //Build out HTML object of Scores.
     const scoreSection = this.state.objective.map((game, id) => {
       return (
         <div key={id} className="dayContainer">
@@ -108,7 +109,7 @@ export default class Scores extends React.Component {
           {game.map((gameDetails, i) => {
             return (
               <div key={i} className="scoreContainer">
-                <div className="scoreTable">
+                <div className="scoreTable" onClick={this.viewGameInfo(gameDetails.id)}>
                   <div className="scores">
                     <div className="team">{gameDetails.abvr_atn}</div> <div className="score">{gameDetails.ats}</div> <br />
                   <div className="team">{gameDetails.abvr_htn}</div> <div className="score">{gameDetails.hts}</div>
@@ -123,6 +124,11 @@ export default class Scores extends React.Component {
     });
 
     this.setState({ scoreSection });
+  }
+  viewGameInfo(gameID) {
+    return function() {
+      window.open('https://www.nhl.com/gamecenter/' + gameID + '/recap/box-score');
+    }.bind(this);
   }
   adjustDate(date) {
     const dateFormat = 'h.mm a',
