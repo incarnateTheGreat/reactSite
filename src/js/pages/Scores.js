@@ -8,8 +8,6 @@ export default class Scores extends React.Component {
     super(props);
 
     this.state = {
-      gameData: [],
-      dates: [],
       objective: [],
       scoreSection: null
     };
@@ -52,6 +50,7 @@ export default class Scores extends React.Component {
     axios.get('http://live.nhle.com/GameData/RegularSeasonScoreboardv3.jsonp')
       .then(res => {
         let jsonGameData = res.data,
+            dates = [],
             datesObjects = null;
 
         //Remove wrapping 'loadScoreboard()' method.
@@ -65,7 +64,7 @@ export default class Scores extends React.Component {
 
         // Collect different dates for filtering.
         datesObjects = _.uniqBy(gameData, "ts");
-        datesObjects.map(e => this.state.dates.push(e.ts))
+        datesObjects.map(e => dates.push(e.ts))
 
         //Add abbreviation key to game objects for display purposes.
         _.forEach(gameData, function(v,k) {
@@ -87,11 +86,9 @@ export default class Scores extends React.Component {
           });
         });
 
-        this.setState({ gameData });
-
         // Filter different dates.
         let objective = [];
-        _.forEach(this.state.dates, function(v,k){
+        _.forEach(dates, function(v,k){
           objective.push(gameData.filter(date => date.ts == v));
         })
 
@@ -100,8 +97,8 @@ export default class Scores extends React.Component {
         this.renderScores();
       });
   }
+  //Build out HTML object of Scores.
   renderScores() {
-    //Build out HTML object of Scores.
     const scoreSection = this.state.objective.map((game, id) => {
       return (
         <div key={id} className="dayContainer">
@@ -125,11 +122,13 @@ export default class Scores extends React.Component {
 
     this.setState({ scoreSection });
   }
+  //Link to NHL.com to get game data using game's ID
   viewGameInfo(gameID) {
     return function() {
       window.open('https://www.nhl.com/gamecenter/' + gameID + '/recap/box-score');
     }.bind(this);
   }
+  //Check the date/time input and return accordingly.
   adjustDate(date) {
     const dateFormat = 'h.mm a',
           isDateValid = moment(moment(date, dateFormat).format(dateFormat), dateFormat,true).isValid();
