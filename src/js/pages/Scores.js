@@ -92,8 +92,7 @@ export default class Scores extends React.Component {
             completedGames = [],
             futureGames = [];
 
-        _.forEach(gameData, function(v,k){console.log(v);
-          console.log(v);
+        _.forEach(gameData, function(v,k){
           if(v.bsc === 'progress') {
             liveGames.push(v);
           } else if(v.bsc !== 'progress' || _.startsWith(v, "F")) {
@@ -107,9 +106,9 @@ export default class Scores extends React.Component {
         // console.log("Completed:", completedGames);
         console.log("Future:", futureGames);
 
-        let liveGameSection = this.renderLiveGames(liveGames),
-            completedGameSection = this.renderLiveGames(completedGames),
-            futureGameSection = this.renderLiveGames(futureGames);
+        let liveGameSection = this.renderGameOutput(liveGames),
+            completedGameSection = this.renderGameOutput(completedGames),
+            futureGameSection = this.renderGameOutput(futureGames);
 
         this.setState({ liveGameSection });
         this.setState({ completedGameSection });
@@ -117,7 +116,7 @@ export default class Scores extends React.Component {
       });
   }
   //Build out HTML object of Scores.
-  renderLiveGames(gameGroup) {
+  renderGameOutput(gameGroup) {
     return gameGroup.map((game, id) => {
       return (
         <div key={id} className="scoreContainer">
@@ -135,43 +134,7 @@ export default class Scores extends React.Component {
         </div>
       )
     });
-
-    // this.setState({ liveGameSection });
   }
-  // renderCompletedGames(gameGroup) {
-  //   const completedScoreSection = gameGroup.map((game, id) => {
-  //     return (
-  //       <div key={id} className="scoreContainer">
-  //         <div className="scoreTable" onClick={this.viewGameInfo(game.id)}>
-  //           <div className="scores">
-  //             <div className="team">{game.abvr_atn}</div> <div className="score">{game.ats}</div> <br />
-  //           <div className="team">{game.abvr_htn}</div> <div className="score">{game.hts}</div>
-  //           </div>
-  //           <div className="timeRemaining">{this.adjustDate(game.bs)}</div>
-  //         </div>
-  //       </div>
-  //     )
-  //   });
-  //
-  //   this.setState({ completedScoreSection });
-  // }
-  // renderFutureGames(gameGroup) {
-  //   const futureScoreSection = gameGroup.map((game, id) => {
-  //     return (
-  //       <div key={id} className="scoreContainer">
-  //         <div className="scoreTable" onClick={this.viewGameInfo(game.id)}>
-  //           <div className="scores">
-  //             <div className="team">{game.abvr_atn}</div> <div className="score">{game.ats}</div> <br />
-  //           <div className="team">{game.abvr_htn}</div> <div className="score">{game.hts}</div>
-  //           </div>
-  //           <div className="timeRemaining">{this.adjustDate(game.bs)}</div>
-  //         </div>
-  //       </div>
-  //     )
-  //   });
-  //
-  //   this.setState({ futureScoreSection });
-  // }
   //Link to NHL.com to get game data using game's ID
   viewGameInfo(gameID) {
     return function() {
@@ -210,11 +173,12 @@ export default class Scores extends React.Component {
               {this.state.liveGameSection}
             </div>
             <hr />
-          <h2>Completed</h2>
+            <h2>Completed</h2>
             <div className="dayContainer">
               {this.state.completedGameSection}
             </div>
             <hr />
+          <h2>Future</h2>
             <div className="dayContainer">
             {this.state.futureGameSection}
             </div>
