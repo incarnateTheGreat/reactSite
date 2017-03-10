@@ -8,6 +8,9 @@ html, body {
 h1 {
   text-decoration: none;
 }
+h2 {
+  font-weight: bold;
+}
 header {
   background-color: #222222;
 }
@@ -60,6 +63,7 @@ h3 {
 }
 .scoreTable .timeRemaining {
   float: right;
+  text-align: right;
 }
 .scoreTable .scores .team {
   float: left;

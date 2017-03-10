@@ -8,8 +8,9 @@ export default class Scores extends React.Component {
     super(props);
 
     this.state = {
-      objective: [],
-      scoreSection: null
+      liveGameSection: null,
+      completedGameSection: null,
+      futureGameSection: null
     };
   }
   componentWillMount() {
@@ -87,41 +88,90 @@ export default class Scores extends React.Component {
         });
 
         // Filter different dates.
-        let objective = [];
-        _.forEach(dates, function(v,k){
-          objective.push(gameData.filter(date => date.ts == v));
+        let liveGames = [],
+            completedGames = [],
+            futureGames = [];
+
+        _.forEach(gameData, function(v,k){console.log(v);
+          console.log(v);
+          if(v.bsc === 'progress') {
+            liveGames.push(v);
+          } else if(v.bsc !== 'progress' || _.startsWith(v, "F")) {
+            completedGames.push(v);
+          } else {
+            futureGames.push(v);
+          }
         })
 
-        this.setState({ objective });
+        // console.log("Live:", liveGames);
+        // console.log("Completed:", completedGames);
+        console.log("Future:", futureGames);
 
-        this.renderScores();
+        let liveGameSection = this.renderLiveGames(liveGames),
+            completedGameSection = this.renderLiveGames(completedGames),
+            futureGameSection = this.renderLiveGames(futureGames);
+
+        this.setState({ liveGameSection });
+        this.setState({ completedGameSection });
+        this.setState({ futureGameSection });
       });
   }
   //Build out HTML object of Scores.
-  renderScores() {
-    const scoreSection = this.state.objective.map((game, id) => {
+  renderLiveGames(gameGroup) {
+    return gameGroup.map((game, id) => {
       return (
-        <div key={id} className="dayContainer">
-          <h3>{game[id].ts}</h3>
-          {game.map((gameDetails, i) => {
-            return (
-              <div key={i} className="scoreContainer">
-                <div className="scoreTable" onClick={this.viewGameInfo(gameDetails.id)}>
-                  <div className="scores">
-                    <div className="team">{gameDetails.abvr_atn}</div> <div className="score">{gameDetails.ats}</div> <br />
-                  <div className="team">{gameDetails.abvr_htn}</div> <div className="score">{gameDetails.hts}</div>
-                  </div>
-                  <div className="timeRemaining">{this.adjustDate(gameDetails.bs)}</div>
-                </div>
-              </div>
-            )
-          })}
+        <div key={id} className="scoreContainer">
+          <div className="scoreTable" onClick={this.viewGameInfo(game.id)}>
+            <div className="scores">
+              <div className="team">{game.abvr_atn}</div> <div className="score">{game.ats}</div> <br />
+            <div className="team">{game.abvr_htn}</div> <div className="score">{game.hts}</div>
+            </div>
+            {game.bsc === 'progress' ? (
+              <div className="timeRemaining">{game.ts}</div>
+            ) : (
+              <div className="timeRemaining">{game.bs}<br />{this.adjustDate(game)}</div>
+            )}
+          </div>
         </div>
       )
     });
 
-    this.setState({ scoreSection });
+    // this.setState({ liveGameSection });
   }
+  // renderCompletedGames(gameGroup) {
+  //   const completedScoreSection = gameGroup.map((game, id) => {
+  //     return (
+  //       <div key={id} className="scoreContainer">
+  //         <div className="scoreTable" onClick={this.viewGameInfo(game.id)}>
+  //           <div className="scores">
+  //             <div className="team">{game.abvr_atn}</div> <div className="score">{game.ats}</div> <br />
+  //           <div className="team">{game.abvr_htn}</div> <div className="score">{game.hts}</div>
+  //           </div>
+  //           <div className="timeRemaining">{this.adjustDate(game.bs)}</div>
+  //         </div>
+  //       </div>
+  //     )
+  //   });
+  //
+  //   this.setState({ completedScoreSection });
+  // }
+  // renderFutureGames(gameGroup) {
+  //   const futureScoreSection = gameGroup.map((game, id) => {
+  //     return (
+  //       <div key={id} className="scoreContainer">
+  //         <div className="scoreTable" onClick={this.viewGameInfo(game.id)}>
+  //           <div className="scores">
+  //             <div className="team">{game.abvr_atn}</div> <div className="score">{game.ats}</div> <br />
+  //           <div className="team">{game.abvr_htn}</div> <div className="score">{game.hts}</div>
+  //           </div>
+  //           <div className="timeRemaining">{this.adjustDate(game.bs)}</div>
+  //         </div>
+  //       </div>
+  //     )
+  //   });
+  //
+  //   this.setState({ futureScoreSection });
+  // }
   //Link to NHL.com to get game data using game's ID
   viewGameInfo(gameID) {
     return function() {
@@ -130,14 +180,19 @@ export default class Scores extends React.Component {
   }
   //Check the date/time input and return accordingly.
   adjustDate(date) {
-    const dateFormat = 'h.mm a',
-          isDateValid = moment(moment(date, dateFormat).format(dateFormat), dateFormat,true).isValid();
+    // console.log(date);
+    // const dateFormat = 'h.mm a',
+    //       isDateValid = moment(moment(date, dateFormat).format(dateFormat), dateFormat,true).isValid();
 
-    if(isDateValid) {
-      return moment(date, dateFormat).add('3', 'hours').format(dateFormat);
-    } else {
-      return date;
+    if(date.bsc === 'final') {
+      return moment(date.ts, "MM/DD").format("ddd M/D");
     }
+
+    // if(isDateValid) {
+    //   return moment(date, dateFormat).add('3', 'hours').format(dateFormat); //For Future Dates.
+    // } else {
+    //   return date;
+    // }
   }
   render() {
     // const gameComponent = todos.map((todo) => {
@@ -150,7 +205,19 @@ export default class Scores extends React.Component {
         <hr/>
         <h2>NHL Scores</h2>
           <div className="scoreTableContainer">
-            {this.state.scoreSection}
+            <h2>Live</h2>
+            <div className="dayContainer">
+              {this.state.liveGameSection}
+            </div>
+            <hr />
+          <h2>Completed</h2>
+            <div className="dayContainer">
+              {this.state.completedGameSection}
+            </div>
+            <hr />
+            <div className="dayContainer">
+            {this.state.futureGameSection}
+            </div>
           </div>
       </div>
     );
