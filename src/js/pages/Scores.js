@@ -65,7 +65,7 @@ export default class Scores extends React.Component {
 
         // Collect different dates for filtering.
         datesObjects = _.uniqBy(gameData, "ts");
-        datesObjects.map(e => dates.push(e.ts))
+        datesObjects.map(e => dates.push(e.ts));
 
         //Add abbreviation key to game objects for display purposes.
         _.forEach(gameData, function(v,k) {
@@ -93,6 +93,11 @@ export default class Scores extends React.Component {
             futureGames = [];
 
         _.forEach(gameData, function(v,k){
+          // replace date with fixed date objective
+          getDate(v);
+
+          // console.log(v);
+
           if(v.bsc === 'progress') {
             liveGames.push(v);
           } else if(v.bsc !== 'progress' || _.startsWith(v, "F")) {
@@ -100,11 +105,55 @@ export default class Scores extends React.Component {
           } else {
             futureGames.push(v);
           }
-        })
+        });
+
+        function getDate(dateObj) {
+          const today = moment(),
+                dateFormat = 'h.mm a';
+          let dateValue = null,
+              isDateValid = null,
+              momentedDate = null;
+
+          if(!_.startsWith(dateObj.bs, "F")) {
+            isDateValid = isDateValid = moment(moment(dateObj.bs, dateFormat).format(dateFormat), dateFormat,true).isValid();
+            dateValue = isDateValid ? moment(dateObj.bs, dateFormat).add('3', 'hours').format(dateFormat) : null;
+
+
+          } else {
+            // console.log(dateObj);
+
+            console.log("The Date to be checked:", moment(dateObj.ts));
+            console.log(dateObj.ts);
+            console.log(today.diff(moment(dateObj.ts), 'days'));
+
+            //separating dates
+          }
+
+
+
+        }
 
         // console.log("Live:", liveGames);
         // console.log("Completed:", completedGames);
-        console.log("Future:", futureGames);
+
+        let theDate = {};
+
+        _.forEach(dates, function(date) {
+            theDate[date] = {};
+        });
+
+        _.forEach(theDate, function(dateObj, date) {
+          _.forEach(completedGames, function(v){
+            // console.log(v.ts);
+            if(date === v.ts) {
+              dateObj[v.id] = v;
+            }
+          });
+        });
+
+        // console.log(theDate);
+
+        // console.log("Future:", futureGames);
 
         let liveGameSection = this.renderGameOutput(liveGames),
             completedGameSection = this.renderGameOutput(completedGames),
