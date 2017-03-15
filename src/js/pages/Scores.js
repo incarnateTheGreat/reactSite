@@ -10,6 +10,7 @@ export default class Scores extends React.Component {
     this.state = {
       liveGameSection: null,
       completedGameSection: null,
+      tonightGameSection: null,
       futureGameSection: null
     };
   }
@@ -20,7 +21,7 @@ export default class Scores extends React.Component {
       ATL: 'Atlanta',
       BOS: 'Boston',
       BUF: 'Buffalo',
-      CAL: 'Calgary',
+      CGY: 'Calgary',
       CAR: 'Carolina',
       CHI: 'Chicago',
       COL: 'Colorado',
@@ -87,79 +88,75 @@ export default class Scores extends React.Component {
           });
         });
 
+        function getDate(dateObj) {
+          //If game is currently in progress, do not modify date;
+          if(dateObj.bsc === 'progress') return;
+
+          //Get date string, modify it to support MomentJS, then apply.
+          const dateFormat = "h.mm a";
+          let submittedDate = "",
+              convertedDate = "",
+              diffValue = "",
+              isSameOrAfter = false;
+
+          submittedDate = dateObj.ts === "TODAY" ? moment() : dateObj.ts.substr(dateObj.ts.length - 4);
+          convertedDate = moment(submittedDate, "MM/DD");
+          isSameOrAfter = moment().isSameOrAfter(convertedDate);
+
+          //Determine if the game is in the future or has past. Check if game has ended.
+          if(isSameOrAfter) {
+            //Get difference of days between today and the converted date.
+            diffValue = moment().diff(convertedDate, "days");
+
+            //Game has ended.
+            if(diffValue > 0 && _.startsWith(dateObj.bs, "F")) {
+              dateObj["hasEnded"] = true;
+              dateObj["gameTime"] = "FINAL";
+              dateObj["modifiedDate"] = moment(dateObj.ts, "MM/DD").format("ddd M/D");
+            }
+            //Game is today.
+            else if(moment().isSame(convertedDate)) {
+              dateObj["gameTime"] = moment(dateObj.bs, dateFormat).add('3', 'hours').format(dateFormat);
+            }
+          } else {
+              //Game is in the future.
+              dateObj["hasEnded"] = false;
+              dateObj["gameTime"] = moment(dateObj.bs, dateFormat).add('3', 'hours').format(dateFormat);
+              dateObj["modifiedDate"] = moment(dateObj.ts, "MM/DD").format("ddd M/D");
+          }
+
+          return dateObj;
+        }
+
+
         // Filter different dates.
         let liveGames = [],
             completedGames = [],
+            tonightGames = [],
             futureGames = [];
 
         _.forEach(gameData, function(v,k){
           // replace date with fixed date objective
-          getDate(v);
-
-          // console.log(v);
+          v = getDate(v);
 
           if(v.bsc === 'progress') {
             liveGames.push(v);
-          } else if(v.bsc !== 'progress' || _.startsWith(v, "F")) {
+          } else if(v.ts === 'TODAY') {
+            tonightGames.push(v);
+          } else if(v.hasEnded) {
             completedGames.push(v);
-          } else {
+          } else if(v.ts !== 'TODAY' && !v.hasEnded) {
             futureGames.push(v);
           }
         });
 
-        function getDate(dateObj) {
-          const today = moment(),
-                dateFormat = 'h.mm a';
-          let dateValue = null,
-              isDateValid = null,
-              momentedDate = null;
-
-          if(!_.startsWith(dateObj.bs, "F")) {
-            isDateValid = isDateValid = moment(moment(dateObj.bs, dateFormat).format(dateFormat), dateFormat,true).isValid();
-            dateValue = isDateValid ? moment(dateObj.bs, dateFormat).add('3', 'hours').format(dateFormat) : null;
-
-
-          } else {
-            // console.log(dateObj);
-
-            console.log("The Date to be checked:", moment(dateObj.ts));
-            console.log(dateObj.ts);
-            console.log(today.diff(moment(dateObj.ts), 'days'));
-
-            //separating dates
-          }
-
-
-
-        }
-
-        // console.log("Live:", liveGames);
-        // console.log("Completed:", completedGames);
-
-        let theDate = {};
-
-        _.forEach(dates, function(date) {
-            theDate[date] = {};
-        });
-
-        _.forEach(theDate, function(dateObj, date) {
-          _.forEach(completedGames, function(v){
-            // console.log(v.ts);
-            if(date === v.ts) {
-              dateObj[v.id] = v;
-            }
-          });
-        });
-
-        // console.log(theDate);
-
-        // console.log("Future:", futureGames);
-
         let liveGameSection = this.renderGameOutput(liveGames),
             completedGameSection = this.renderGameOutput(completedGames),
+            tonightGameSection = this.renderGameOutput(tonightGames),
             futureGameSection = this.renderGameOutput(futureGames);
 
         this.setState({ liveGameSection });
+        this.setState({ tonightGameSection });
         this.setState({ completedGameSection });
         this.setState({ futureGameSection });
       });
@@ -172,12 +169,12 @@ export default class Scores extends React.Component {
           <div className="scoreTable" onClick={this.viewGameInfo(game.id)}>
             <div className="scores">
               <div className="team">{game.abvr_atn}</div> <div className="score">{game.ats}</div> <br />
-            <div className="team">{game.abvr_htn}</div> <div className="score">{game.hts}</div>
+              <div className="team">{game.abvr_htn}</div> <div className="score">{game.hts}</div>
             </div>
             {game.bsc === 'progress' ? (
               <div className="timeRemaining">{game.ts}</div>
             ) : (
-              <div className="timeRemaining">{game.bs}<br />{this.adjustDate(game)}</div>
+              <div className="timeRemaining">{game.gameTime}<br />{game.modifiedDate}</div>
             )}
           </div>
         </div>
@@ -192,19 +189,9 @@ export default class Scores extends React.Component {
   }
   //Check the date/time input and return accordingly.
   adjustDate(date) {
-    // console.log(date);
-    // const dateFormat = 'h.mm a',
-    //       isDateValid = moment(moment(date, dateFormat).format(dateFormat), dateFormat,true).isValid();
-
     if(date.bsc === 'final') {
       return moment(date.ts, "MM/DD").format("ddd M/D");
     }
-
-    // if(isDateValid) {
-    //   return moment(date, dateFormat).add('3', 'hours').format(dateFormat); //For Future Dates.
-    // } else {
-    //   return date;
-    // }
   }
   render() {
     // const gameComponent = todos.map((todo) => {
@@ -217,19 +204,24 @@ export default class Scores extends React.Component {
         <hr/>
         <h2>NHL Scores</h2>
           <div className="scoreTableContainer">
-            <h2>Live</h2>
-            <div className="dayContainer">
+          <h2>Live</h2>
+            <div className="gameGroupContainer">
               {this.state.liveGameSection}
             </div>
-            <hr />
-            <h2>Completed</h2>
-            <div className="dayContainer">
+          <hr />
+          <h2>Completed</h2>
+            <div className="gameGroupContainer">
               {this.state.completedGameSection}
             </div>
-            <hr />
+          <hr />
+          <h2>Tonight</h2>
+            <div className="gameGroupContainer">
+              {this.state.tonightGameSection}
+            </div>
+          <hr />
           <h2>Future</h2>
-            <div className="dayContainer">
-            {this.state.futureGameSection}
+            <div className="gameGroupContainer">
+              {this.state.futureGameSection}
             </div>
           </div>
       </div>

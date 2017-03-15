@@ -44,7 +44,7 @@ footer .container .text-muted {
   -webkit-transform: translateX(-3px);
   transform: translateX(-3px);
 }
-.dayContainer {
+.gameGroupContainer {
   clear: both;
   overflow: auto;
   margin: 0 0 30px;

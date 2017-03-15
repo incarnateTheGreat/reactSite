@@ -20,9 +20,6 @@ module.exports = {
       }
     ]
   },
-//   devServer: {
-//    headers: { "Access-Control-Allow-Origin": "*" }
-// },
   externals: {
       "lodash": "lodash"
   },
