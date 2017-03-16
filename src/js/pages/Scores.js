@@ -90,7 +90,7 @@ export default class Scores extends React.Component {
 
         function getDate(dateObj) {
           //If game is currently in progress, do not modify date;
-          if(dateObj.bsc === 'progress') return;
+          if(dateObj.bsc === 'progress') return dateObj;
 
           //Get date string, modify it to support MomentJS, then apply.
           const dateFormat = "h.mm a";
@@ -109,7 +109,7 @@ export default class Scores extends React.Component {
             diffValue = moment().diff(convertedDate, "days");
 
             //Game has ended.
-            if(diffValue > 0 && _.startsWith(dateObj.bs, "F")) {
+            if(diffValue > 0 || _.startsWith(dateObj.bs, "F")) {
               dateObj["hasEnded"] = true;
               dateObj["gameTime"] = "FINAL";
               dateObj["modifiedDate"] = moment(dateObj.ts, "MM/DD").format("ddd M/D");
@@ -137,6 +137,7 @@ export default class Scores extends React.Component {
 
         _.forEach(gameData, function(v,k){
           // replace date with fixed date objective
+
           v = getDate(v);
 
           if(v.bsc === 'progress') {
@@ -153,7 +154,7 @@ export default class Scores extends React.Component {
         let liveGameSection = this.renderGameOutput(liveGames),
             completedGameSection = this.renderGameOutput(completedGames),
             tonightGameSection = this.renderGameOutput(tonightGames),
-            futureGameSection = this.renderGameOutput(futureGames);
+            futureGameSection = this.renderGameOutput(futureGames, true);
 
         this.setState({ liveGameSection });
         this.setState({ tonightGameSection });
@@ -162,10 +163,11 @@ export default class Scores extends React.Component {
       });
   }
   //Build out HTML object of Scores.
-  renderGameOutput(gameGroup) {
+  renderGameOutput(gameGroup, isFuture) {
     return gameGroup.map((game, id) => {
       return (
         <div key={id} className="scoreContainer">
+          {/* {isFuture ? (<span>{game.ts}</span>) : ''} */}
           <div className="scoreTable" onClick={this.viewGameInfo(game.id)}>
             <div className="scores">
               <div className="team">{game.abvr_atn}</div> <div className="score">{game.ats}</div> <br />
@@ -209,14 +211,14 @@ export default class Scores extends React.Component {
               {this.state.liveGameSection}
             </div>
           <hr />
-          <h2>Completed</h2>
-            <div className="gameGroupContainer">
-              {this.state.completedGameSection}
-            </div>
-          <hr />
           <h2>Tonight</h2>
             <div className="gameGroupContainer">
               {this.state.tonightGameSection}
+            </div>
+          <hr />
+          <h2>Completed</h2>
+            <div className="gameGroupContainer">
+              {this.state.completedGameSection}
             </div>
           <hr />
           <h2>Future</h2>
