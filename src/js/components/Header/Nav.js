@@ -19,6 +19,7 @@ export default class Nav extends React.Component {
   render() {
     // const { history } = this.props;
     // console.log(history.isActive("What"));
+    //Example of applying inline CSS.
     const logoStyle = {
       color: "white",
       float: "right",
@@ -55,7 +56,8 @@ export default class Nav extends React.Component {
             <li><Link to="Scores">Scores</Link></li>
           </ul>
         </div>
-        <span style={logoStyle}>tsaconas.com</span>
+        {/*<span style={logoStyle}>tsaconas.com</span> */}
+        <span className="logo">tsaconas.com</span>
       </nav>
     );
   }

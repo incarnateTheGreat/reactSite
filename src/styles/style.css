@@ -23,6 +23,16 @@ footer {
 footer .container .text-muted {
   margin: 20px 0;
 }
+.logo {
+  color: white;
+  float: right;
+  padding: 14px 10px 14px;
+  fontSize: 1.3em;
+  fontWeight: bold;
+}
+.navbar-collapse {
+  float: left;
+}
 
 /*Scores*/
 .scoreTableContainer {

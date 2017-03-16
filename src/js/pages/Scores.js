@@ -103,11 +103,11 @@ export default class Scores extends React.Component {
               //Create string to check
               testDateVal = moment(testDateVal, "MM/DD");
 
-              // if(moment().diff(testDateVal, "days")) {
-              //   dateObj.ts = "TODAY";
-              // }
+              if(moment().diff(testDateVal, "days") == 0) {
+                dateObj.ts = "TODAY";
+              }
 
-              console.log(dateObj.ts);
+              // console.log(dateObj.ts);
 
           submittedDate = dateObj.ts === "TODAY" ? moment() : dateObj.ts.substr(dateObj.ts.length - 4);
           convertedDate = moment(submittedDate, "MM/DD");
@@ -125,8 +125,9 @@ export default class Scores extends React.Component {
               dateObj["modifiedDate"] = moment(dateObj.ts, "MM/DD").format("ddd M/D");
             }
             //Game is today.
-            else if(moment().isSame(convertedDate)) {
+            else if(moment().isSame(convertedDate, "day")) {
               dateObj["gameTime"] = moment(dateObj.bs, dateFormat).add('3', 'hours').format(dateFormat);
+              console.log(dateObj.atn, dateObj.htn, dateObj["gameTime"]);
             }
           } else {
               //Game is in the future.
