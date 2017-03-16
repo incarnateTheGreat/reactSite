@@ -97,7 +97,17 @@ export default class Scores extends React.Component {
           let submittedDate = "",
               convertedDate = "",
               diffValue = "",
-              isSameOrAfter = false;
+              isSameOrAfter = false,
+              testDateVal = dateObj.ts.substr(dateObj.ts.length - 4).trim();
+
+              //Create string to check
+              testDateVal = moment(testDateVal, "MM/DD");
+
+              // if(moment().diff(testDateVal, "days")) {
+              //   dateObj.ts = "TODAY";
+              // }
+
+              console.log(dateObj.ts);
 
           submittedDate = dateObj.ts === "TODAY" ? moment() : dateObj.ts.substr(dateObj.ts.length - 4);
           convertedDate = moment(submittedDate, "MM/DD");
@@ -127,7 +137,6 @@ export default class Scores extends React.Component {
 
           return dateObj;
         }
-
 
         // Filter different dates.
         let liveGames = [],
