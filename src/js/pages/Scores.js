@@ -107,8 +107,6 @@ export default class Scores extends React.Component {
                 dateObj.ts = "TODAY";
               }
 
-              // console.log(dateObj.ts);
-
           submittedDate = dateObj.ts === "TODAY" ? moment() : dateObj.ts.substr(dateObj.ts.length - 4);
           convertedDate = moment(submittedDate, "MM/DD");
           isSameOrAfter = moment().isSameOrAfter(convertedDate);
@@ -127,7 +125,6 @@ export default class Scores extends React.Component {
             //Game is today.
             else if(moment().isSame(convertedDate, "day")) {
               dateObj["gameTime"] = moment(dateObj.bs, dateFormat).add('3', 'hours').format(dateFormat);
-              console.log(dateObj.atn, dateObj.htn, dateObj["gameTime"]);
             }
           } else {
               //Game is in the future.
