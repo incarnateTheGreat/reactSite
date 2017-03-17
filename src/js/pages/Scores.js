@@ -234,12 +234,6 @@ export default class Scores extends React.Component {
       window.open('https://www.nhl.com/gamecenter/' + gameID + '/recap/box-score');
     }.bind(this);
   }
-  //Check the date/time input and return accordingly.
-  adjustDate(date) {
-    if(date.bsc === 'final') {
-      return moment(date.ts, "MM/DD").format("ddd M/D");
-    }
-  }
   render() {
     // const gameComponent = todos.map((todo) => {
     //     return <Todo key={todo.id} {...todo}/>;
