@@ -116,11 +116,17 @@ export default class Scores extends React.Component {
             //Get difference of days between today and the converted date.
             diffValue = moment().diff(convertedDate, "days");
 
-            //Game has ended.
-            if(diffValue > 0 || _.startsWith(dateObj.bs, "F")) {
+            //Game has ended & is not today.
+            if(diffValue > 0) {
               dateObj["hasEnded"] = true;
               dateObj["gameTime"] = "FINAL";
               dateObj["modifiedDate"] = moment(dateObj.ts, "MM/DD").format("ddd M/D");
+            }
+            //Game has ended and is today.
+            // && moment().isSame(convertedDate, "day") <-- might be necessary.
+            else if (_.startsWith(dateObj.bs, "F")) {
+              dateObj["hasEnded"] = true;
+              dateObj["gameTime"] = "FINAL";
             }
             //Game is today.
             else if(moment().isSame(convertedDate, "day")) {
@@ -142,9 +148,8 @@ export default class Scores extends React.Component {
             tonightGames = [],
             futureGames = [];
 
+        //Replace date with fixed date objective
         _.forEach(gameData, function(v,k){
-          // replace date with fixed date objective
-
           v = getDate(v);
 
           if(v.bsc === 'progress') {
@@ -171,24 +176,28 @@ export default class Scores extends React.Component {
   }
   //Build out HTML object of Scores.
   renderGameOutput(gameGroup, isFuture) {
-    return gameGroup.map((game, id) => {
-      return (
-        <div key={id} className="scoreContainer">
-          {/* {isFuture ? (<span>{game.ts}</span>) : ''} */}
-          <div className="scoreTable" onClick={this.viewGameInfo(game.id)}>
-            <div className="scores">
-              <div className="team">{game.abvr_atn}</div> <div className="score">{game.ats}</div> <br />
-              <div className="team">{game.abvr_htn}</div> <div className="score">{game.hts}</div>
+    if(gameGroup.length == 0) {
+      return (<h4>No games listed.</h4>);
+    } else {
+      return gameGroup.map((game, id) => {
+        return (
+          <div key={id} className="scoreContainer">
+            {/* {isFuture ? (<span>{game.ts}</span>) : ''} */}
+            <div className="scoreTable" onClick={this.viewGameInfo(game.id)}>
+              <div className="scores">
+                <div className="team">{game.abvr_atn}</div> <div className="score">{game.ats}</div> <br />
+                <div className="team">{game.abvr_htn}</div> <div className="score">{game.hts}</div>
+              </div>
+              {game.bsc === 'progress' ? (
+                <div className="timeRemaining">{game.ts}</div>
+              ) : (
+                <div className="timeRemaining">{game.gameTime}<br />{game.modifiedDate}</div>
+              )}
             </div>
-            {game.bsc === 'progress' ? (
-              <div className="timeRemaining">{game.ts}</div>
-            ) : (
-              <div className="timeRemaining">{game.gameTime}<br />{game.modifiedDate}</div>
-            )}
           </div>
-        </div>
-      )
-    });
+        )
+      });
+    }
   }
   //Link to NHL.com to get game data using game's ID
   viewGameInfo(gameID) {
