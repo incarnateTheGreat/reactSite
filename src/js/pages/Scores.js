@@ -10,7 +10,7 @@ export default class Scores extends React.Component {
     this.state = {
       liveGameSection: null,
       completedGameSection: null,
-      tonightGameSection: null,
+      todayGameSection: null,
       futureGameSection: null
     };
   }
@@ -103,7 +103,8 @@ export default class Scores extends React.Component {
               //Create string to check
               testDateVal = moment(testDateVal, "MM/DD");
 
-              if(moment().diff(testDateVal, "days") == 0) {
+              //If date string matches today, or actual value "TODAY" is registered, then force "TODAY".
+              if((moment().isSame(testDateVal)) || dateObj.ts === "TODAY") {
                 dateObj.ts = "TODAY";
               }
 
@@ -145,7 +146,7 @@ export default class Scores extends React.Component {
         // Filter different dates.
         let liveGames = [],
             completedGames = [],
-            tonightGames = [],
+            todayGames = [],
             futureGames = [];
 
         //Replace date with fixed date objective
@@ -155,7 +156,7 @@ export default class Scores extends React.Component {
           if(v.bsc === 'progress') {
             liveGames.push(v);
           } else if(v.ts === 'TODAY') {
-            tonightGames.push(v);
+            todayGames.push(v);
           } else if(v.hasEnded) {
             completedGames.push(v);
           } else if(v.ts !== 'TODAY' && !v.hasEnded) {
@@ -163,40 +164,70 @@ export default class Scores extends React.Component {
           }
         });
 
+
+        //Experimenting with grouping dates.
+        completedGames = _.groupBy(completedGames, function(obj) {
+          return obj.ts;
+        });
+
+
         let liveGameSection = this.renderGameOutput(liveGames),
-            completedGameSection = this.renderGameOutput(completedGames),
-            tonightGameSection = this.renderGameOutput(tonightGames),
-            futureGameSection = this.renderGameOutput(futureGames, true);
+            completedGameSection = [],
+            todayGameSection = this.renderGameOutput(todayGames),
+            futureGameSection = this.renderGameOutput(futureGames);
+
+        for(var id in completedGames) {
+          completedGameSection.push(this.renderGameOutput(completedGames[id], true));
+        }
 
         this.setState({ liveGameSection });
-        this.setState({ tonightGameSection });
+        this.setState({ todayGameSection });
         this.setState({ completedGameSection });
         this.setState({ futureGameSection });
       });
   }
   //Build out HTML object of Scores.
-  renderGameOutput(gameGroup, isFuture) {
+  renderGameOutput(gameGroup, supportsGroups) {
     if(gameGroup.length == 0) {
       return (<h4>No games listed.</h4>);
     } else {
-      return gameGroup.map((game, id) => {
-        return (
-          <div key={id} className="scoreContainer">
-            {/* {isFuture ? (<span>{game.ts}</span>) : ''} */}
-            <div className="scoreTable" onClick={this.viewGameInfo(game.id)}>
-              <div className="scores">
-                <div className="team">{game.abvr_atn}</div> <div className="score">{game.ats}</div> <br />
-                <div className="team">{game.abvr_htn}</div> <div className="score">{game.hts}</div>
+      if(supportsGroups) {
+        return gameGroup.map((game, id) => {
+          return (
+            <div key={id} className="scoreContainer">
+              <div className="scoreTable" onClick={this.viewGameInfo(game.id)}>
+                <div className="scores">
+                  <div className="team">{game.abvr_atn}</div> <div className="score">{game.ats}</div> <br />
+                  <div className="team">{game.abvr_htn}</div> <div className="score">{game.hts}</div>
+                </div>
+                {game.bsc === 'progress' ? (
+                  <div className="timeRemaining">{game.ts}</div>
+                ) : (
+                  <div className="timeRemaining">{game.gameTime}<br />{game.modifiedDate}</div>
+                )}
               </div>
-              {game.bsc === 'progress' ? (
-                <div className="timeRemaining">{game.ts}</div>
-              ) : (
-                <div className="timeRemaining">{game.gameTime}<br />{game.modifiedDate}</div>
-              )}
             </div>
-          </div>
-        )
-      });
+          )
+        });
+      } else {
+        return gameGroup.map((game, id) => {
+          return (
+            <div key={id} className="scoreContainer">
+              <div className="scoreTable" onClick={this.viewGameInfo(game.id)}>
+                <div className="scores">
+                  <div className="team">{game.abvr_atn}</div> <div className="score">{game.ats}</div> <br />
+                  <div className="team">{game.abvr_htn}</div> <div className="score">{game.hts}</div>
+                </div>
+                {game.bsc === 'progress' ? (
+                  <div className="timeRemaining">{game.ts}</div>
+                ) : (
+                  <div className="timeRemaining">{game.gameTime}<br />{game.modifiedDate}</div>
+                )}
+              </div>
+            </div>
+          )
+        });
+      }
     }
   }
   //Link to NHL.com to get game data using game's ID
@@ -227,9 +258,9 @@ export default class Scores extends React.Component {
               {this.state.liveGameSection}
             </div>
           <hr />
-          <h2>Tonight</h2>
+          <h2>Today</h2>
             <div className="gameGroupContainer">
-              {this.state.tonightGameSection}
+              {this.state.todayGameSection}
             </div>
           <hr />
           <h2>Completed</h2>
