@@ -164,12 +164,10 @@ export default class Scores extends React.Component {
           }
         });
 
-
         //Experimenting with grouping dates.
         completedGames = _.groupBy(completedGames, function(obj) {
           return obj.ts;
         });
-
 
         let liveGameSection = this.renderGameOutput(liveGames),
             completedGameSection = [],
