@@ -98,13 +98,19 @@ export default class Scores extends React.Component {
               convertedDate = "",
               diffValue = "",
               isSameOrAfter = false,
-              testDateVal = dateObj.ts.substr(dateObj.ts.length - 4).trim();
+              testDateVal = dateObj.ts.substr(dateObj.ts.length - 4).trim(),
+              todayVal = moment().format();
 
-              //Create string to check
-              testDateVal = moment(testDateVal, "MM/DD");
+              //Create ISO formats.
+              testDateVal = moment(testDateVal, "MM/DD").format();
+              todayVal = moment().format();
+
+              //Create Moment objects to compare Today and date variable.
+              testDateVal = moment(testDateVal);
+              todayVal = moment(todayVal);
 
               //If date string matches today, or actual value "TODAY" is registered, then force "TODAY".
-              if((moment().isSame(testDateVal)) || dateObj.ts === "TODAY") {
+              if((todayVal.isSame(testDateVal, "day")) || dateObj.ts === "TODAY") {
                 dateObj.ts = "TODAY";
               }
 
@@ -242,6 +248,7 @@ export default class Scores extends React.Component {
     return (
       <div>
         <h1>Scores</h1>
+        <h5>All times in EST</h5>
         <hr/>
         <h2>NHL Scores</h2>
           <div className="scoreTableContainer">
