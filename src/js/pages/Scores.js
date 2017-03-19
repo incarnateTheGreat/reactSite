@@ -73,6 +73,7 @@ export default class Scores extends React.Component {
           v['abvr_atn'] = "",
           v['abvr_htn'] = "";
 
+          //Assign abbreviated Away team name to key.
           _.find(teams, function(val, key) {
             if(v.atn === val) {
               v['abvr_atn'] = key;
@@ -80,6 +81,7 @@ export default class Scores extends React.Component {
             }
           });
 
+          //Assign abbreviated Home team name to key.
           _.find(teams, function(val, key) {
             if(v.htn === val) {
               v['abvr_htn'] = key;
