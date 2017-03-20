@@ -11,9 +11,6 @@ h1 {
 h2 {
   font-weight: bold;
 }
-header {
-  background-color: #222222;
-}
 footer {
   position: absolute;
   width: 100%;
@@ -47,12 +44,14 @@ footer .container .text-muted {
   transition:all 0.3s ease;
 }
 .scoreTable:hover {
-  background: #ADB8FF;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.1), 0 2px 3px rgba(0,0,0,.2);
+  background: #EEE;
+  /*background: #ADB8FF;
   box-shadow: 1px 1px #53a7ea,
               2px 2px #53a7ea,
               3px 3px #53a7ea;
   -webkit-transform: translateX(-3px);
-  transform: translateX(-3px);
+  transform: translateX(-3px);*/
 }
 .gameGroupContainer {
   clear: both;
@@ -82,4 +81,37 @@ h3 {
 .scoreTable .scores .score {
   float: left;
   font-weight: bold;
+}
+.navbar-nav li a {
+  transition:all 0.3s ease;
+}
+.navbar-nav li a.test {
+  color: #ffffff;
+  background-color: #1967be;
+}
+.navAnim span {
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  display: block;
+  height: 60px;
+}
+
+.navAnim, .navAnimBtn {
+  transition: 0.3s;
+}
+
+.navAnim {
+  height: 50px;
+  font: normal normal 700 1em/4em Arial,sans-serif;
+  overflow: hidden;
+  background-color: #3b5998;
+}
+
+.navAnimBtn{
+  margin-top: 0em;
+}
+
+.navAnim:hover .navAnimBtn{
+  margin-top: -4em;
 }

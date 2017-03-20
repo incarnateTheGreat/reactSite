@@ -128,7 +128,7 @@ export default class Scores extends React.Component {
             //Game has ended & is not today.
             if(diffValue > 0) {
               dateObj["hasEnded"] = true;
-              dateObj["gameTime"] = "FINAL";
+              dateObj["gameTime"] = dateObj.bs;
               dateObj["modifiedDate"] = moment(dateObj.ts, "MM/DD").format("ddd M/D");
             }
             //Game has ended and is today.
