@@ -47,31 +47,31 @@ export default class Nav extends React.Component {
         </div>
         <div class={"navbar-collapse " + navClass} id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
-            <li><Link to="" activeClassName="test" className="navAnim">
-            <span className="navAnimBtn">Home</span>
-            <span>Home</span>
+            <li><Link to="">
+              <span className="navAnimBtn">Home</span>
+              <span>Home</span>
             </Link></li>
-            <li><Link to="Todos" activeClassName="test" className="navAnim">
+            <li><Link to="Todos" activeClassName="active">
               <span className="navAnimBtn">Todos</span>
               <span>Todos</span>
             </Link></li>
-            <li><Link to="Who" activeClassName="test" className="navAnim">
+            <li><Link to="Who" activeClassName="active">
               <span className="navAnimBtn">Who</span>
               <span>Who</span>
             </Link></li>
-            <li><Link to="What" activeClassName="test" className="navAnim">
+            <li><Link to="What" activeClassName="active">
               <span className="navAnimBtn">What</span>
               <span>What</span>
             </Link></li>
-            <li><Link to="Where" activeClassName="test" className="navAnim">
+            <li><Link to="Where" activeClassName="active">
               <span className="navAnimBtn">Where</span>
               <span>Where</span>
             </Link></li>
-            <li><Link to="Featured" activeClassName="test" className="navAnim">
+            <li><Link to="Featured" activeClassName="active">
               <span className="navAnimBtn">Featured</span>
               <span>Featured</span>
             </Link></li>
-            <li><Link to="Scores" activeClassName="test" className="navAnim">
+            <li><Link to="Scores" activeClassName="active">
               <span className="navAnimBtn">Scores</span>
               <span>Scores</span>
             </Link></li>
