@@ -24,8 +24,7 @@ footer .container .text-muted {
   color: white;
   float: right;
   padding: 14px 10px 14px;
-  fontSize: 1.3em;
-  fontWeight: bold;
+  font: normal normal 700 1.25em/1.25em Arial,sans-serif;
 }
 .navbar-collapse {
   float: left;
