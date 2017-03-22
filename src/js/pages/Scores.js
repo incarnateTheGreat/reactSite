@@ -50,6 +50,7 @@ export default class Scores extends React.Component {
     }
 
     axios.get('http://live.nhle.com/GameData/RegularSeasonScoreboardv3.jsonp')
+    // axios.get('/testData/completedGamesTest.json')
       .then(res => {
         let jsonGameData = res.data,
             dates = [],
@@ -129,7 +130,6 @@ export default class Scores extends React.Component {
             if(diffValue > 0) {
               dateObj["hasEnded"] = true;
               dateObj["gameTime"] = dateObj.bs;
-              dateObj["modifiedDate"] = moment(dateObj.ts, "MM/DD").format("ddd M/D");
             }
             //Game has ended and is today.
             // && moment().isSame(convertedDate, "day") <-- might be necessary.
@@ -172,7 +172,7 @@ export default class Scores extends React.Component {
           }
         });
 
-        //Experimenting with grouping dates.
+        //Group Completed Games by Day.
         completedGames = _.groupBy(completedGames, function(obj) {
           return obj.ts;
         });
@@ -182,8 +182,12 @@ export default class Scores extends React.Component {
             todayGameSection = this.renderGameOutput(todayGames),
             futureGameSection = this.renderGameOutput(futureGames);
 
+        //Wrap Completed Games by Day into separate groups.
         for(var id in completedGames) {
-          completedGameSection.push(this.renderGameOutput(completedGames[id], true));
+            completedGameSection.push(<div key={id} className="completedGamesGroupContainer">
+                <h3>{id}</h3>
+                {this.renderGameOutput(completedGames[id])}
+            </div>);
         }
 
         this.setState({ liveGameSection });
@@ -193,11 +197,10 @@ export default class Scores extends React.Component {
       });
   }
   //Build out HTML object of Scores.
-  renderGameOutput(gameGroup, supportsGroups) {
+  renderGameOutput(gameGroup) {
     if(gameGroup.length == 0) {
       return (<h4>No games listed.</h4>);
     } else {
-      if(supportsGroups) {
         return gameGroup.map((game, id) => {
           return (
             <div key={id} className="scoreContainer">
@@ -215,25 +218,6 @@ export default class Scores extends React.Component {
             </div>
           )
         });
-      } else {
-        return gameGroup.map((game, id) => {
-          return (
-            <div key={id} className="scoreContainer">
-              <div className="scoreTable" onClick={this.viewGameInfo(game.id)}>
-                <div className="scores">
-                  <div className="team">{game.abvr_atn}</div> <div className="score">{game.ats}</div> <br />
-                  <div className="team">{game.abvr_htn}</div> <div className="score">{game.hts}</div>
-                </div>
-                {game.bsc === 'progress' ? (
-                  <div className="timeRemaining">{game.ts}</div>
-                ) : (
-                  <div className="timeRemaining">{game.gameTime}<br />{game.modifiedDate}</div>
-                )}
-              </div>
-            </div>
-          )
-        });
-      }
     }
   }
   //Link to NHL.com to get game data using game's ID
@@ -264,7 +248,7 @@ export default class Scores extends React.Component {
               {this.state.todayGameSection}
             </div>
           <hr />
-        <h2>Previous</h2>
+        <h2>Completed</h2>
             <div className="gameGroupContainer">
               {this.state.completedGameSection}
             </div>
