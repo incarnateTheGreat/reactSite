@@ -47,7 +47,7 @@ export default class Scores extends React.Component {
       VAN: 'Vancouver',
       WAS: 'Washington',
       WPG: 'Winnipeg'
-    }
+    };
 
     axios.get('http://live.nhle.com/GameData/RegularSeasonScoreboardv3.jsonp')
     // axios.get('/testData/completedGamesTest.json')
@@ -177,24 +177,40 @@ export default class Scores extends React.Component {
           return obj.ts;
         });
 
+        futureGames = _.groupBy(futureGames, function(obj) {
+          return obj.ts;
+        });
+
         let liveGameSection = this.renderGameOutput(liveGames),
             completedGameSection = [],
             todayGameSection = this.renderGameOutput(todayGames),
-            futureGameSection = this.renderGameOutput(futureGames);
+            futureGameSection = [];
 
         //Wrap Completed Games by Day into separate groups.
         for(var id in completedGames) {
-            completedGameSection.push(<div key={id} className="completedGamesGroupContainer">
+            completedGameSection.push(<div key={id} className={this.getNumberOfColumns(completedGames)} >
                 <h3>{id}</h3>
                 {this.renderGameOutput(completedGames[id])}
             </div>);
         }
+
+          for(var id in futureGames) {
+              futureGameSection.push(<div key={id}className={this.getNumberOfColumns(futureGames)} >
+                  <h3>{id}</h3>
+                  {this.renderGameOutput(futureGames[id])}
+              </div>);
+          }
 
         this.setState({ liveGameSection });
         this.setState({ todayGameSection });
         this.setState({ completedGameSection });
         this.setState({ futureGameSection });
       });
+  }
+  getNumberOfColumns(games) {
+      let classString = "completedGamesGroupContainer col-md-";
+
+      return classString = classString + (Object.keys(games).length > 1 ? "6" : "12");
   }
   //Build out HTML object of Scores.
   renderGameOutput(gameGroup) {
