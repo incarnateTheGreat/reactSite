@@ -145,7 +145,6 @@ export default class Scores extends React.Component {
               //Game is in the future.
               dateObj["hasEnded"] = false;
               dateObj["gameTime"] = moment(dateObj.bs, dateFormat).add('3', 'hours').format(dateFormat);
-              dateObj["modifiedDate"] = moment(dateObj.ts, "MM/DD").format("ddd M/D");
           }
 
           return dateObj;
@@ -194,12 +193,13 @@ export default class Scores extends React.Component {
             </div>);
         }
 
-          for(var id in futureGames) {
-              futureGameSection.push(<div key={id}className={this.getNumberOfColumns(futureGames)} >
-                  <h3>{id}</h3>
-                  {this.renderGameOutput(futureGames[id])}
-              </div>);
-          }
+        //Wrap Future Games by Day into separate groups.
+        for(var id in futureGames) {
+            futureGameSection.push(<div key={id}className={this.getNumberOfColumns(futureGames)} >
+                <h3>{id}</h3>
+                {this.renderGameOutput(futureGames[id])}
+            </div>);
+        }
 
         this.setState({ liveGameSection });
         this.setState({ todayGameSection });
