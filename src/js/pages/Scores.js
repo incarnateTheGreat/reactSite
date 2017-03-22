@@ -264,7 +264,7 @@ export default class Scores extends React.Component {
               {this.state.todayGameSection}
             </div>
           <hr />
-          <h2>Completed</h2>
+        <h2>Previous</h2>
             <div className="gameGroupContainer">
               {this.state.completedGameSection}
             </div>
