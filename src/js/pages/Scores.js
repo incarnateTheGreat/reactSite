@@ -232,14 +232,14 @@ export default class Scores extends React.Component {
 
     getNumberOfColumns(games) {
         let classString = "completedGamesGroupContainer col-md-";
-
+        
         return classString = classString + (Object.keys(games).length > 1 ? "6" : "12");
     }
 
     //Build out HTML object of Scores.
     renderGameOutput(gameGroup) {
         if (gameGroup.length == 0) {
-            return (<h4>No games listed.</h4>);
+            return (<h4 key="{gameGroup.length}">No games listed.</h4>);
         } else {
             return gameGroup.map((game, id) => {
                 return (
