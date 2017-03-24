@@ -239,13 +239,13 @@ export default class Scores extends React.Component {
             let loader = document.getElementsByClassName("loader")[0];
 
             //Display Loader.
-            setTimeout(() => loader.setAttribute("style", "opacity: 1"), 30000);
+            setTimeout(() => loader.setAttribute("style", "opacity: 1"), 27000);
 
             //Refresh the Scoreboard Data at every interval, then hide Loader.
             setTimeout(() => {
               loader.setAttribute("style", "opacity: 0");
               this.buildScoreboard();
-            }, 6000);
+            }, 30000);
       });
     }
 
