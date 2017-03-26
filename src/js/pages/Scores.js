@@ -202,6 +202,7 @@ export default class Scores extends React.Component {
                 return obj.ts;
             });
 
+            //Set up Section variables to inject into Render.
             let liveGameSection = this.renderGameOutput(liveGames),
                 completedGameSection = [],
                 todayGameSection = this.renderGameOutput(todayGames),
@@ -231,21 +232,32 @@ export default class Scores extends React.Component {
                 futureGameSection.push(this.renderGameOutput([]));
             }
 
+            //Set Render States for each section.
             this.setState({liveGameSection});
             this.setState({todayGameSection});
             this.setState({completedGameSection});
             this.setState({futureGameSection});
 
-            let loader = document.getElementsByClassName("loader")[0];
+            const loaderTimeoutIntervals = {
+              'liveGames': [27000, 30000],
+              'noLiveGames': [117000, 120000]
+            };
+
+            //Control the frequency of refresh intervals depending on whether
+            //there are Live Games in progress or not.
+            function getTimeoutIntervals() {
+              return liveGames.length > 0 ? 'liveGames' : 'noLiveGames';
+            }
 
             //Display Loader.
-            setTimeout(() => loader.setAttribute("style", "opacity: 1"), 27000);
+            let loader = document.getElementsByClassName("loader")[0];
+            setTimeout(() => loader.setAttribute("style", "opacity: 1"), loaderTimeoutIntervals[getTimeoutIntervals()][0]);
 
             //Refresh the Scoreboard Data at every interval, then hide Loader.
             setTimeout(() => {
               loader.setAttribute("style", "opacity: 0");
               this.buildScoreboard();
-            }, 30000);
+            }, loaderTimeoutIntervals[getTimeoutIntervals()][1]);
       });
     }
 
@@ -260,10 +272,28 @@ export default class Scores extends React.Component {
                 let gameData = res.data.gameData,
                     liveData = res.data.liveData;
 
-                console.log(res.data.liveData);
+                console.log(liveData);
 
                 console.log(liveData.linescore.teams.away.team.abbreviation, ":", liveData.linescore.teams.away.goals);
                 console.log(liveData.linescore.teams.home.team.abbreviation, ":", liveData.linescore.teams.home.goals);
+
+                console.log("Goals:");
+                let goals = [],
+                    scorerObj = "";
+
+                _.forEach(liveData.plays.scoringPlays, function(id) {
+                  _.forEach(liveData.plays.allPlays, function(playID, v) {
+                    if(id == v) {
+                      scorerObj = _.find(playID.players, {playerType: 'Scorer'});
+                      console.log("-----------------");
+                      console.log("Scorer:", scorerObj.player.fullName);
+                      console.log("Period:", playID.about.ordinalNum);
+                      console.log("Time:", playID.about.periodTime);
+                      console.log("Type of Goal:", playID.result.secondaryType);
+                      console.log("Strength:", playID.result.strength.name);
+                    }
+                  });
+                });
 
                 if(liveData.linescore.currentPeriodTimeRemaining === "Final") {
                   if(liveData.linescore.hasShootout) {
