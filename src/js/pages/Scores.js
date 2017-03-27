@@ -1,8 +1,6 @@
 import React from "react";
 import axios from 'axios';
 
-// import Article from "../components/Article";
-
 export default class Scores extends React.Component {
     constructor(props) {
         super(props);
@@ -83,9 +81,9 @@ export default class Scores extends React.Component {
             datesObjects.map(e => dates.push(e.ts));
 
             //Add abbreviation key to game objects for display purposes.
-            _.forEach(gameData, function (v, k) {
+            _.forEach(gameData, function (v) {
                 v['abvr_atn'] = "",
-                    v['abvr_htn'] = "";
+                v['abvr_htn'] = "";
 
                 //Assign abbreviated Away team name to key.
                 _.find(teams, function (val, key) {
@@ -170,7 +168,7 @@ export default class Scores extends React.Component {
                 futureGames = [];
 
             //Replace date with fixed date objective
-            _.forEach(gameData, function (v, k) {
+            _.forEach(gameData, function (v) {
                 v = getDate(v);
 
                 if (v.bsc === 'progress') {
@@ -185,9 +183,7 @@ export default class Scores extends React.Component {
             });
 
             //Group Completed Games by Day.
-            completedGames = _.groupBy(completedGames, function (obj) {
-                return obj.ts;
-            });
+            completedGames = _.groupBy(completedGames, obj => obj.ts);
 
             //To show the latest day first, reverse the order of the objects (only if more than 1 day of data is available).
             if(_.keys(completedGames).length > 1) {
@@ -201,9 +197,8 @@ export default class Scores extends React.Component {
                 completedGames = tempArr;
             }
 
-            futureGames = _.groupBy(futureGames, function (obj) {
-                return obj.ts;
-            });
+            //Group Future Games by Day.
+            futureGames = _.groupBy(futureGames, obj => obj.ts);
 
             //Set up Section variables to inject into Render.
             let liveGameSection = this.renderGameOutput(liveGames),
@@ -246,8 +241,7 @@ export default class Scores extends React.Component {
               'noLiveGames': [117000, 120000]
             };
 
-            //Control the frequency of refresh intervals depending on whether
-            //there are Live Games in progress or not.
+            //Control the frequency of refresh intervals depending on whether there are Live Games in progress or not.
             function getTimeoutIntervals() {
               return liveGames.length > 0 ? 'liveGames' : 'noLiveGames';
             }
@@ -364,6 +358,7 @@ export default class Scores extends React.Component {
         // });
 
         return (
+            // <div className="col-sm-8 col-md-6 col-lg-6">
             <div>
               <div class="loader"></div>
                 <h1>Scores</h1>
