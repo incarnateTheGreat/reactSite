@@ -274,7 +274,7 @@ export default class Scores extends React.Component {
                 let gameData = res.data.gameData,
                     liveData = res.data.liveData;
 
-                console.log("Goals:");
+                // console.log("Goals:");
                 let goals = [],
                     scorerObj = "";
 
@@ -292,10 +292,10 @@ export default class Scores extends React.Component {
                     }
                   });
                 });
-
+                
                 console.log(liveData.linescore.teams.away.team.abbreviation, ":", liveData.linescore.teams.away.goals);
                 console.log(liveData.linescore.teams.home.team.abbreviation, ":", liveData.linescore.teams.home.goals);
-
+                
                 if(liveData.linescore.currentPeriodTimeRemaining === "Final") {
                   if(liveData.linescore.hasShootout) {
                     console.log(liveData.linescore.currentPeriodTimeRemaining, "(" + liveData.linescore.currentPeriodOrdinal + ")");
@@ -306,7 +306,24 @@ export default class Scores extends React.Component {
                   console.log(liveData.linescore.currentPeriodTimeRemaining, liveData.linescore.currentPeriodOrdinal);
                 }
 
-              // }
+                // console.log(liveData);
+                // console.log(liveData.linescore.teams.away.team.abbreviation, ":", liveData.linescore.teams.away.goals);
+                // console.log(liveData.linescore.teams.home.team.abbreviation, ":", liveData.linescore.teams.home.goals);
+
+                // modalContent.push(<div id={gameID}>
+                //     <div>{liveData.linescore.teams.away.team.abbreviation} : {liveData.linescore.teams.away.goals}</div>
+                //     <div>{liveData.linescore.teams.home.team.abbreviation} : {liveData.linescore.teams.home.goals}</div>
+                // </div>);
+
+                // _.forEach(liveData.linescore.teams, function(teamObj, id) {
+                //     console.log(id, teamObj);
+                //     if(id == "away") {
+                //         modalContent.push(<div id={id}>
+                //             <div>{teamObj.goals}</div>
+                //         </div>);
+                //     }
+                //
+                // });
             });
       }.bind(this);
     }
@@ -319,9 +336,7 @@ export default class Scores extends React.Component {
     }
 
     getNumberOfColumns(games) {
-        let classString = "completedGamesGroupContainer col-md-";
-
-        return classString = classString + (Object.keys(games).length > 1 ? "6" : "12");
+        return "completedGamesGroupContainer col-md-" + (Object.keys(games).length > 1 ? "6" : "12");
     }
 
     //Build out HTML object of Scores.
@@ -358,7 +373,6 @@ export default class Scores extends React.Component {
         // });
 
         return (
-            // <div className="col-sm-8 col-md-6 col-lg-6">
             <div>
               <div class="loader"></div>
                 <h1>Scores</h1>
