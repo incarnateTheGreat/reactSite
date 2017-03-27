@@ -13,6 +13,9 @@ export default class Scores extends React.Component {
             todayGameSection: null,
             futureGameSection: null
         };
+
+        this.timeoutOpenLoader = null;
+        this.timeoutCloseLoader = null;
     }
 
     //Return NHL Scoreboard data.
@@ -251,14 +254,19 @@ export default class Scores extends React.Component {
 
             //Display Loader.
             let loader = document.getElementsByClassName("loader")[0];
-            setTimeout(() => loader.setAttribute("style", "opacity: 1"), loaderTimeoutIntervals[getTimeoutIntervals()][0]);
+            this.timeoutOpenLoader = setTimeout(() => loader.setAttribute("style", "opacity: 1"), loaderTimeoutIntervals[getTimeoutIntervals()][0]);
 
             //Refresh the Scoreboard Data at every interval, then hide Loader.
-            setTimeout(() => {
+            this.timeoutCloseLoader = setTimeout(() => {
               loader.setAttribute("style", "opacity: 0");
               this.buildScoreboard();
             }, loaderTimeoutIntervals[getTimeoutIntervals()][1]);
       });
+    }
+
+    componentWillUnmount() {
+      clearTimeout(this.timeoutOpenLoader);
+      clearTimeout(this.timeoutCloseLoader);
     }
 
     componentWillMount() {
@@ -272,11 +280,6 @@ export default class Scores extends React.Component {
                 let gameData = res.data.gameData,
                     liveData = res.data.liveData;
 
-                console.log(liveData);
-
-                console.log(liveData.linescore.teams.away.team.abbreviation, ":", liveData.linescore.teams.away.goals);
-                console.log(liveData.linescore.teams.home.team.abbreviation, ":", liveData.linescore.teams.home.goals);
-
                 console.log("Goals:");
                 let goals = [],
                     scorerObj = "";
@@ -285,15 +288,19 @@ export default class Scores extends React.Component {
                   _.forEach(liveData.plays.allPlays, function(playID, v) {
                     if(id == v) {
                       scorerObj = _.find(playID.players, {playerType: 'Scorer'});
-                      console.log("-----------------");
+                      console.log("Team:", playID.team.name);
                       console.log("Scorer:", scorerObj.player.fullName);
                       console.log("Period:", playID.about.ordinalNum);
                       console.log("Time:", playID.about.periodTime);
                       console.log("Type of Goal:", playID.result.secondaryType);
                       console.log("Strength:", playID.result.strength.name);
+                      console.log("-----------------");
                     }
                   });
                 });
+
+                console.log(liveData.linescore.teams.away.team.abbreviation, ":", liveData.linescore.teams.away.goals);
+                console.log(liveData.linescore.teams.home.team.abbreviation, ":", liveData.linescore.teams.home.goals);
 
                 if(liveData.linescore.currentPeriodTimeRemaining === "Final") {
                   if(liveData.linescore.hasShootout) {
