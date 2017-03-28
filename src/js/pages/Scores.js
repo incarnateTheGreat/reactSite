@@ -292,10 +292,10 @@ export default class Scores extends React.Component {
                     }
                   });
                 });
-                
+
                 console.log(liveData.linescore.teams.away.team.abbreviation, ":", liveData.linescore.teams.away.goals);
                 console.log(liveData.linescore.teams.home.team.abbreviation, ":", liveData.linescore.teams.home.goals);
-                
+
                 if(liveData.linescore.currentPeriodTimeRemaining === "Final") {
                   if(liveData.linescore.hasShootout) {
                     console.log(liveData.linescore.currentPeriodTimeRemaining, "(" + liveData.linescore.currentPeriodOrdinal + ")");
@@ -385,7 +385,7 @@ export default class Scores extends React.Component {
                         {this.state.liveGameSection}
                     </div>
                     <hr />
-                    <h2>Today</h2>
+                  <h2>Today: {moment().format("MM/DD")}</h2>
                     <div className="gameGroupContainer">
                         {this.state.todayGameSection}
                     </div>
