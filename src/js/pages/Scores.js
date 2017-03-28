@@ -1,6 +1,8 @@
 import React from "react";
 import axios from 'axios';
 
+import GameModal from "../components/GameModal";
+
 export default class Scores extends React.Component {
     constructor(props) {
         super(props);
@@ -59,7 +61,7 @@ export default class Scores extends React.Component {
           WPG: 'Winnipeg'
       };
 
-      var p = this.loadScoreData();
+      let p = this.loadScoreData();
 
       p.then((scoreData) => {
         console.log("Data Updated.");
@@ -346,22 +348,7 @@ export default class Scores extends React.Component {
         } else {
             return gameGroup.map((game, id) => {
                 return (
-                    <div key={id} className="scoreContainer">
-                        <div className="scoreTable" onClick={this.getBoxscoreData(game.id)}>
-                            <div className="scores">
-                                <div className="team">{game.abvr_atn}</div>
-                                <div className="score">{game.ats}</div>
-                                <br />
-                                <div className="team">{game.abvr_htn}</div>
-                                <div className="score">{game.hts}</div>
-                            </div>
-                            {game.bsc === 'progress' ? (
-                                <div className="timeRemaining">{game.ts}</div>
-                            ) : (
-                                <div className="timeRemaining">{game.gameTime}<br />{game.modifiedDate}</div>
-                            )}
-                        </div>
-                    </div>
+                    <GameModal key={id} gameData={game} />
                 )
             });
         }
@@ -371,6 +358,7 @@ export default class Scores extends React.Component {
         // const gameComponent = todos.map((todo) => {
         //     return <Todo key={todo.id} {...todo}/>;
         // });
+        
 
         return (
             <div>
@@ -385,7 +373,7 @@ export default class Scores extends React.Component {
                         {this.state.liveGameSection}
                     </div>
                     <hr />
-                  <h2>Today: {moment().format("MM/DD")}</h2>
+                    <h2>Today: {moment().format("dddd M/DD")}</h2>
                     <div className="gameGroupContainer">
                         {this.state.todayGameSection}
                     </div>
