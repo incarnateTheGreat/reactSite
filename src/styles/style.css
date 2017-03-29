@@ -116,18 +116,28 @@ h3 {
   opacity: 0;
 }
 
-/*Modal*/
+/*Game Modal*/
+.status {
+  text-align: right;
+  padding: 5px 15px 5px 0;
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.050);
+  text-transform: uppercase;
+}
 .teamBlock {
-  height: 50px;
-  background-image: url(http://www-league.nhlstatic.com/builds/site-core/12f1822ee25771cc54f967a2a2aedeb768d6ef50_1485977581/images/team/logo/current/52_dark.svg);
-  background-position: -56px -20px;
+  height: 100px;
+  background-position: -10px 50%;
   background-repeat: no-repeat;
-  background-size: 50% 190%;
+  background-size: 165px;
   border-bottom: 1px solid #dad;
 }
 .teamBlock > div {
   float: right;
-  padding: 14px;
+  padding: 14px 20px 14px 0;
+}
+.teamBlock > div span {
+  font-size: 50px;
+  font-weight: bold;
 }
 
 @-webkit-keyframes spin {

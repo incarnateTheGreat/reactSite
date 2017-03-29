@@ -3,16 +3,25 @@ import axios from 'axios';
 import Modal from 'react-modal';
 
 const customStyles = {
-    content : {
+    content: {
+        fontFamily            : 'sans-serif',
         top                   : '50%',
         left                  : '50%',
         right                 : 'auto',
         bottom                : 'auto',
         marginRight           : '-50%',
         transform             : 'translate(-50%, -50%)',
+        transition            : 'all 0.35s ease',
         padding               : '0',
-        width                 : '50%',
+        borderRadius          : '15px',
+        width                 : '30%',
         height                : '50%'
+    }
+}
+
+let tweenStyle = {
+    content: {
+        opacity               : '0'
     }
 };
 
@@ -23,7 +32,8 @@ export default class GameModal extends React.Component {
         this.state = {
             modalIsOpen: false,
             gameContentBody: null,
-            game: null
+            game: null,
+            modalStyle: _.merge(customStyles, tweenStyle)
         };
 
         this.openModal = this.openModal.bind(this);
@@ -36,10 +46,14 @@ export default class GameModal extends React.Component {
     }
 
     afterOpenModal() {
+        tweenStyle['content'].opacity = '1';
+        this.setState({modalStyle: _.merge(customStyles, tweenStyle)});
         this.getBoxscoreData(this.state.game);
     }
 
     closeModal() {
+        tweenStyle['content'].opacity = '0';
+        this.setState({modalStyle: _.merge(customStyles, tweenStyle)});
         this.setState({modalIsOpen: false});
     }
 
@@ -52,64 +66,76 @@ export default class GameModal extends React.Component {
         p.then((data) => {
             let gameData = data.gameData,
                 liveData = data.liveData,
+                lineScore = liveData.linescore,
+                homeScore = lineScore.teams.home.goals,
+                awayScore = lineScore.teams.away.goals,
+                gameStatus = "",
                 gameContentBody = [];
 
-            // let goals = [],
-            //     scorerObj = "";
+            let goals = [],
+                scorerObj = "";
 
-            // _.forEach(liveData.plays.scoringPlays, function(id) {
-            //     _.forEach(liveData.plays.allPlays, function(playID, v) {
-            //         if(id == v) {
-            //             scorerObj = _.find(playID.players, {playerType: 'Scorer'});
-            //             console.log("Team:", playID.team.name);
-            //             console.log("Scorer:", scorerObj.player.fullName);
-            //             console.log("Period:", playID.about.ordinalNum);
-            //             console.log("Time:", playID.about.periodTime);
-            //             console.log("Type of Goal:", playID.result.secondaryType);
-            //             console.log("Strength:", playID.result.strength.name);
-            //             console.log("-----------------");
-            //         }
-            //     });
-            // });
-            //
-            // console.log(liveData.linescore.teams.away.team.abbreviation, ":", liveData.linescore.teams.away.goals);
-            // console.log(liveData.linescore.teams.home.team.abbreviation, ":", liveData.linescore.teams.home.goals);
-            //
-            // if(liveData.linescore.currentPeriodTimeRemaining === "Final") {
-            //     if(liveData.linescore.hasShootout) {
-            //         console.log(liveData.linescore.currentPeriodTimeRemaining, "(" + liveData.linescore.currentPeriodOrdinal + ")");
-            //     } else {
-            //         console.log(liveData.linescore.currentPeriodTimeRemaining);
-            //     }
-            // } else {
-            //     console.log(liveData.linescore.currentPeriodTimeRemaining, liveData.linescore.currentPeriodOrdinal);
-            // }
+            _.forEach(liveData.plays.scoringPlays, function(id) {
+                _.forEach(liveData.plays.allPlays, function(playID, v) {
+                    if(id == v) {
+                        scorerObj = _.find(playID.players, {playerType: 'Scorer'});
+                        console.log("Team:", playID.team.name);
+                        console.log("Scorer:", scorerObj.player.fullName);
+                        console.log("Period:", playID.about.ordinalNum);
+                        console.log("Time:", playID.about.periodTime);
+                        console.log("Type of Goal:", playID.result.secondaryType);
+                        console.log("Strength:", playID.result.strength.name);
+                        console.log("-----------------");
+                    }
+                });
+            });
+            console.log(liveData);
+            // console.log(lineScore.teams.away.team.abbreviation, ":", lineScore.teams.away.goals);
+            // console.log(lineScore.teams.home.team.abbreviation, ":", lineScore.teams.home.goals);
 
-            // console.log(liveData);
-            // console.log(liveData.linescore.teams.away.team.abbreviation, ":", liveData.linescore.teams.away.goals);
-            // console.log(liveData.linescore.teams.home.team.abbreviation, ":", liveData.linescore.teams.home.goals);
+            if(lineScore.currentPeriodTimeRemaining === "Final") {
+                if(lineScore.hasShootout) {
+                    console.log(lineScore.currentPeriodTimeRemaining, "(" + lineScore.currentPeriodOrdinal + ")");
+                } else {
+                    console.log(lineScore.currentPeriodTimeRemaining);
+                }
+            } else {
+                console.log(lineScore.currentPeriodTimeRemaining, lineScore.currentPeriodOrdinal);
+            }
+
+            const away = {
+                backgroundImage: 'url("/images/logos/' + lineScore.teams.away.team.abbreviation +'.png")'
+            };
+            const home = {
+                backgroundImage: 'url("/images/logos/' + lineScore.teams.home.team.abbreviation +'.png")'
+            };
+
+            if(lineScore.currentPeriodTimeRemaining === 'Final') {
+                //Game has completed.
+                gameStatus = lineScore.currentPeriodTimeRemaining + (lineScore.currentPeriodOrdinal === 'SO' || lineScore.currentPeriodOrdinal === 'OT' ? ' (' + lineScore.currentPeriodOrdinal + ')' : '');
+            } else if(lineScore.currentPeriod > 0) {
+                //Game is in progress.
+                gameStatus = lineScore.currentPeriodOrdinal + '' + lineScore.currentPeriodTimeRemaining;
+            } else if(lineScore.currentPeriod === 0) {
+                //Game has not started yet.
+                gameStatus = moment(gameData.datetime.dateTime).format('h.mm a');
+                homeScore = '-';
+                awayScore = '-';
+            }
 
             gameContentBody.push(<div key={gameID}>
-                <div className="teamBlock">
+                <div className="status">{gameStatus}</div>
+                <div className="teamBlock" style={away}>
                   <div>
-                    <span>{liveData.linescore.teams.away.team.abbreviation}</span> :
-                    <span>{liveData.linescore.teams.away.goals}</span>
+                    <span>{awayScore}</span>
                   </div>
                 </div>
-                <div className="teamBlock">
+                <div className="teamBlock" style={home}>
                   <div>
-                    <span>{liveData.linescore.teams.home.team.abbreviation}</span> :
-                    <span>{liveData.linescore.teams.home.goals}</span>
+                    <span>{homeScore}</span>
                   </div>
                 </div>
             </div>);
-
-            // _.forEach(liveData.linescore.teams, function(teamObj, id) {
-            //     console.log(teamObj, id);
-            //     gameContentBody.push(<div key={id}>
-            //         <span>{teamObj.team.abbreviation}</span>: <span>{teamObj.goals}</span>
-            //     </div>);
-            // });
 
             this.setState({gameContentBody});
         });
@@ -139,14 +165,12 @@ export default class GameModal extends React.Component {
                     isOpen={this.state.modalIsOpen}
                     onAfterOpen={this.afterOpenModal}
                     onRequestClose={this.closeModal}
-                    style={customStyles}
+                    style={this.state.modalStyle}
                     contentLabel="Example Modal">
 
                     {this.state.modalIsOpen ? (
                         <div key={game.id}>{this.state.gameContentBody}</div>
                     ) : ''}
-
-                    {/* <button onClick={this.closeModal}>close</button> */}
                 </Modal>
             </div>
         );

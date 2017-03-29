@@ -30,7 +30,6 @@ export default class Scores extends React.Component {
       const teams = {
           ANA: 'Anaheim',
           ARI: 'Arizona',
-          ATL: 'Atlanta',
           BOS: 'Boston',
           BUF: 'Buffalo',
           CGY: 'Calgary',
@@ -41,23 +40,24 @@ export default class Scores extends React.Component {
           DAL: 'Dallas',
           DET: 'Detroit',
           EDM: 'Edmonton',
-          FLO: 'Florida',
-          LA: 'Los Angeles',
+          FLA: 'Florida',
+          LAK: 'Los Angeles',
           MIN: 'Minnesota',
           MTL: 'Montréal',
-          NAS: 'Nashville',
+          NSH: 'Nashville',
           NJD: 'New Jersey',
           NYI: 'NY Islanders',
           NYR: 'NY Rangers',
           OTT: 'Ottawa',
           PHI: 'Philadelphia',
           PIT: 'Pittsburgh',
-          SJ: 'San Jose',
+          SJS: 'San Jose',
           STL: 'St Louis',
-          TB: 'Tampa Bay',
+          TBL: 'Tampa Bay',
           TOR: 'Toronto',
           VAN: 'Vancouver',
-          WAS: 'Washington',
+          VEG: 'Vegas Golden Knights',
+          WSH: 'Washington',
           WPG: 'Winnipeg'
       };
 
@@ -109,7 +109,7 @@ export default class Scores extends React.Component {
                 if (dateObj.bsc === 'progress') return dateObj;
 
                 //Get date string, modify it to support MomentJS, then apply.
-                const dateFormat = "h.mm a";
+                const dateFormat = "h.mm A";
                 let submittedDate = "",
                     convertedDate = "",
                     diffValue = "",
