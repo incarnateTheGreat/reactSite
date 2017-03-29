@@ -269,67 +269,6 @@ export default class Scores extends React.Component {
         this.buildScoreboard();
     }
 
-    getBoxscoreData(gameID) {
-      return function () {
-        axios.get('http://statsapi.web.nhl.com/api/v1/game/' + gameID + '/feed/live')
-            .then(res => {
-                let gameData = res.data.gameData,
-                    liveData = res.data.liveData;
-
-                // console.log("Goals:");
-                let goals = [],
-                    scorerObj = "";
-
-                _.forEach(liveData.plays.scoringPlays, function(id) {
-                  _.forEach(liveData.plays.allPlays, function(playID, v) {
-                    if(id == v) {
-                      scorerObj = _.find(playID.players, {playerType: 'Scorer'});
-                      console.log("Team:", playID.team.name);
-                      console.log("Scorer:", scorerObj.player.fullName);
-                      console.log("Period:", playID.about.ordinalNum);
-                      console.log("Time:", playID.about.periodTime);
-                      console.log("Type of Goal:", playID.result.secondaryType);
-                      console.log("Strength:", playID.result.strength.name);
-                      console.log("-----------------");
-                    }
-                  });
-                });
-
-                console.log(liveData.linescore.teams.away.team.abbreviation, ":", liveData.linescore.teams.away.goals);
-                console.log(liveData.linescore.teams.home.team.abbreviation, ":", liveData.linescore.teams.home.goals);
-
-                if(liveData.linescore.currentPeriodTimeRemaining === "Final") {
-                  if(liveData.linescore.hasShootout) {
-                    console.log(liveData.linescore.currentPeriodTimeRemaining, "(" + liveData.linescore.currentPeriodOrdinal + ")");
-                  } else {
-                    console.log(liveData.linescore.currentPeriodTimeRemaining);
-                  }
-                } else {
-                  console.log(liveData.linescore.currentPeriodTimeRemaining, liveData.linescore.currentPeriodOrdinal);
-                }
-
-                // console.log(liveData);
-                // console.log(liveData.linescore.teams.away.team.abbreviation, ":", liveData.linescore.teams.away.goals);
-                // console.log(liveData.linescore.teams.home.team.abbreviation, ":", liveData.linescore.teams.home.goals);
-
-                // modalContent.push(<div id={gameID}>
-                //     <div>{liveData.linescore.teams.away.team.abbreviation} : {liveData.linescore.teams.away.goals}</div>
-                //     <div>{liveData.linescore.teams.home.team.abbreviation} : {liveData.linescore.teams.home.goals}</div>
-                // </div>);
-
-                // _.forEach(liveData.linescore.teams, function(teamObj, id) {
-                //     console.log(id, teamObj);
-                //     if(id == "away") {
-                //         modalContent.push(<div id={id}>
-                //             <div>{teamObj.goals}</div>
-                //         </div>);
-                //     }
-                //
-                // });
-            });
-      }.bind(this);
-    }
-
     //Link to NHL.com to get game data using game's ID
     viewGameInfo(gameID) {
         return function () {
@@ -358,7 +297,7 @@ export default class Scores extends React.Component {
         // const gameComponent = todos.map((todo) => {
         //     return <Todo key={todo.id} {...todo}/>;
         // });
-        
+
 
         return (
             <div>

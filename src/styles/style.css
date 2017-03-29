@@ -116,6 +116,20 @@ h3 {
   opacity: 0;
 }
 
+/*Modal*/
+.teamBlock {
+  height: 50px;
+  background-image: url(http://www-league.nhlstatic.com/builds/site-core/12f1822ee25771cc54f967a2a2aedeb768d6ef50_1485977581/images/team/logo/current/52_dark.svg);
+  background-position: -56px -20px;
+  background-repeat: no-repeat;
+  background-size: 50% 190%;
+  border-bottom: 1px solid #dad;
+}
+.teamBlock > div {
+  float: right;
+  padding: 14px;
+}
+
 @-webkit-keyframes spin {
   0% { -webkit-transform: rotate(0deg); }
   100% { -webkit-transform: rotate(360deg); }

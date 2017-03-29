@@ -10,6 +10,7 @@ const customStyles = {
         bottom                : 'auto',
         marginRight           : '-50%',
         transform             : 'translate(-50%, -50%)',
+        padding               : '0',
         width                 : '50%',
         height                : '50%'
     }
@@ -88,17 +89,27 @@ export default class GameModal extends React.Component {
             // console.log(liveData.linescore.teams.away.team.abbreviation, ":", liveData.linescore.teams.away.goals);
             // console.log(liveData.linescore.teams.home.team.abbreviation, ":", liveData.linescore.teams.home.goals);
 
-            // modalContent.push(<div id={gameID}>
-            //     <div>{liveData.linescore.teams.away.team.abbreviation} : {liveData.linescore.teams.away.goals}</div>
-            //     <div>{liveData.linescore.teams.home.team.abbreviation} : {liveData.linescore.teams.home.goals}</div>
-            // </div>);
+            gameContentBody.push(<div key={gameID}>
+                <div className="teamBlock">
+                  <div>
+                    <span>{liveData.linescore.teams.away.team.abbreviation}</span> :
+                    <span>{liveData.linescore.teams.away.goals}</span>
+                  </div>
+                </div>
+                <div className="teamBlock">
+                  <div>
+                    <span>{liveData.linescore.teams.home.team.abbreviation}</span> :
+                    <span>{liveData.linescore.teams.home.goals}</span>
+                  </div>
+                </div>
+            </div>);
 
-            _.forEach(liveData.linescore.teams, function(teamObj, id) {
-                console.log(teamObj, id);
-                gameContentBody.push(<div key={id}>
-                    <span>{teamObj.team.abbreviation}</span>: <span>{teamObj.goals}</span>
-                </div>);
-            });
+            // _.forEach(liveData.linescore.teams, function(teamObj, id) {
+            //     console.log(teamObj, id);
+            //     gameContentBody.push(<div key={id}>
+            //         <span>{teamObj.team.abbreviation}</span>: <span>{teamObj.goals}</span>
+            //     </div>);
+            // });
 
             this.setState({gameContentBody});
         });
@@ -134,7 +145,8 @@ export default class GameModal extends React.Component {
                     {this.state.modalIsOpen ? (
                         <div key={game.id}>{this.state.gameContentBody}</div>
                     ) : ''}
-                    <button onClick={this.closeModal}>close</button>
+
+                    {/* <button onClick={this.closeModal}>close</button> */}
                 </Modal>
             </div>
         );
