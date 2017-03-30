@@ -14,6 +14,7 @@ const customStyles = {
         transition            : 'all 0.35s ease',
         padding               : '0',
         borderRadius          : '15px',
+        overflow              : 'hidden',
         width                 : '30%',
         height                : '50%'
     }
@@ -60,7 +61,8 @@ export default class GameModal extends React.Component {
     getBoxscoreData(gameID) {
         let p = new Promise(function (resolve, reject) {
             axios.get('http://statsapi.web.nhl.com/api/v1/game/' + gameID + '/feed/live')
-                .then(res => resolve(res.data));
+                .then(res => resolve(res.data))
+                .catch(err => console.log(err));
         });
 
         p.then((data) => {
@@ -73,35 +75,54 @@ export default class GameModal extends React.Component {
                 gameContentBody = [];
 
             let goals = [],
-                scorerObj = "";
+                scorerObj = "",
+                scoringSummary = {},
+                scoringSummaryBody = [];
 
-            _.forEach(liveData.plays.scoringPlays, function(id) {
-                _.forEach(liveData.plays.allPlays, function(playID, v) {
-                    if(id == v) {
-                        scorerObj = _.find(playID.players, {playerType: 'Scorer'});
-                        console.log("Team:", playID.team.name);
-                        console.log("Scorer:", scorerObj.player.fullName);
-                        console.log("Period:", playID.about.ordinalNum);
-                        console.log("Time:", playID.about.periodTime);
-                        console.log("Type of Goal:", playID.result.secondaryType);
-                        console.log("Strength:", playID.result.strength.name);
-                        console.log("-----------------");
-                    }
+            function getScoringSummary() {
+                _.forEach(liveData.plays.scoringPlays, function(id) {
+                    _.forEach(liveData.plays.allPlays, function(playID, v) {
+                        if(id == v) {
+                            scorerObj = _.find(playID.players, {playerType: 'Scorer'});
+                            // console.log("Team:", playID.team.triCode);
+                            // console.log("Scorer:", scorerObj.player.fullName);
+                            // console.log("Period:", playID.about.ordinalNum);
+                            // console.log("Time:", playID.about.periodTime);
+                            // console.log("Type of Goal:", playID.result.secondaryType);
+                            // console.log("Strength:", playID.result.strength.name);
+                            // console.log("-----------------");
+
+                            scoringSummary[v] = {
+                                team: playID.team.triCode,
+                                scorer: scorerObj.player.fullName,
+                                period: playID.about.ordinalNum,
+                                time: playID.about.periodTime,
+                                typeOfGoal: playID.result.secondaryType,
+                                strength: playID.result.strength.name
+                            };
+                        }
+                    });
                 });
-            });
-            console.log(liveData);
+            }
+
+            getScoringSummary();
+            console.log(scoringSummary);
+
+
+            // console.log(gameData);
+            // console.log(liveData);
             // console.log(lineScore.teams.away.team.abbreviation, ":", lineScore.teams.away.goals);
             // console.log(lineScore.teams.home.team.abbreviation, ":", lineScore.teams.home.goals);
 
-            if(lineScore.currentPeriodTimeRemaining === "Final") {
-                if(lineScore.hasShootout) {
-                    console.log(lineScore.currentPeriodTimeRemaining, "(" + lineScore.currentPeriodOrdinal + ")");
-                } else {
-                    console.log(lineScore.currentPeriodTimeRemaining);
-                }
-            } else {
-                console.log(lineScore.currentPeriodTimeRemaining, lineScore.currentPeriodOrdinal);
-            }
+            // if(lineScore.currentPeriodTimeRemaining === "Final") {
+            //     if(lineScore.hasShootout) {
+            //         console.log(lineScore.currentPeriodTimeRemaining, "(" + lineScore.currentPeriodOrdinal + ")");
+            //     } else {
+            //         console.log(lineScore.currentPeriodTimeRemaining);
+            //     }
+            // } else {
+            //     console.log(lineScore.currentPeriodTimeRemaining, lineScore.currentPeriodOrdinal);
+            // }
 
             const away = {
                 backgroundImage: 'url("/images/logos/' + lineScore.teams.away.team.abbreviation +'.png")'
@@ -115,13 +136,32 @@ export default class GameModal extends React.Component {
                 gameStatus = lineScore.currentPeriodTimeRemaining + (lineScore.currentPeriodOrdinal === 'SO' || lineScore.currentPeriodOrdinal === 'OT' ? ' (' + lineScore.currentPeriodOrdinal + ')' : '');
             } else if(lineScore.currentPeriod > 0) {
                 //Game is in progress.
-                gameStatus = lineScore.currentPeriodOrdinal + '' + lineScore.currentPeriodTimeRemaining;
+                gameStatus = lineScore.currentPeriodTimeRemaining + ' ' + lineScore.currentPeriodOrdinal;
             } else if(lineScore.currentPeriod === 0) {
                 //Game has not started yet.
                 gameStatus = moment(gameData.datetime.dateTime).format('h.mm a');
                 homeScore = '-';
                 awayScore = '-';
             }
+
+            // scoringSummary[v] = {
+            //     team: playID.team.triCode,
+            //     scorer: scorerObj.player.fullName,
+            //     period: playID.about.ordinalNum,
+            //     time: playID.about.periodTime,
+            //     typeOfGoal: playID.result.secondaryType,
+            //     strength: playID.result.strength.name
+            // };
+
+            _.forEach(scoringSummary, function(data, id) {
+                console.log(data);
+                scoringSummaryBody.push(<div className="scoringSummary" key={id}>
+                    <h4>{data.period}</h4>
+                    <div><span>{data.team}</span>: <span>{data.scorer}</span></div>
+                    <div><span>{data.time}</span></div>
+                    <div><span>{data.typeOfGoal}</span></div>
+                </div>)
+            });
 
             gameContentBody.push(<div key={gameID}>
                 <div className="status">{gameStatus}</div>
@@ -135,12 +175,21 @@ export default class GameModal extends React.Component {
                     <span>{homeScore}</span>
                   </div>
                 </div>
+                <div className="scoringSummaryContainer">
+                    {scoringSummaryBody}
+                </div>
             </div>);
 
             this.setState({gameContentBody});
         });
     }
 
+    //Link to NHL.com to get game data using game's ID
+    viewGameInfo(gameID) {
+        return function () {
+            window.open('https://www.nhl.com/gamecenter/' + gameID + '/recap/box-score');
+        }.bind(this);
+    }
 
     render() {
         const game = this.props.gameData;

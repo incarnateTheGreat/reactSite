@@ -20,9 +20,17 @@ export default class Scores extends React.Component {
 
     //Return NHL Scoreboard data.
     loadScoreData() {
+      var self = this;
+
       return new Promise(function(resolve, reject) {
         axios.get('http://live.nhle.com/GameData/RegularSeasonScoreboardv3.jsonp')
-             .then(res => resolve(res.data));
+             .then(res => resolve(res.data))
+             .catch(err => {
+                 setTimeout(function(){
+                     console.log(err, 'Trying again');
+                     self.buildScoreboard();
+                 }, 3000);
+             });
       });
     }
 
@@ -252,6 +260,8 @@ export default class Scores extends React.Component {
             let loader = document.getElementsByClassName("loader")[0];
             this.timeoutOpenLoader = setTimeout(() => loader.setAttribute("style", "opacity: 1"), loaderTimeoutIntervals[getTimeoutIntervals()][0]);
 
+          // console.log(GameModal.prototype);
+
             //Refresh the Scoreboard Data at every interval, then hide Loader.
             this.timeoutCloseLoader = setTimeout(() => {
               loader.setAttribute("style", "opacity: 0");
@@ -267,13 +277,6 @@ export default class Scores extends React.Component {
 
     componentWillMount() {
         this.buildScoreboard();
-    }
-
-    //Link to NHL.com to get game data using game's ID
-    viewGameInfo(gameID) {
-        return function () {
-            window.open('https://www.nhl.com/gamecenter/' + gameID + '/recap/box-score');
-        }.bind(this);
     }
 
     getNumberOfColumns(games) {
@@ -294,11 +297,6 @@ export default class Scores extends React.Component {
     }
 
     render() {
-        // const gameComponent = todos.map((todo) => {
-        //     return <Todo key={todo.id} {...todo}/>;
-        // });
-
-
         return (
             <div>
               <div class="loader"></div>
