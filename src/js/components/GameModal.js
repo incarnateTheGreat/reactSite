@@ -13,11 +13,11 @@ const customStyles = {
         transform             : 'translate(-50%, -50%)',
         transition            : 'all 0.35s ease',
         padding               : '0',
-        borderRadius          : '15px',
+        borderRadius          : '7px 7px 0px 0px',
         overflow              : 'hidden',
         width                 : '70%'
     }
-}
+};
 
 let tweenStyle = {
     content: {
@@ -54,9 +54,11 @@ export default class GameModal extends React.Component {
     closeModal() {
         tweenStyle['content'].opacity = '0';
         this.setState({modalStyle: _.merge(customStyles, tweenStyle)});
-        this.setState({modalIsOpen: false});
-    }
+        setTimeout(() => {
+            this.setState({modalIsOpen: false});
+        }, 350);
 
+    }
     getBoxscoreData(gameID) {
         let p = new Promise(function (resolve, reject) {
             axios.get('http://statsapi.web.nhl.com/api/v1/game/' + gameID + '/feed/live')

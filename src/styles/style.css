@@ -148,8 +148,7 @@ h3 {
 }
 .scoringSummaryContainer {
   overflow-y: auto;
-  height: 250px;
-  padding: 0px 0 0;
+  height: 400px;
 }
 .scoringSummaryContainer .period {
   background-color: rgba(5, 5, 5, 0.2);
@@ -163,7 +162,7 @@ h3 {
   text-align: right;
 }
 .odd {
-  background-color: none;
+  background-color: transparent;
 }
 .even {
   background-color: rgba(115, 5, 15, 0.2);
