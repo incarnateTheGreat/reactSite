@@ -1,6 +1,3 @@
-.navbar {
-  margin: 0;
-}
 html, body {
   height: 100%;
   margin: 0;
@@ -11,6 +8,13 @@ h1 {
 h2 {
   font-weight: bold;
 }
+header {
+  position: fixed;
+  width: 100%;
+}
+.navbar {
+  margin: 0;
+}
 footer {
   position: absolute;
   width: 100%;
@@ -19,6 +23,9 @@ footer {
 }
 footer .container .text-muted {
   margin: 20px 0;
+}
+.container-fluid > div {
+  margin: 70px 0 0;
 }
 .logo {
   color: white;
@@ -142,11 +149,26 @@ h3 {
 .scoringSummaryContainer {
   overflow-y: auto;
   height: 250px;
-  padding: 0 15px 10px 15px;
+  padding: 0px 0 0;
+}
+.scoringSummaryContainer .period {
+  background-color: rgba(5, 5, 5, 0.2);
+  font-weight: bold;
+  font-size: 18px;
+  padding: 5px 0 6px 11px;
+  border-left: 5px solid darkred;
 }
 .scoringSummary {
-  padding: 0 10px 5px 10px;
+  padding: 15px 10px 15px 0;
+  text-align: right;
 }
+.odd {
+  background-color: none;
+}
+.even {
+  background-color: rgba(115, 5, 15, 0.2);
+}
+
 
 /*Loading Spinner*/
 @-webkit-keyframes spin {

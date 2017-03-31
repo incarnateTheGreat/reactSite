@@ -92,9 +92,16 @@ export default class GameModal extends React.Component {
                             // console.log("Strength:", playID.result.strength.name);
                             // console.log("-----------------");
 
+                            // Collect Assists from each goal.
+                            let assistsObj = _.filter(playID.players, (o) => o.playerType === 'Assist'),
+                                tempAssistArr = [];
+
+                            _.forEach(assistsObj, (o) => tempAssistArr.push(o.player.fullName));
+
                             scoringSummary[v] = {
                                 team: playID.team.triCode,
                                 scorer: scorerObj.player.fullName,
+                                assists: tempAssistArr.join(', '),
                                 period: playID.about.ordinalNum,
                                 time: playID.about.periodTime,
                                 typeOfGoal: playID.result.secondaryType,
@@ -106,13 +113,6 @@ export default class GameModal extends React.Component {
             }
 
             getScoringSummary();
-            console.log(scoringSummary);
-
-
-            // console.log(gameData);
-            // console.log(liveData);
-            // console.log(lineScore.teams.away.team.abbreviation, ":", lineScore.teams.away.goals);
-            // console.log(lineScore.teams.home.team.abbreviation, ":", lineScore.teams.home.goals);
 
             // if(lineScore.currentPeriodTimeRemaining === "Final") {
             //     if(lineScore.hasShootout) {
@@ -124,12 +124,8 @@ export default class GameModal extends React.Component {
             //     console.log(lineScore.currentPeriodTimeRemaining, lineScore.currentPeriodOrdinal);
             // }
 
-            const away = {
-                backgroundImage: 'url("/images/logos/' + lineScore.teams.away.team.abbreviation +'.png")'
-            };
-            const home = {
-                backgroundImage: 'url("/images/logos/' + lineScore.teams.home.team.abbreviation +'.png")'
-            };
+            const away = { backgroundImage: 'url("/images/logos/' + lineScore.teams.away.team.abbreviation +'.png")' },
+                  home = { backgroundImage: 'url("/images/logos/' + lineScore.teams.home.team.abbreviation +'.png")' };
 
             if(lineScore.currentPeriodTimeRemaining === 'Final') {
                 //Game has completed.
@@ -144,26 +140,24 @@ export default class GameModal extends React.Component {
                 awayScore = '-';
             }
 
-            // scoringSummary[v] = {
-            //     team: playID.team.triCode,
-            //     scorer: scorerObj.player.fullName,
-            //     period: playID.about.ordinalNum,
-            //     time: playID.about.periodTime,
-            //     typeOfGoal: playID.result.secondaryType,
-            //     strength: playID.result.strength.name
-            // };
+            //Group By Periods.
+            scoringSummary = _.groupBy(scoringSummary, 'period');
 
-            _.forEach(scoringSummary, function(data, id) {
-                console.log(data);
-                scoringSummaryBody.push(<div className="scoringSummary" key={id}>
-                    <h4>{data.period}</h4>
-                    <div><span>{data.team}</span>: <span>{data.scorer}</span></div>
-                    <div><span>{data.time}</span></div>
-                    <div><span>{data.typeOfGoal}</span></div>
-                </div>)
+            _.forEach(scoringSummary, function(periodObj, period) {
+              scoringSummaryBody.push(<div key={periodObj[0].time} className='period'>{period}</div>)
+                _.forEach(periodObj, function(data, i) {
+                    scoringSummaryBody.push(
+                      <div className={i % 2 ? 'scoringSummary even' : 'scoringSummary odd'} key={Math.random()}>
+                        <div><span>{data.team}</span>: <span>{data.scorer}</span></div>
+                        <div><span>{data.assists}</span></div>
+                        <div><span>{data.time}</span></div>
+                        <div><span>{data.typeOfGoal}</span></div>
+                      </div>)
+                });
             });
 
-            gameContentBody.push(<div key={gameID}>
+            gameContentBody.push(
+              <div key={gameID}>
                 <div className="status">{gameStatus}</div>
                 <div className="teamBlock" style={away}>
                   <div>
@@ -178,7 +172,7 @@ export default class GameModal extends React.Component {
                 <div className="scoringSummaryContainer">
                     {scoringSummaryBody}
                 </div>
-            </div>);
+              </div>);
 
             this.setState({gameContentBody});
         });
