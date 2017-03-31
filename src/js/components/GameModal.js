@@ -15,8 +15,8 @@ const customStyles = {
         padding               : '0',
         borderRadius          : '15px',
         overflow              : 'hidden',
-        width                 : '30%',
-        height                : '50%'
+        width                 : '70%',
+        height                : '70%'
     }
 }
 
