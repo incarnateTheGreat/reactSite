@@ -3,13 +3,15 @@ import axios from 'axios';
 import Modal from 'react-modal';
 
 const customStyles = {
+    overlay : {
+        zIndex                : '200',
+    },
     content: {
         fontFamily            : 'sans-serif',
         top                   : '50%',
         left                  : '50%',
         right                 : 'auto',
         bottom                : 'auto',
-        zIndex                : '101',
         marginRight           : '-50%',
         transform             : 'translate(-50%, -50%)',
         transition            : 'all 0.35s ease',
@@ -159,29 +161,30 @@ export default class GameModal extends React.Component {
                     _.forEach(teamInfo, function(team, id) {
                         let teamResult =_.head(team);
                         console.log(teamResult);
-                        console.log(teamResult.divisionRank, ':', teamResult.team.name, teamResult.points, 'PTS.', '/ Conference Rank:', teamResult.conferenceRank);
 
-                        summaryBody.push(<div>
+                        summaryBody.push(
                             <div key={id} className='teamInfoTable'>
-                            <div className='row'>
-                                <div></div>
-                                <div>GP</div>
-                                <div>PTS</div>
-                                <div>GS</div>
-                                <div>GA</div>
-                                <div>Div. Ranking</div>
-                                <div>Conf. Ranking</div>
-                            </div>
-                            <div className='row'>
-                                <div>{teamResult.clinchIndicator} {teamResult.team.teamName}</div>
-                                <div>{teamResult.gamesPlayed}</div>
-                                <div>{teamResult.points}</div>
-                                <div>{teamResult.goalsScored}</div>
-                                <div>{teamResult.goalsAgainst}</div>
-                                <div>{teamResult.divisionRank}</div>
-                                <div>{teamResult.conferenceRank}</div>
-                            </div>
-                        </div></div>)
+                                <div className='row'>
+                                    <div></div>
+                                    <div>GP</div>
+                                    <div>PTS</div>
+                                    <div>GS</div>
+                                    <div>GA</div>
+                                    <div>Div. Ranking</div>
+                                    <div>Conf. Ranking</div>
+                                    <div>Record</div>
+                                </div>
+                                <div className='row'>
+                                    <div>{teamResult.clinchIndicator} {teamResult.team.teamName}</div>
+                                    <div>{teamResult.gamesPlayed}</div>
+                                    <div>{teamResult.points}</div>
+                                    <div>{teamResult.goalsScored}</div>
+                                    <div>{teamResult.goalsAgainst}</div>
+                                    <div>{teamResult.divisionRank}</div>
+                                    <div>{teamResult.conferenceRank}</div>
+                                    <div>{teamResult.leagueRecord.wins}-{teamResult.leagueRecord.losses}-{teamResult.leagueRecord.ot}</div>
+                                </div>
+                            </div>)
                     });
 
                     writeToScreen();
@@ -209,7 +212,7 @@ export default class GameModal extends React.Component {
                 });
             }
 
-            if(gameData.status.detailedState === 'Scheduled') {
+            if(gameData.status.detailedState === 'Scheduled' || gameData.status.detailedState === 'Pre-Game') {
                 getScheduledSummary();
             } else {
                 getScoringSummary();

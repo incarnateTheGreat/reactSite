@@ -247,7 +247,7 @@ export default class Scores extends React.Component {
             this.setState({futureGameSection});
 
             const loaderTimeoutIntervals = {
-              'liveGames': [27000, 30000], 
+              'liveGames': [27000, 30000],
               'noLiveGames': [117000, 120000]
             };
 
@@ -260,7 +260,7 @@ export default class Scores extends React.Component {
             let loader = document.getElementsByClassName("loader")[0];
             this.timeoutOpenLoader = setTimeout(() => {
                 loader.style.opacity = "1";
-                loader.style.zIndex = "0";
+                loader.style.zIndex = "1";
             }, loaderTimeoutIntervals[getTimeoutIntervals()][0]);
 
             //Refresh the Scoreboard Data at every interval, then hide Loader.

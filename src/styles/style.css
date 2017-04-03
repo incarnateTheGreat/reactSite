@@ -162,8 +162,9 @@ h3 {
   text-align: right;
 }
 .scoringSummaryContainer .teamInfoTable {
-  display: table;
-  margin: 10px 0;
+  clear: both;
+  float: right;
+  padding: 15px 10px 15px 0;
 }
 .scoringSummaryContainer .teamInfoTable > .row {
   display: table-row;
