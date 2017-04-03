@@ -61,6 +61,8 @@ export default class GameModal extends React.Component {
 
     }
     getBoxscoreData(gameID) {
+        let self = this;
+
         let p = new Promise(function (resolve, reject) {
             axios.get('http://statsapi.web.nhl.com/api/v1/game/' + gameID + '/feed/live')
                 .then(res => resolve(res.data))
@@ -79,20 +81,13 @@ export default class GameModal extends React.Component {
             let goals = [],
                 scorerObj = "",
                 scoringSummary = {},
-                scoringSummaryBody = [];
+                summaryBody = [];
 
             function getScoringSummary() {
                 _.forEach(liveData.plays.scoringPlays, function(id) {
                     _.forEach(liveData.plays.allPlays, function(playID, v) {
                         if(id == v) {
                             scorerObj = _.find(playID.players, {playerType: 'Scorer'});
-                            // console.log("Team:", playID.team.triCode);
-                            // console.log("Scorer:", scorerObj.player.fullName);
-                            // console.log("Period:", playID.about.ordinalNum);
-                            // console.log("Time:", playID.about.periodTime);
-                            // console.log("Type of Goal:", playID.result.secondaryType);
-                            // console.log("Strength:", playID.result.strength.name);
-                            // console.log("-----------------");
 
                             // Collect Assists from each goal.
                             let assistsObj = _.filter(playID.players, (o) => o.playerType === 'Assist'),
@@ -112,9 +107,113 @@ export default class GameModal extends React.Component {
                         }
                     });
                 });
+
+                //Group By Periods.
+                scoringSummary = _.groupBy(scoringSummary, 'period');
+
+                _.forEach(scoringSummary, function(periodObj, period) {
+                    summaryBody.push(<div key={periodObj[0].time} className='desc'>{period}</div>)
+                    _.forEach(periodObj, function(data, i) {
+                        summaryBody.push(
+                            <div className={i % 2 ? 'scoringSummary even' : 'scoringSummary odd'} key={Math.random()}>
+                                <div><span>{data.team}</span>: <span>{data.scorer}</span></div>
+                                <div><span>{data.assists}</span></div>
+                                <div><span>{data.time}</span></div>
+                                <div><span>{data.typeOfGoal}</span></div>
+                            </div>)
+                    });
+                });
+
+                writeToScreen();
             }
 
-            getScoringSummary();
+            function getScheduledSummary() {
+                let p = new Promise(function (resolve, reject) {
+                    axios.get('https://statsapi.web.nhl.com/api/v1/standings?expand=standings.record,standings.team,standings.division,standings.conference&season=20162017')
+                        .then(res => resolve(res.data))
+                        .catch(err => console.log(err));
+                });
+
+                let home = gameData.teams.away.abbreviation,
+                    away = gameData.teams.away.abbreviation;
+
+                p.then((data) => {
+                    let standings = data.records,
+                        result = null,
+                        teamInfo = [];
+                    
+                    _.forEach(gameData.teams, function(team, id) {
+                        _.forEach(standings, function(standingsObj, i) {
+                            result = _.filter(standingsObj.teamRecords, function(e) {
+                                return e.team.abbreviation === team.abbreviation;
+                            });
+
+                            if(result.length > 0) teamInfo.push(result);
+                        });
+                    });
+
+                    summaryBody.push(<div key={gameData.venue.name}>
+                        <div className='desc venue'>{gameData.venue.name}</div>
+                    </div>);
+
+                    _.forEach(teamInfo, function(team, id) {
+                        let teamResult =_.head(team);
+                        console.log(teamResult);
+                        console.log(teamResult.divisionRank, ':', teamResult.team.name, teamResult.points, 'PTS.', '/ Conference Rank:', teamResult.conferenceRank);
+
+                        summaryBody.push(<div>
+                            <div key={id} className='teamInfoTable'>
+                            <div className='row'>
+                                <div></div>
+                                <div>GP</div>
+                                <div>PTS</div>
+                                <div>GS</div>
+                                <div>GA</div>
+                                <div>Div. Ranking</div>
+                                <div>Conf. Ranking</div>
+                            </div>
+                            <div className='row'>
+                                <div>{teamResult.clinchIndicator} {teamResult.team.teamName}</div>
+                                <div>{teamResult.gamesPlayed}</div>
+                                <div>{teamResult.points}</div>
+                                <div>{teamResult.goalsScored}</div>
+                                <div>{teamResult.goalsAgainst}</div>
+                                <div>{teamResult.divisionRank}</div>
+                                <div>{teamResult.conferenceRank}</div>
+                            </div>
+                        </div></div>)
+                    });
+
+                    writeToScreen();
+
+                    // _.forEach(teamResult, function(team, id) {
+                    //     summaryBody.push(<div key={id}>
+                    //         <div>{team.team.teamName} : {team.points} PTS.</div>
+                    //     </div>)
+                    // });
+
+                    // console.log('DIVISION STANDINGS');
+                    // console.log('=================================================');
+                    // _.forEach(standings, function(teamObj, id) {
+                    //     // console.log(teamObj.division.name);
+                    //     // console.log('-------------------------------------------');
+                    //     _.forEach(teamObj.teamRecords, function(team, i) {
+                    //         console.log(team.team.abbreviation, _.filter(team.team.abbreviation, {'abbreviation': team.team.abbreviation}) );
+                    //         if( (_.filter(team.team, {'abbreviation': 'NJD'}).length > 1)) {
+                    //             console.log(_.filter(team, {'abbreviation': 'NJD'}));
+                    //         }
+                    // //         // console.log(team.divisionRank, ':', team.team.name, team.points, 'PTS.', '/ Conference Rank:', team.conferenceRank);
+                    //     });
+                    //     // console.log('-------------------------------------------');
+                    // });
+                });
+            }
+
+            if(gameData.status.detailedState === 'Scheduled') {
+                getScheduledSummary();
+            } else {
+                getScoringSummary();
+            }
 
             // if(lineScore.currentPeriodTimeRemaining === "Final") {
             //     if(lineScore.hasShootout) {
@@ -126,57 +225,43 @@ export default class GameModal extends React.Component {
             //     console.log(lineScore.currentPeriodTimeRemaining, lineScore.currentPeriodOrdinal);
             // }
 
-            const away = { backgroundImage: 'url("/images/logos/' + lineScore.teams.away.team.abbreviation +'.png")' },
-                  home = { backgroundImage: 'url("/images/logos/' + lineScore.teams.home.team.abbreviation +'.png")' };
+            function writeToScreen() {
+                const away = { backgroundImage: 'url("/images/logos/' + lineScore.teams.away.team.abbreviation +'.png")' },
+                    home = { backgroundImage: 'url("/images/logos/' + lineScore.teams.home.team.abbreviation +'.png")' };
 
-            if(lineScore.currentPeriodTimeRemaining === 'Final') {
-                //Game has completed.
-                gameStatus = lineScore.currentPeriodTimeRemaining + (lineScore.currentPeriodOrdinal === 'SO' || lineScore.currentPeriodOrdinal === 'OT' ? ' (' + lineScore.currentPeriodOrdinal + ')' : '');
-            } else if(lineScore.currentPeriod > 0) {
-                //Game is in progress.
-                gameStatus = lineScore.currentPeriodTimeRemaining + ' ' + lineScore.currentPeriodOrdinal;
-            } else if(lineScore.currentPeriod === 0) {
-                //Game has not started yet.
-                gameStatus = moment(gameData.datetime.dateTime).format('h.mm a');
-                homeScore = '-';
-                awayScore = '-';
+                if(lineScore.currentPeriodTimeRemaining === 'Final') {
+                    //Game has completed.
+                    gameStatus = lineScore.currentPeriodTimeRemaining + (lineScore.currentPeriodOrdinal === 'SO' || lineScore.currentPeriodOrdinal === 'OT' ? ' (' + lineScore.currentPeriodOrdinal + ')' : '');
+                } else if(lineScore.currentPeriod > 0) {
+                    //Game is in progress.
+                    gameStatus = lineScore.currentPeriodTimeRemaining + ' ' + lineScore.currentPeriodOrdinal;
+                } else if(lineScore.currentPeriod === 0) {
+                    //Game has not started yet.
+                    gameStatus = moment(gameData.datetime.dateTime).format('h.mm a');
+                    homeScore = '-';
+                    awayScore = '-';
+                }
+
+                gameContentBody.push(
+                    <div key={gameID}>
+                        <div className="status">{gameStatus}</div>
+                        <div className="teamBlock" style={away}>
+                            <div>
+                                <span>{awayScore}</span>
+                            </div>
+                        </div>
+                        <div className="teamBlock" style={home}>
+                            <div>
+                                <span>{homeScore}</span>
+                            </div>
+                        </div>
+                        <div className="scoringSummaryContainer">
+                            {summaryBody}
+                        </div>
+                    </div>);
+
+                self.setState({gameContentBody});
             }
-
-            //Group By Periods.
-            scoringSummary = _.groupBy(scoringSummary, 'period');
-
-            _.forEach(scoringSummary, function(periodObj, period) {
-              scoringSummaryBody.push(<div key={periodObj[0].time} className='period'>{period}</div>)
-                _.forEach(periodObj, function(data, i) {
-                    scoringSummaryBody.push(
-                      <div className={i % 2 ? 'scoringSummary even' : 'scoringSummary odd'} key={Math.random()}>
-                        <div><span>{data.team}</span>: <span>{data.scorer}</span></div>
-                        <div><span>{data.assists}</span></div>
-                        <div><span>{data.time}</span></div>
-                        <div><span>{data.typeOfGoal}</span></div>
-                      </div>)
-                });
-            });
-
-            gameContentBody.push(
-              <div key={gameID}>
-                <div className="status">{gameStatus}</div>
-                <div className="teamBlock" style={away}>
-                  <div>
-                    <span>{awayScore}</span>
-                  </div>
-                </div>
-                <div className="teamBlock" style={home}>
-                  <div>
-                    <span>{homeScore}</span>
-                  </div>
-                </div>
-                <div className="scoringSummaryContainer">
-                    {scoringSummaryBody}
-                </div>
-              </div>);
-
-            this.setState({gameContentBody});
         });
     }
 
