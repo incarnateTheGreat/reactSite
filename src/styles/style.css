@@ -126,36 +126,46 @@ h3 {
 /*Game Modal*/
 .status {
   text-align: right;
-  padding: 5px 15px 5px 0;
+  padding: 8px 15px 7px 0;
   font-weight: bold;
   background-color: rgba(0, 0, 0, 0.050);
   text-transform: uppercase;
 }
+.teamBlockContainer {
+  float: left;
+  width: 260px;
+}
 .teamBlock {
-  height: 100px;
-  background-position: -10px 50%;
+  height: 185px;
+  background-position: 20px 50%;
   background-repeat: no-repeat;
-  background-size: 165px;
-  border-bottom: 1px solid #dad;
+  background-size: 125px;
+
+  border-top:0px solid #ddaadd;
+  border-right:1px solid #ddaadd;
+  border-bottom:1px solid #ddaadd;
+  border-left:0px solid #ddaadd;
+
 }
 .teamBlock > div {
   float: right;
-  padding: 14px 20px 14px 0;
+  padding: 46px 14px 14px 0;
 }
 .teamBlock > div span {
-  font-size: 50px;
+  font-size: 60px;
   font-weight: bold;
 }
 .scoringSummaryContainer {
   overflow-y: auto;
-  height: 400px;
+  height: 406px;
 }
 .scoringSummaryContainer .desc {
-  background-color: rgba(5, 5, 5, 0.2);
   font-weight: bold;
   font-size: 18px;
-  padding: 5px 0 6px 11px;
+  text-align: right;
+  padding: 10px 11px 10px 0;
   border-left: 5px solid darkred;
+  background-color: #f7f7f9;
 }
 .scoringSummaryContainer .desc.venue {
   padding: 5px 11px 6px 11px;
@@ -165,6 +175,9 @@ h3 {
   clear: both;
   float: right;
   padding: 15px 10px 15px 0;
+}
+.scoringSummaryContainer .teamInfoTable .teamName {
+  text-align: right;
 }
 .scoringSummaryContainer .teamInfoTable > .row {
   display: table-row;
@@ -181,16 +194,20 @@ h3 {
   min-width: 110px;
 }
 .scoringSummary {
-  padding: 15px 10px 15px 0;
   text-align: right;
 }
-.odd {
-  background-color: transparent;
+.scoringSummary > div:first-child {
+  background-color: rgba(247,247,249, 0.2);
+  padding: 10px 8px 10px 0;
+  font-weight: bold;
+  border-top: 1px solid #e1e1e8;
+  border-bottom: 1px solid #e1e1e8;
+  border-left: none;
+  border-right: none;
 }
-.even {
-  background-color: rgba(115, 5, 15, 0.2);
+.scoringSummary .scorerInfo {
+  padding: 10px;
 }
-
 
 /*Loading Spinner*/
 @-webkit-keyframes spin {

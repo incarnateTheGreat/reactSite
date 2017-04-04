@@ -98,7 +98,7 @@ export default class GameModal extends React.Component {
                             _.forEach(assistsObj, (o) => tempAssistArr.push(o.player.fullName));
 
                             scoringSummary[v] = {
-                                team: playID.team.triCode,
+                                team: playID.team.name,
                                 scorer: scorerObj.player.fullName,
                                 assists: tempAssistArr.join(', '),
                                 period: playID.about.ordinalNum,
@@ -117,11 +117,14 @@ export default class GameModal extends React.Component {
                     summaryBody.push(<div key={periodObj[0].time} className='desc'>{period}</div>)
                     _.forEach(periodObj, function(data, i) {
                         summaryBody.push(
-                            <div className={i % 2 ? 'scoringSummary even' : 'scoringSummary odd'} key={Math.random()}>
-                                <div><span>{data.team}</span>: <span>{data.scorer}</span></div>
-                                <div><span>{data.assists}</span></div>
-                                <div><span>{data.time}</span></div>
-                                <div><span>{data.typeOfGoal}</span></div>
+                            <div className='scoringSummary' key={Math.random()}>
+                                <div><span>{data.team}</span></div>
+                                <div className='scorerInfo'>
+                                  <div><span>{data.scorer}</span></div>
+                                  <div><span>{data.assists}</span></div>
+                                  <div><span>{data.time}</span></div>
+                                  <div><span>{data.typeOfGoal}</span></div>
+                                </div>
                             </div>)
                     });
                 });
@@ -143,7 +146,7 @@ export default class GameModal extends React.Component {
                     let standings = data.records,
                         result = null,
                         teamInfo = [];
-                    
+
                     _.forEach(gameData.teams, function(team, id) {
                         _.forEach(standings, function(standingsObj, i) {
                             result = _.filter(standingsObj.teamRecords, function(e) {
@@ -164,8 +167,8 @@ export default class GameModal extends React.Component {
 
                         summaryBody.push(
                             <div key={id} className='teamInfoTable'>
-                                <div className='row'>
-                                    <div></div>
+                                <div className='teamName'>{teamResult.clinchIndicator} {teamResult.team.teamName}</div>
+                              {/*<div className='row'>
                                     <div>GP</div>
                                     <div>PTS</div>
                                     <div>GS</div>
@@ -173,16 +176,15 @@ export default class GameModal extends React.Component {
                                     <div>Div. Ranking</div>
                                     <div>Conf. Ranking</div>
                                     <div>Record</div>
-                                </div>
+                                </div>*/}
                                 <div className='row'>
-                                    <div>{teamResult.clinchIndicator} {teamResult.team.teamName}</div>
-                                    <div>{teamResult.gamesPlayed}</div>
+                                    <div>GP</div><div>{teamResult.gamesPlayed}</div>
                                     <div>{teamResult.points}</div>
-                                    <div>{teamResult.goalsScored}</div>
-                                    <div>{teamResult.goalsAgainst}</div>
-                                    <div>{teamResult.divisionRank}</div>
-                                    <div>{teamResult.conferenceRank}</div>
-                                    <div>{teamResult.leagueRecord.wins}-{teamResult.leagueRecord.losses}-{teamResult.leagueRecord.ot}</div>
+                                    <div>GS</div><div>PTS</div><div>{teamResult.goalsScored}</div>
+                                    <div>GA</div><div>{teamResult.goalsAgainst}</div>
+                                    <div>Div. Ranking</div><div>{teamResult.divisionRank}</div>
+                                    <div>Conf. Ranking</div><div>{teamResult.conferenceRank}</div>
+                                    <div>Record</div><div>{teamResult.leagueRecord.wins}-{teamResult.leagueRecord.losses}-{teamResult.leagueRecord.ot}</div>
                                 </div>
                             </div>)
                     });
@@ -247,6 +249,7 @@ export default class GameModal extends React.Component {
 
                 gameContentBody.push(
                     <div key={gameID}>
+                      <div className='teamBlockContainer'>
                         <div className="status">{gameStatus}</div>
                         <div className="teamBlock" style={away}>
                             <div>
@@ -258,9 +261,10 @@ export default class GameModal extends React.Component {
                                 <span>{homeScore}</span>
                             </div>
                         </div>
-                        <div className="scoringSummaryContainer">
-                            {summaryBody}
-                        </div>
+                      </div>
+                      <div className="scoringSummaryContainer">
+                          {summaryBody}
+                      </div>
                     </div>);
 
                 self.setState({gameContentBody});
