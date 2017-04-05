@@ -279,6 +279,41 @@ export default class Scores extends React.Component {
 
     componentWillMount() {
         this.buildScoreboard();
+
+        //Get and create Team Data object.
+        axios.get('http://statsapi.web.nhl.com/api/v1/teams')
+            .then(res => {
+                let teams = res.data.teams;
+                const teamObj = {};
+
+                _.forEach(teams, function(team) {
+                    teamObj[team.name] = team;
+                });
+
+                axios.get('https://statsapi.web.nhl.com/api/v1/schedule?startDate=2017-04-04&endDate=2017-04-05')
+                    .then(res => {
+                        let dates = res.data.dates,
+                            today = moment().format('dddd MM/DD'),
+                            diffValue = null,
+                            convertedDate = null;
+
+                        _.forEach(dates, function (date, id) {
+                            console.log('-------------------------------');
+                            console.log("***", moment(date.date).format('dddd MM/DD'), "***");
+                            console.log('-------------------------------');
+                            _.forEach(date.games, function(o, v) {
+                                // console.log(o);
+                                console.log("==============================================");
+                                // console.log("Date:", moment(o.gameDate).format('dddd MM/DD'));
+                                console.log("Venue:", o.venue.name);
+                                console.log("Status:", o.status.detailedState);
+                                console.log(teamObj[o.teams.away.team.name].abbreviation,":", o.teams.away.score);
+                                console.log(teamObj[o.teams.home.team.name].abbreviation,":", o.teams.home.score);
+                            });
+                        });
+                    });
+            });
+
     }
 
     getNumberOfColumns(games) {
