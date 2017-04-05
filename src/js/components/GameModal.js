@@ -188,8 +188,8 @@ export default class GameModal extends React.Component {
                                             <td>{teamResult.points}</td>
                                             <td>{teamResult.goalsScored}</td>
                                             <td>{teamResult.goalsAgainst}</td>
-                                            <td>{teamResult.divisionRank}</td>
-                                            <td>{teamResult.conferenceRank}</td>
+                                            <td>{teamResult.divisionRank} in {teamResult.team.division.name}</td>
+                                            <td>{teamResult.conferenceRank} in {teamResult.team.conference.name}</td>
                                         </tr>
                                     </table>
                                 </div>
@@ -198,26 +198,17 @@ export default class GameModal extends React.Component {
 
                     writeToScreen();
 
-                    // _.forEach(teamResult, function(team, id) {
-                    //     summaryBody.push(<div key={id}>
-                    //         <div>{team.team.teamName} : {team.points} PTS.</div>
-                    //     </div>)
-                    // });
-
-                    // console.log('DIVISION STANDINGS');
-                    // console.log('=================================================');
-                    // _.forEach(standings, function(teamObj, id) {
-                    //     // console.log(teamObj.division.name);
-                    //     // console.log('-------------------------------------------');
-                    //     _.forEach(teamObj.teamRecords, function(team, i) {
-                    //         console.log(team.team.abbreviation, _.filter(team.team.abbreviation, {'abbreviation': team.team.abbreviation}) );
-                    //         if( (_.filter(team.team, {'abbreviation': 'NJD'}).length > 1)) {
-                    //             console.log(_.filter(team, {'abbreviation': 'NJD'}));
-                    //         }
-                    // //         // console.log(team.divisionRank, ':', team.team.name, team.points, 'PTS.', '/ Conference Rank:', team.conferenceRank);
-                    //     });
-                    //     // console.log('-------------------------------------------');
-                    // });
+                    console.log('DIVISION STANDINGS');
+                    console.log('=================================================');
+                    _.forEach(standings, function(teamObj, id) {
+                        // console.log(teamObj);
+                        console.log(teamObj.division.name);
+                        console.log('-------------------------------------------');
+                        _.forEach(teamObj.teamRecords, function(team, i) {
+                            console.log((_.isUndefined(team.clinchIndicator) ? "    " : "X - "), team.divisionRank, ':', team.team.name, team.points, 'PTS.', '/ Conference Rank:', team.conferenceRank);
+                        });
+                        console.log('-------------------------------------------');
+                    });
                 });
             }
 
