@@ -4,9 +4,12 @@ import Modal from 'react-modal';
 
 const customStyles = {
     overlay : {
-        zIndex                : '200',
+        zIndex                : '200'
     },
     content: {
+        WebkitBoxShadow       : '3px 3px 5px 0px rgba(0,0,0,0.40)',
+        MozBoxShadow          : '3px 3px 5px 0px rgba(0,0,0,0.40)',
+        BowShadow             : '3px 3px 5px 0px rgba(0,0,0,0.40)',
         fontFamily            : 'sans-serif',
         top                   : '50%',
         left                  : '50%',
@@ -167,24 +170,28 @@ export default class GameModal extends React.Component {
 
                         summaryBody.push(
                             <div key={id} className='teamInfoTable'>
-                                <div className='teamName'>{teamResult.clinchIndicator} {teamResult.team.teamName}</div>
-                              {/*<div className='row'>
-                                    <div>GP</div>
-                                    <div>PTS</div>
-                                    <div>GS</div>
-                                    <div>GA</div>
-                                    <div>Div. Ranking</div>
-                                    <div>Conf. Ranking</div>
-                                    <div>Record</div>
-                                </div>*/}
+                                <div className='teamName'>{teamResult.clinchIndicator} {teamResult.team.teamName} ({teamResult.leagueRecord.wins}-{teamResult.leagueRecord.losses}-{teamResult.leagueRecord.ot})</div>
                                 <div className='row'>
-                                    <div>GP</div><div>{teamResult.gamesPlayed}</div>
-                                    <div>{teamResult.points}</div>
-                                    <div>GS</div><div>PTS</div><div>{teamResult.goalsScored}</div>
-                                    <div>GA</div><div>{teamResult.goalsAgainst}</div>
-                                    <div>Div. Ranking</div><div>{teamResult.divisionRank}</div>
-                                    <div>Conf. Ranking</div><div>{teamResult.conferenceRank}</div>
-                                    <div>Record</div><div>{teamResult.leagueRecord.wins}-{teamResult.leagueRecord.losses}-{teamResult.leagueRecord.ot}</div>
+                                    <table>
+                                        <tr>
+                                            <thead>
+                                                <th>GP</th>
+                                                <th>PTS</th>
+                                                <th>GS</th>
+                                                <th>GA</th>
+                                                <th>Div. Ranking</th>
+                                                <th>Conf. Ranking</th>
+                                            </thead>
+                                        </tr>
+                                        <tr>
+                                            <td>{teamResult.gamesPlayed}</td>
+                                            <td>{teamResult.points}</td>
+                                            <td>{teamResult.goalsScored}</td>
+                                            <td>{teamResult.goalsAgainst}</td>
+                                            <td>{teamResult.divisionRank}</td>
+                                            <td>{teamResult.conferenceRank}</td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>)
                     });

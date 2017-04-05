@@ -135,17 +135,29 @@ h3 {
   float: left;
   width: 260px;
 }
+@media screen and (max-width: 1240px) {
+  .teamBlockContainer {
+    clear: both;
+    display: block;
+    width: 100%;
+  }
+  .teamBlock {
+    float: left;
+    width: 50%;
+  }
+  .scoringSummaryContainer {
+    clear: both;
+  }
+}
 .teamBlock {
   height: 185px;
   background-position: 20px 50%;
   background-repeat: no-repeat;
   background-size: 125px;
-
-  border-top:0px solid #ddaadd;
-  border-right:1px solid #ddaadd;
-  border-bottom:1px solid #ddaadd;
-  border-left:0px solid #ddaadd;
-
+  border-top: 0;
+  border-right: 1px solid #dadada;
+  border-bottom: 1px solid #dadada;
+  border-left: 0;
 }
 .teamBlock > div {
   float: right;
@@ -178,20 +190,22 @@ h3 {
 }
 .scoringSummaryContainer .teamInfoTable .teamName {
   text-align: right;
+  font-weight: bold;
+  font-size: 20px;
+  border-bottom: 1px solid black;
 }
 .scoringSummaryContainer .teamInfoTable > .row {
   display: table-row;
 }
-.scoringSummaryContainer .teamInfoTable > .row:first-child {
-  font-weight: bold;
+.scoringSummaryContainer .teamInfoTable > .row table {
+  width: 580px;
 }
-.scoringSummaryContainer .teamInfoTable > .row div {
-  display: table-cell;
-  padding: 0 10px;
+.scoringSummaryContainer .teamInfoTable > .row table th {
   text-align: right;
+  background: #f7f7f9;
 }
-.scoringSummaryContainer .teamInfoTable > .row div:first-child {
-  min-width: 110px;
+.scoringSummaryContainer .teamInfoTable > .row table td {
+  text-align: right;
 }
 .scoringSummary {
   text-align: right;
