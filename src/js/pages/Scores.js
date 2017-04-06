@@ -284,13 +284,15 @@ export default class Scores extends React.Component {
         axios.get('http://statsapi.web.nhl.com/api/v1/teams')
             .then(res => {
                 let teams = res.data.teams;
-                const teamObj = {};
+                const teamObj = {},
+                      yesterday = moment().subtract(1, 'day').format('YYYY-MM-DD'),
+                      tomorrow = moment().add(1, 'day').format('YYYY-MM-DD');
 
                 _.forEach(teams, function(team) {
                     teamObj[team.name] = team;
                 });
 
-                axios.get('https://statsapi.web.nhl.com/api/v1/schedule?startDate=2017-04-04&endDate=2017-04-05')
+                axios.get('https://statsapi.web.nhl.com/api/v1/schedule?startDate='+ yesterday +'&endDate='+ tomorrow +'')
                     .then(res => {
                         let dates = res.data.dates,
                             today = moment().format('dddd MM/DD'),
