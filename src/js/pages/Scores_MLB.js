@@ -44,7 +44,7 @@ export default class Scores_MLB extends React.Component {
 
         p.then((scoreData) => {
             console.log("Data Updated.");
-            
+
             let gameData = scoreData.data.games;
 
             // Filter different dates.
@@ -105,8 +105,10 @@ export default class Scores_MLB extends React.Component {
 
     //Build out HTML object of Scores.
     renderGameOutput(game) {
-        let gameStatus = "";
-        
+        let gameStatus = '',
+            homeScore = '',
+            awayScore = '';
+
         if (game.length == 0) {
             return (<h4 key="{game.length}">No games listed.</h4>);
         } else {
@@ -125,14 +127,24 @@ export default class Scores_MLB extends React.Component {
                 gameStatus = game.status.inning_state + ' ' + game.status.inning;
             }
 
+            //Check if Linescore is available.
+            if(_.isUndefined(game.linescore) || game.status.ind === 'DR') {
+              awayScore = '-';
+              homeScore = '-';
+              gameStatus = game.time + ' ' + game.ampm;
+            } else {
+              awayScore = game.linescore.r.away;
+              homeScore = game.linescore.r.home;
+            }
+
             return (
                 <div className="scoreTable">
                     <div className="scores">
                         <div className="team">{game.away_name_abbrev}</div>
-                        <div className="score">{game.status.ind === 'DR' ? '-' : game.linescore.r.away}</div>
+                      <div className="score">{awayScore}</div>
                         <br />
                         <div className="team">{game.home_name_abbrev}</div>
-                        <div className="score">{game.status.ind === 'DR' ? '-' : game.linescore.r.home}</div>
+                      <div className="score">{homeScore}</div>
                     </div>
                     <div className="timeRemaining">{gameStatus}</div>
                 </div>
