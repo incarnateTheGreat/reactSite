@@ -57,43 +57,8 @@ export default class Scores_MLB extends React.Component {
             });
 
             this.setState({gamesSection});
-
-            //Set Render States for each section.
-            // this.setState({liveGameSection});
-            // this.setState({todayGameSection});
-            // this.setState({completedGameSection});
-            // this.setState({futureGameSection});
-
-            // const loaderTimeoutIntervals = {
-            //     'liveGames': [27000, 30000],
-            //     'noLiveGames': [117000, 120000]
-            // };
-            //
-            // //Control the frequency of refresh intervals depending on whether there are Live Games in progress or not.
-            // function getTimeoutIntervals() {
-            //     return liveGames.length > 0 ? 'liveGames' : 'noLiveGames';
-            // }
-            //
-            // //Display Loader.
-            // let loader = document.getElementsByClassName("loader")[0];
-            // this.timeoutOpenLoader = setTimeout(() => {
-            //     loader.style.opacity = "1";
-            //     loader.style.zIndex = "1";
-            // }, loaderTimeoutIntervals[getTimeoutIntervals()][0]);
-            //
-            // //Refresh the Scoreboard Data at every interval, then hide Loader.
-            // this.timeoutCloseLoader = setTimeout(() => {
-            //     loader.style.opacity = "0";
-            //     loader.style.zIndex = "-1";
-            //     this.buildScoreboard();
-            // }, loaderTimeoutIntervals[getTimeoutIntervals()][1]);
         });
     }
-
-    // componentWillUnmount() {
-    //     clearTimeout(this.timeoutOpenLoader);
-    //     clearTimeout(this.timeoutCloseLoader);
-    // }
 
     componentWillMount() {
         this.buildScoreboard();
