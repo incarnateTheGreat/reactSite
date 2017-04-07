@@ -58,8 +58,6 @@ export default class Scores_MLB extends React.Component {
 
             this.setState({gamesSection});
 
-            // console.log(gameData.game);
-
             //Set Render States for each section.
             // this.setState({liveGameSection});
             // this.setState({todayGameSection});
