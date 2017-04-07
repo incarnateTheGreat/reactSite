@@ -10,6 +10,7 @@ import Who from "./pages/Who";
 import Where from "./pages/Where";
 import Featured from "./pages/Featured";
 import Scores from "./pages/Scores";
+import Scores_MLB from "./pages/Scores_MLB";
 
 const app = document.getElementById('app');
 
@@ -23,6 +24,7 @@ ReactDOM.render(
       <Route path="Where" component={Where}></Route>
       <Route path="Featured" component={Featured}></Route>
       <Route path="Scores" component={Scores}></Route>
+      <Route path="Scores_MLB" component={Scores_MLB}></Route>
     </Route>
   </Router>,
 app);

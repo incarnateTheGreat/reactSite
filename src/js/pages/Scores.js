@@ -340,7 +340,7 @@ export default class Scores extends React.Component {
             <div>
               <div class="loader"></div>
                 <h1>Scores</h1>
-                <h5>All times in EST</h5>
+                <h5>All games in EST</h5>
                 <hr/>
                 <h2>NHL Scores</h2>
                 <div className="scoreTableContainer">

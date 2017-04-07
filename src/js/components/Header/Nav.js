@@ -72,8 +72,12 @@ export default class Nav extends React.Component {
               <span>Featured</span>
             </Link></li>
             <li><Link to="Scores" activeClassName="active">
-              <span className="navAnimBtn">Scores</span>
-              <span>Scores</span>
+              <span className="navAnimBtn">NHL</span>
+              <span>NHL</span>
+            </Link></li>
+            <li><Link to="Scores_MLB" activeClassName="active">
+              <span className="navAnimBtn">MLB</span>
+              <span>MLB</span>
             </Link></li>
           </ul>
         </div>
