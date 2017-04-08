@@ -1,6 +1,4 @@
-# ReactJS Boilerplate for me.
-
-Learning ReactJS for myself.
+# ReactJS Boilerplate: NHL and MLB Score App.
 
 **Install & Run**
 - Run Node Install (have latest stable version)
