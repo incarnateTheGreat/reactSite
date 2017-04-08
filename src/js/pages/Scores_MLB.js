@@ -8,9 +8,9 @@ export default class Scores_MLB extends React.Component {
         this.state = {
             liveGameSection: null,
             completedGameSection: null,
-            todayGameSection: null,
             futureGameSection: null,
-            gamesSection: null
+            yesterdayGamesSection: null,
+            todayGamesSection: null
         };
 
         this.timeoutOpenLoader = null;
@@ -18,16 +18,14 @@ export default class Scores_MLB extends React.Component {
     }
 
     //Return MLB Scoreboard data.
-    loadScoreData() {
+    loadScoreData(date) {
         var self = this;
 
         return new Promise(function(resolve, reject) {
-            let date = moment(),
-                year = date.format('YYYY'),
-                month = date.format('MM'),
-                day = date.format('DD');
+            let year = moment().format('YYYY'),
+                month = moment().format('MM');
 
-            axios.get('http://mlb.mlb.com/gdcross/components/game/mlb/year_'+ year +'/month_'+ month +'/day_'+ day +'/master_scoreboard.json')
+            axios.get('http://mlb.mlb.com/gdcross/components/game/mlb/year_'+ year +'/month_'+ month +'/day_'+ date.day +'/master_scoreboard.json')
                 .then(res => resolve(res.data))
                 .catch(err => {
                     setTimeout(function(){
@@ -38,30 +36,55 @@ export default class Scores_MLB extends React.Component {
         });
     }
 
-    buildScoreboard() {
-        let p = this.loadScoreData(),
-            self = this;
+    buildScoreboard(gameData) {
+      console.log("Data Updated.");
 
-        p.then((scoreData) => {
-            console.log("Data Updated.");
+      // Filter different dates.
+      let yesterdayGamesSection = [],
+          todayGamesSection = [],
+          self = this;
 
-            let gameData = scoreData.data.games;
+          gameData = gameData.data.games;
 
-            // Filter different dates.
-            let gamesSection = [];
-
+          //Today's Games
+          if(moment().format('DD') == gameData.day) {
             _.forEach(gameData.game, function(game, id) {
-                gamesSection.push(<div key={id}>
+                todayGamesSection.push(<div key={id}>
                     {self.renderGameOutput(game)}
                 </div>);
             });
 
-            this.setState({gamesSection});
-        });
+            this.setState({todayGamesSection});
+          } else {
+            //Yesterday's Games
+            _.forEach(gameData.game, function(game, id) {
+                yesterdayGamesSection.push(<div key={id}>
+                    {self.renderGameOutput(game)}
+                </div>);
+            });
+
+            this.setState({yesterdayGamesSection});
+          }
     }
 
     componentWillMount() {
-        this.buildScoreboard();
+      const self = this,
+            dateObj = {
+              yesterday: {
+                day: moment().subtract(1, 'day').format('DD')
+              },
+              today: {
+                day: moment().format('DD')
+              }
+            };
+
+      _.forEach(dateObj, function(date) {
+        let p = self.loadScoreData(date);
+
+        p.then((gameData) => {
+          self.buildScoreboard(gameData);
+        });
+      });
     }
 
     getNumberOfColumns(games) {
@@ -80,9 +103,13 @@ export default class Scores_MLB extends React.Component {
             if(game.status.ind === 'P' || game.status.ind === 'F') {
                 //Pre-Game or Final
                 gameStatus = game.status.status;
+
+                //Extra Innings
+                if(parseInt(game.status.inning) > 9) {
+                  gameStatus = gameStatus + '/' + game.status.inning;
+                }
             } else if(game.status.ind === 'DR') {
                 //Postponed
-                // gameStatus = game.description;
                 gameStatus = "PPD";
             } else if(game.status.ind === 'IR') {
                 //Temporary Delay
@@ -126,9 +153,14 @@ export default class Scores_MLB extends React.Component {
                 <hr/>
                 <h2>MLB Scores</h2>
                 <div className="scoreTableContainer">
-                    <h2>Live</h2>
+                    <h2>Today's Games</h2>
                     <div className="gameGroupContainer">
-                        {this.state.gamesSection}
+                        {this.state.todayGamesSection}
+                    </div>
+                    <hr />
+                    <h2>Yesterday's Games</h2>
+                    <div className="gameGroupContainer">
+                        {this.state.yesterdayGamesSection}
                     </div>
                 </div>
             </div>
