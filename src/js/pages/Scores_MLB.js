@@ -7,14 +7,97 @@ export default class Scores_MLB extends React.Component {
 
         this.state = {
             liveGameSection: null,
-            completedGameSection: null,
-            futureGameSection: null,
             yesterdayGamesSection: null,
-            todayGamesSection: null
+            todayGamesSection: null,
+            tomorrowGamesSection: null,
         };
+
+        this.gameDataObjects = {
+          yesterday: [],
+          today: [],
+          tomorrow: [],
+          live: []
+        }
 
         this.timeoutOpenLoader = null;
         this.timeoutCloseLoader = null;
+    }
+
+    componentWillMount() {
+      this.setGameDataOutput();
+    }
+
+    setGameDataOutput() {
+      const self = this,
+            dateObj = {
+              yesterday: {
+                day: moment().subtract(1, 'day').format('DD')
+              },
+              today: {
+                day: moment().format('DD')
+              },
+              tomorrow: {
+                day: moment().add(1, 'day').format('DD')
+              }
+            };
+
+      //Loop through Live, Today, and Yesterday's games.
+      let p = [];
+
+      _.forEach(dateObj, function(date) {
+        p.push(self.loadScoreData(date));
+      });
+
+      Promise.all([p]).then(values => {
+        _.forEach(values[0], function(o, i) {
+          o.then((dayData) => {
+            let gameData = dayData.data.games.game;
+
+            if(dayData.data.games.day == dateObj.today.day) {
+              //Today's Game Data
+              _.forEach(gameData, function(game) {
+                if(self.isGameLive(game)) {
+                  self.gameDataObjects.live.push(game);
+                  _.remove(gameData, () => true );
+                }
+
+                self.gameDataObjects.today.push(game);
+              });
+            } else if(dayData.data.games.day == dateObj.tomorrow.day) {
+              //Tomorrow's Game Data
+              _.forEach(gameData, function(game) {
+                if(self.isGameLive(game)) {
+                  self.gameDataObjects.live.push(game);
+                  _.remove(gameData, () => true );
+                }
+
+                self.gameDataObjects.tomorrow.push(game);
+              });
+            } else if(dayData.data.games.day == dateObj.yesterday.day) {
+              //Yesterday's Game Data
+              _.forEach(gameData, function(game) {
+                if(self.isGameLive(game)) {
+                  self.gameDataObjects.live.push(game);
+                  _.remove(gameData, () => true );
+                }
+
+                self.gameDataObjects.yesterday.push(game);
+              });
+            }
+          });
+        });
+
+        //After all Promises have completed, build out the Scoreboards.
+        setTimeout(() => {
+          _.forEach(this.gameDataObjects, function(game, id) {
+            self.buildScoreboard(game, id);
+          });
+        }, 350);
+      });
+    }
+
+    isGameLive(game){
+      return game.status.ind === 'I' || game.status.ind === 'IR';
     }
 
     //Return MLB Scoreboard data.
@@ -36,55 +119,47 @@ export default class Scores_MLB extends React.Component {
         });
     }
 
-    buildScoreboard(gameData) {
+    buildScoreboard(gameData, id) {
       console.log("Data Updated.");
 
       // Filter different dates.
       let yesterdayGamesSection = [],
           todayGamesSection = [],
+          liveGameSection = [],
+          tomorrowGamesSection = [],
           self = this;
 
-          gameData = gameData.data.games;
+          _.forEach(gameData, function(game, gameID) {
+            if(id === 'today') {
+              //Today's Games
+              todayGamesSection.push(<div key={gameID}>
+                  {self.renderGameOutput(game)}
+              </div>);
 
-          //Today's Games
-          if(moment().format('DD') == gameData.day) {
-            _.forEach(gameData.game, function(game, id) {
-                todayGamesSection.push(<div key={id}>
-                    {self.renderGameOutput(game)}
-                </div>);
-            });
+              self.setState({todayGamesSection});
+            } else if(id === 'yesterday'){
+              //Yesterday's Games
+              yesterdayGamesSection.push(<div key={gameID}>
+                  {self.renderGameOutput(game)}
+              </div>);
 
-            this.setState({todayGamesSection});
-          } else {
-            //Yesterday's Games
-            _.forEach(gameData.game, function(game, id) {
-                yesterdayGamesSection.push(<div key={id}>
-                    {self.renderGameOutput(game)}
-                </div>);
-            });
+              self.setState({yesterdayGamesSection});
+            } else if(id === 'tomorrow'){
+              //Tomorrow's Games
+              tomorrowGamesSection.push(<div key={gameID}>
+                  {self.renderGameOutput(game)}
+              </div>);
 
-            this.setState({yesterdayGamesSection});
-          }
-    }
+              self.setState({tomorrowGamesSection});
+            } else if(id === 'live') {
+              //Live Games
+              liveGameSection.push(<div key={id}>
+                {self.renderGameOutput(game)}
+              </div>);
 
-    componentWillMount() {
-      const self = this,
-            dateObj = {
-              yesterday: {
-                day: moment().subtract(1, 'day').format('DD')
-              },
-              today: {
-                day: moment().format('DD')
-              }
-            };
-
-      _.forEach(dateObj, function(date) {
-        let p = self.loadScoreData(date);
-
-        p.then((gameData) => {
-          self.buildScoreboard(gameData);
-        });
-      });
+              self.setState({liveGameSection});
+            }
+          });
     }
 
     getNumberOfColumns(games) {
@@ -94,54 +169,55 @@ export default class Scores_MLB extends React.Component {
     //Build out HTML object of Scores.
     renderGameOutput(game) {
         let gameStatus = '',
+            outs = '',
             homeScore = '',
             awayScore = '';
 
-        if (game.length == 0) {
-            return (<h4 key="{game.length}">No games listed.</h4>);
-        } else {
-            if(game.status.ind === 'P' || game.status.ind === 'F') {
-                //Pre-Game or Final
-                gameStatus = game.status.status;
+        if(game.status.ind === 'P' || game.status.ind === 'F' || game.status.ind === 'O') {
+            //Pre-Game, Final, or 'Game Over'
+            gameStatus = (game.status.ind === 'O' ? 'Final' : game.status.ind);
 
-                //Extra Innings
-                if(parseInt(game.status.inning) > 9) {
-                  gameStatus = gameStatus + '/' + game.status.inning;
-                }
-            } else if(game.status.ind === 'DR') {
-                //Postponed
-                gameStatus = "PPD";
-            } else if(game.status.ind === 'IR') {
-                //Temporary Delay
-                gameStatus = game.status.inning_state + ' ' + game.status.inning + ' -- ' + game.status.status + ' (' + game.status.reason +')';
-            } else if(game.status.ind === 'I') {
-                //In Progress
-                gameStatus = game.status.inning_state + ' ' + game.status.inning;
+            //Extra Innings
+            if(parseInt(game.status.inning) > 9) {
+              gameStatus = gameStatus + '/' + game.status.inning;
             }
-
-            //Check if Linescore is available.
-            if(_.isUndefined(game.linescore) || game.status.ind === 'DR') {
-              awayScore = '-';
-              homeScore = '-';
-              gameStatus = game.time + ' ' + game.ampm;
-            } else {
-              awayScore = game.linescore.r.away;
-              homeScore = game.linescore.r.home;
-            }
-
-            return (
-                <div className="scoreTable">
-                    <div className="scores">
-                        <div className="team">{game.away_name_abbrev}</div>
-                      <div className="score">{awayScore}</div>
-                        <br />
-                        <div className="team">{game.home_name_abbrev}</div>
-                      <div className="score">{homeScore}</div>
-                    </div>
-                    <div className="timeRemaining">{gameStatus}</div>
-                </div>
-            )
+        } else if(game.status.ind === 'DR') {
+            //Postponed
+            gameStatus = "PPD";
+        } else if(game.status.ind === 'IR') {
+            //Temporary Delay
+            gameStatus = game.status.inning_state + ' ' + game.status.inning + ' -- ' + game.status.status + ' (' + game.status.reason +')';
+        } else if(game.status.ind === 'I') {
+            //In Progress
+            gameStatus = game.status.inning_state.substring(0, 3) + ' ' + game.status.inning;
+            outs = game.status.o + ' OUT';
         }
+
+        //Check if Linescore is available.
+        if(_.isUndefined(game.linescore) || game.status.ind === 'DR') {
+          awayScore = '-';
+          homeScore = '-';
+          gameStatus = game.time + ' ' + game.ampm;
+        } else {
+          awayScore = game.linescore.r.away;
+          homeScore = game.linescore.r.home;
+        }
+
+        return (
+            <div className="scoreTable">
+                <div className="scores">
+                    <div className="team">{game.away_name_abbrev}</div>
+                  <div className="score">{awayScore}</div>
+                    <br />
+                    <div className="team">{game.home_name_abbrev}</div>
+                  <div className="score">{homeScore}</div>
+                </div>
+                <div className="gameStatusContainer">
+                  <div className="timeRemaining">{gameStatus}</div>
+                  <div>{outs}</div>
+                </div>
+            </div>
+        )
     }
 
     render() {
@@ -153,14 +229,40 @@ export default class Scores_MLB extends React.Component {
                 <hr/>
                 <h2>MLB Scores</h2>
                 <div className="scoreTableContainer">
-                    <h2>Today's Games</h2>
+                    <h2>Live</h2>
                     <div className="gameGroupContainer">
-                        {this.state.todayGamesSection}
+                      {!this.state.liveGameSection ? (
+                        <h4>There are currently no Live Games.</h4>
+                      ) : (
+                        this.state.liveGameSection
+                      )}
                     </div>
                     <hr />
-                    <h2>Yesterday's Games</h2>
+                    <h2>Today's Games: {moment().format("dddd M/DD")}</h2>
                     <div className="gameGroupContainer">
-                        {this.state.yesterdayGamesSection}
+                        {!this.state.todayGamesSection ? (
+                          <h4>There are no Games today.</h4>
+                        ) : (
+                          this.state.todayGamesSection
+                        )}
+                    </div>
+                    <hr />
+                    <h2>Yesterday's Games: {moment().subtract(1, 'day').format("dddd M/DD")}</h2>
+                    <div className="gameGroupContainer">
+                        {!this.state.yesterdayGamesSection ? (
+                          <h4>There were no Games yesterday..</h4>
+                        ) : (
+                          this.state.yesterdayGamesSection
+                        )}
+                    </div>
+                    <hr />
+                    <h2>Tomorrow's Games: {moment().add(1, 'day').format("dddd M/DD")}</h2>
+                    <div className="gameGroupContainer">
+                        {!this.state.tomorrowGamesSection ? (
+                          <h4>There will be no Games tomorrow.</h4>
+                        ) : (
+                          this.state.tomorrowGamesSection
+                        )}
                     </div>
                 </div>
             </div>

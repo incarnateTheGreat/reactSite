@@ -304,13 +304,15 @@ export default class Scores extends React.Component {
                             console.log("***", moment(date.date).format('dddd MM/DD'), "***");
                             console.log('-------------------------------');
                             _.forEach(date.games, function(o, v) {
-                                // console.log(o);
-                                console.log("==============================================");
-                                // console.log("Date:", moment(o.gameDate).format('dddd MM/DD'));
-                                console.log("Venue:", o.venue.name);
-                                console.log("Status:", o.status.detailedState);
-                                console.log(teamObj[o.teams.away.team.name].abbreviation,":", o.teams.away.score);
-                                console.log(teamObj[o.teams.home.team.name].abbreviation,":", o.teams.home.score);
+                              if(o.status.detailedState === 'In Progress') {
+                                console.log(o);
+                              }
+                                // console.log("==============================================");
+                                // // console.log("Date:", moment(o.gameDate).format('dddd MM/DD'));
+                                // console.log("Venue:", o.venue.name);
+                                // console.log("Status:", o.status.detailedState);
+                                // console.log(teamObj[o.teams.away.team.name].abbreviation,":", o.teams.away.score);
+                                // console.log(teamObj[o.teams.home.team.name].abbreviation,":", o.teams.home.score);
                             });
                         });
                     });
@@ -349,7 +351,7 @@ export default class Scores extends React.Component {
                         {this.state.liveGameSection}
                     </div>
                     <hr />
-                    <h2>Today: {moment().format("dddd M/DD")}</h2>
+                  <h2>Today's Games: {moment().format("dddd M/DD")}</h2>
                     <div className="gameGroupContainer">
                         {this.state.todayGameSection}
                     </div>

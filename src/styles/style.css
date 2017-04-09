@@ -71,7 +71,10 @@ h3 {
 .scoreTable .scores {
   float: left;
 }
-.scoreTable .timeRemaining {
+.scoreTable .gameStatusContainer {
+  float: right;
+}
+.scoreTable .gameStatusContainer .timeRemaining {
   float: right;
   text-align: right;
 }
