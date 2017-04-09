@@ -42,49 +42,50 @@ export default class Scores_MLB extends React.Component {
             };
 
       //Loop through Live, Today, and Yesterday's games.
-      let p = [];
+      let p = [],
+          year = moment().format('YYYY'),
+          month = moment().format('MM'),
+          url = '';
 
+      //Use Axios to get Score Data.
       _.forEach(dateObj, function(date) {
-        p.push(self.loadScoreData(date));
+        url = 'http://mlb.mlb.com/gdcross/components/game/mlb/year_'+ year +'/month_'+ month +'/day_'+ date.day +'/master_scoreboard.json';
+        p.push(axios.get(url));
       });
 
-      Promise.all([p]).then(values => {
-        _.forEach(values[0], function(o, i) {
-          o.then((dayData) => {
-            let gameData = dayData.data.games.game;
+      axios.all(p).then((datesWithGames) => {
+        _.forEach((datesWithGames), (dayData) => {
+            let gameData = dayData.data.data.games.game,
+                objectDay = dayData.data.data.games.day;
 
-            if(dayData.data.games.day == dateObj.today.day) {
+            if(objectDay == dateObj.today.day) {
               //Today's Game Data
               _.forEach(gameData, function(game) {
                 if(self.isGameLive(game)) {
                   self.gameDataObjects.live.push(game);
-                  _.remove(gameData, () => true );
+                } else {
+                  self.gameDataObjects.today.push(game);
                 }
-
-                self.gameDataObjects.today.push(game);
               });
-            } else if(dayData.data.games.day == dateObj.tomorrow.day) {
+            } else if(objectDay == dateObj.tomorrow.day) {
               //Tomorrow's Game Data
               _.forEach(gameData, function(game) {
                 if(self.isGameLive(game)) {
                   self.gameDataObjects.live.push(game);
-                  _.remove(gameData, () => true );
+                } else {
+                  self.gameDataObjects.tomorrow.push(game);
                 }
-
-                self.gameDataObjects.tomorrow.push(game);
               });
-            } else if(dayData.data.games.day == dateObj.yesterday.day) {
+            } else if(objectDay == dateObj.yesterday.day) {
               //Yesterday's Game Data
               _.forEach(gameData, function(game) {
                 if(self.isGameLive(game)) {
                   self.gameDataObjects.live.push(game);
-                  _.remove(gameData, () => true );
+                } else {
+                  self.gameDataObjects.yesterday.push(game);
                 }
-
-                self.gameDataObjects.yesterday.push(game);
               });
             }
-          });
         });
 
         //After all Promises have completed, build out the Scoreboards.
@@ -96,32 +97,11 @@ export default class Scores_MLB extends React.Component {
       });
     }
 
-    isGameLive(game){
+    isGameLive(game) {
       return game.status.ind === 'I' || game.status.ind === 'IR';
     }
 
-    //Return MLB Scoreboard data.
-    loadScoreData(date) {
-        var self = this;
-
-        return new Promise(function(resolve, reject) {
-            let year = moment().format('YYYY'),
-                month = moment().format('MM');
-
-            axios.get('http://mlb.mlb.com/gdcross/components/game/mlb/year_'+ year +'/month_'+ month +'/day_'+ date.day +'/master_scoreboard.json')
-                .then(res => resolve(res.data))
-                .catch(err => {
-                    setTimeout(function(){
-                        console.log(err, 'Trying again');
-                        self.buildScoreboard();
-                    }, 3000);
-                });
-        });
-    }
-
     buildScoreboard(gameData, id) {
-      console.log("Data Updated.");
-
       // Filter different dates.
       let yesterdayGamesSection = [],
           todayGamesSection = [],
@@ -153,13 +133,45 @@ export default class Scores_MLB extends React.Component {
               self.setState({tomorrowGamesSection});
             } else if(id === 'live') {
               //Live Games
-              liveGameSection.push(<div key={id}>
+              liveGameSection.push(<div key={gameID}>
                 {self.renderGameOutput(game)}
               </div>);
 
               self.setState({liveGameSection});
             }
           });
+
+      console.log("Data Updated:", id);
+
+      this.refreshScoreboard();
+    }
+
+    refreshScoreboard() {
+      let self = this;
+
+      const loaderTimeoutIntervals = {
+        'liveGames': [5000, 8000],
+        'noLiveGames': [117000, 120000]
+      };
+
+      // //Control the frequency of refresh intervals depending on whether there are Live Games in progress or not.
+      // function getTimeoutIntervals() {
+      //   return self.gameDataObjects.live.length > 0 ? 'liveGames' : 'noLiveGames';
+      // }
+      //
+      // //Display Loader.
+      // let loader = document.getElementsByClassName("loader")[0];
+      // this.timeoutOpenLoader = setTimeout(() => {
+      //     loader.style.opacity = "1";
+      //     loader.style.zIndex = "1";
+      // }, loaderTimeoutIntervals[getTimeoutIntervals()][0]);
+      //
+      // //Refresh the Scoreboard Data at every interval, then hide Loader.
+      // this.timeoutCloseLoader = setTimeout(() => {
+      //     loader.style.opacity = "0";
+      //     loader.style.zIndex = "-1";
+      //   this.setGameDataOutput();
+      // }, loaderTimeoutIntervals[getTimeoutIntervals()][1]);
     }
 
     getNumberOfColumns(games) {
@@ -175,7 +187,7 @@ export default class Scores_MLB extends React.Component {
 
         if(game.status.ind === 'P' || game.status.ind === 'F' || game.status.ind === 'O') {
             //Pre-Game, Final, or 'Game Over'
-            gameStatus = (game.status.ind === 'O' ? 'Final' : game.status.ind);
+            gameStatus = (game.status.ind === 'O' ? 'F' : game.status.ind);
 
             //Extra Innings
             if(parseInt(game.status.inning) > 9) {
