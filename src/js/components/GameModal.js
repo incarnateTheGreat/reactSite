@@ -276,7 +276,7 @@ export default class GameModal extends React.Component {
             window.open('https://www.nhl.com/gamecenter/' + gameID + '/recap/box-score');
         }.bind(this);
     }
-
+    
     render() {
         const game = this.props.gameData;
         this.state.game = game.id;
@@ -290,18 +290,20 @@ export default class GameModal extends React.Component {
                     <div className="team">{game.abvr_htn}</div>
                     <div className="score">{game.hts}</div>
                 </div>
-                {game.bsc === 'progress' ? (
-                    <div className="timeRemaining">{game.ts}</div>
-                ) : (
-                    <div className="timeRemaining">{game.gameTime}<br />{game.modifiedDate}</div>
-                )}
+                <div className="gameStatusContainer">
+                  {game.bsc === 'progress' ? (
+                      <div className="timeRemaining">{game.ts}</div>
+                  ) : (
+                      <div className="timeRemaining">{game.gameTime}<br />{game.modifiedDate}</div>
+                  )}
+                </div>
 
                 <Modal
                     isOpen={this.state.modalIsOpen}
                     onAfterOpen={this.afterOpenModal}
                     onRequestClose={this.closeModal}
                     style={this.state.modalStyle}
-                    contentLabel="Example Modal">
+                    contentLabel="Game Modal">
 
                     {this.state.modalIsOpen ? (
                         <div key={game.id}>{this.state.gameContentBody}</div>

@@ -351,7 +351,7 @@ export default class Scores extends React.Component {
                         {this.state.liveGameSection}
                     </div>
                     <hr />
-                  <h2>Today's Games: {moment().format("dddd M/DD")}</h2>
+                    <h2>Today's Games: {moment().format("dddd M/DD")}</h2>
                     <div className="gameGroupContainer">
                         {this.state.todayGameSection}
                     </div>
