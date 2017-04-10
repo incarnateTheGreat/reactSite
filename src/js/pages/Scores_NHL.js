@@ -1,7 +1,7 @@
 import React from "react";
 import axios from 'axios';
 
-import GameModal from "../components/GameModal";
+import GameModal from "../components/GameModals/NHL/GameModal";
 
 export default class Scores extends React.Component {
     constructor(props) {

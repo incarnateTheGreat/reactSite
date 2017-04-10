@@ -1,6 +1,8 @@
 import React from "react";
 import axios from 'axios';
 
+import GameModalMLB from "../components/GameModals/MLB/GameModal";
+
 export default class Scores_MLB extends React.Component {
     constructor(props) {
         super(props);
@@ -17,7 +19,7 @@ export default class Scores_MLB extends React.Component {
           today: [],
           tomorrow: [],
           live: []
-        }
+        };
 
         this.timeoutOpenLoader = null;
         this.timeoutCloseLoader = null;
@@ -113,28 +115,28 @@ export default class Scores_MLB extends React.Component {
             if(id === 'today') {
               //Today's Games
               todayGamesSection.push(<div key={gameID}>
-                  {self.renderGameOutput(game)}
+                  {self.renderGameOutput(game, gameID)}
               </div>);
 
               self.setState({todayGamesSection});
             } else if(id === 'yesterday'){
               //Yesterday's Games
               yesterdayGamesSection.push(<div key={gameID}>
-                  {self.renderGameOutput(game)}
+                  {self.renderGameOutput(game, gameID)}
               </div>);
 
               self.setState({yesterdayGamesSection});
             } else if(id === 'tomorrow'){
               //Tomorrow's Games
               tomorrowGamesSection.push(<div key={gameID}>
-                  {self.renderGameOutput(game)}
+                  {self.renderGameOutput(game, gameID)}
               </div>);
 
               self.setState({tomorrowGamesSection});
             } else if(id === 'live') {
               //Live Games
               liveGameSection.push(<div key={gameID}>
-                {self.renderGameOutput(game)}
+                {self.renderGameOutput(game, gameID)}
               </div>);
 
               self.setState({liveGameSection});
@@ -179,56 +181,9 @@ export default class Scores_MLB extends React.Component {
     }
 
     //Build out HTML object of Scores.
-    renderGameOutput(game) {
-        let gameStatus = '',
-            outs = '',
-            homeScore = '',
-            awayScore = '';
-
-        if(game.status.ind === 'P' || game.status.ind === 'F' || game.status.ind === 'O') {
-            //Pre-Game, Final, or 'Game Over'
-            gameStatus = (game.status.ind === 'O' ? 'F' : game.status.ind);
-
-            //Extra Innings
-            if(parseInt(game.status.inning) > 9) {
-              gameStatus = gameStatus + '/' + game.status.inning;
-            }
-        } else if(game.status.ind === 'DR') {
-            //Postponed
-            gameStatus = "PPD";
-        } else if(game.status.ind === 'IR') {
-            //Temporary Delay
-            gameStatus = game.status.inning_state + ' ' + game.status.inning + ' -- ' + game.status.status + ' (' + game.status.reason +')';
-        } else if(game.status.ind === 'I') {
-            //In Progress
-            gameStatus = game.status.inning_state.substring(0, 3) + ' ' + game.status.inning;
-            outs = game.status.o + ' OUT';
-        }
-
-        //Check if Linescore is available.
-        if(_.isUndefined(game.linescore) || game.status.ind === 'DR') {
-          awayScore = '-';
-          homeScore = '-';
-          gameStatus = game.time + ' ' + game.ampm;
-        } else {
-          awayScore = game.linescore.r.away;
-          homeScore = game.linescore.r.home;
-        }
-
+    renderGameOutput(game, id) {
         return (
-            <div className="scoreTable">
-                <div className="scores">
-                    <div className="team">{game.away_name_abbrev}</div>
-                  <div className="score">{awayScore}</div>
-                    <br />
-                    <div className="team">{game.home_name_abbrev}</div>
-                  <div className="score">{homeScore}</div>
-                </div>
-                <div className="gameStatusContainer">
-                  <div className="timeRemaining">{gameStatus}</div>
-                  <div>{outs}</div>
-                </div>
-            </div>
+            <GameModalMLB key={id} gameData={game} />
         )
     }
 

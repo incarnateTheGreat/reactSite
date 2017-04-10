@@ -9,7 +9,7 @@ import What from "./pages/What";
 import Who from "./pages/Who";
 import Where from "./pages/Where";
 import Featured from "./pages/Featured";
-import Scores from "./pages/Scores";
+import Scores from "./pages/Scores_NHL";
 import Scores_MLB from "./pages/Scores_MLB";
 
 const app = document.getElementById('app');
@@ -23,7 +23,7 @@ ReactDOM.render(
       <Route path="Who" component={Who}></Route>
       <Route path="Where" component={Where}></Route>
       <Route path="Featured" component={Featured}></Route>
-      <Route path="Scores" component={Scores}></Route>
+      <Route path="Scores_NHL" component={Scores}></Route>
       <Route path="Scores_MLB" component={Scores_MLB}></Route>
     </Route>
   </Router>,
