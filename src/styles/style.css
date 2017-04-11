@@ -126,7 +126,7 @@ h3 {
   z-index: -1;
 }
 
-/*Game Modal*/
+/*Game Modal NHL*/
 .status {
   text-align: right;
   padding: 8px 15px 7px 0;
@@ -224,6 +224,19 @@ h3 {
 }
 .scoringSummary .scorerInfo {
   padding: 10px;
+}
+
+/*Game Modal MLB*/
+.boxScore {
+
+}
+.boxScore .inningContainer {
+  float: left;
+  padding: 10px;
+  text-align: center;
+}
+.boxScore .inningContainer .inning {
+  font-weight: bold;
 }
 
 /*Loading Spinner*/

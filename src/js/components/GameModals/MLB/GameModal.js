@@ -65,115 +65,73 @@ export default class GameModalMLB extends React.Component {
         }, 350);
 
     }
-    getBoxscoreData(gameID) {
+    getBoxscoreData(data) {
         let self = this;
 
-        let p = new Promise(function (resolve, reject) {
-            axios.get('http://statsapi.web.nhl.com/api/v1/game/' + gameID + '/feed/live')
-                .then(res => resolve(res.data))
-                .catch(err => console.log(err));
-        });
+        console.log(data);
 
-        p.then((data) => {
-            let gameData = data.gameData,
-                liveData = data.liveData,
-                lineScore = liveData.linescore,
-                homeScore = lineScore.teams.home.goals,
-                awayScore = lineScore.teams.away.goals,
-                gameStatus = "",
-                gameContentBody = [];
+        let gameContentBody = [],
+            awayTeam = data.away_name_abbrev,
+            homeTeam = data.home_name_abbrev,
+            awayRuns = data.linescore.r.away,
+            homeRuns = data.linescore.r.home,
+            awayHits = data.linescore.h.away,
+            homeHits = data.linescore.h.home,
+            awayErrors = data.linescore.e.away,
+            homeErrors = data.linescore.e.home;
 
-            let goals = [],
-                scorerObj = "",
-                scoringSummary = {},
-                summaryBody = [];
+        writeToScreen();
 
-            function getScoringSummary() {
-                _.forEach(liveData.plays.scoringPlays, function(id) {
-                    _.forEach(liveData.plays.allPlays, function(playID, v) {
-                        if(id == v) {
-                            scorerObj = _.find(playID.players, {playerType: 'Scorer'});
+        function writeToScreen() {
+            // const away = { backgroundImage: 'url("/images/logos/' + lineScore.teams.away.team.abbreviation +'.png")' },
+            //       home = { backgroundImage: 'url("/images/logos/' + lineScore.teams.home.team.abbreviation +'.png")' };
 
-                            // Collect Assists from each goal.
-                            let assistsObj = _.filter(playID.players, (o) => o.playerType === 'Assist'),
-                                tempAssistArr = [];
+            //Apply Team Names.
+            gameContentBody.push(<div className='boxScore' key={Math.random()}>
+              <div className='inningContainer'>
+                  <div>&nbsp;</div>
+                  <div>{awayTeam}</div>
+                  <div>{homeTeam}</div>
+              </div>
+            </div>);
 
-                            _.forEach(assistsObj, (o) => tempAssistArr.push(o.player.fullName));
+            //Apply Inning Linescores.
+            _.forEach(data.linescore.inning, function(inning, id) {
+              gameContentBody.push(<div className='boxScore' key={Math.random()}>
+                <div className='inningContainer'>
+                    <div className='inning'>{id+1}</div>
+                    <div>{inning.away}</div>
+                    <div>{inning.home}</div>
+                </div>
+              </div>);
+            });
 
-                            scoringSummary[v] = {
-                                team: playID.team.name,
-                                scorer: scorerObj.player.fullName,
-                                assists: tempAssistArr.join(', '),
-                                period: playID.about.ordinalNum,
-                                time: playID.about.periodTime,
-                                typeOfGoal: playID.result.secondaryType,
-                                strength: playID.result.strength.name
-                            };
-                        }
-                    });
-                });
+            //Apply Totals.
+            gameContentBody.push(<div className='boxScore' key={Math.random()}>
+              <div className='inningContainer'>
+                  <div className='inning'>R</div>
+                  <div>{awayRuns}</div>
+                  <div>{homeRuns}</div>
+              </div>
+              <div className='inningContainer'>
+                  <div className='inning'>H</div>
+                  <div>{awayHits}</div>
+                  <div>{homeHits}</div>
+              </div>
+              <div className='inningContainer'>
+                  <div className='inning'>E</div>
+                  <div>{awayErrors}</div>
+                  <div>{homeErrors}</div>
+              </div>
+            </div>);
 
-                //Group By Periods.
-                scoringSummary = _.groupBy(scoringSummary, 'period');
-
-                _.forEach(scoringSummary, function(periodObj, period) {
-                    summaryBody.push(<div key={periodObj[0].time} className='desc'>{period}</div>)
-                    _.forEach(periodObj, function(data, i) {
-                        summaryBody.push(
-                            <div className='scoringSummary' key={Math.random()}>
-                                <div><span>{data.team}</span></div>
-                                <div className='scorerInfo'>
-                                    <div><span>{data.scorer}</span></div>
-                                    <div><span>{data.assists}</span></div>
-                                    <div><span>{data.time}</span></div>
-                                    <div><span>{data.typeOfGoal}</span></div>
-                                </div>
-                            </div>)
-                    });
-                });
-
-                writeToScreen();
-            }
-
-            function getScheduledSummary() {
-                let p = new Promise(function (resolve, reject) {
-                    axios.get('https://statsapi.web.nhl.com/api/v1/standings?expand=standings.record,standings.team,standings.division,standings.conference&season=20162017')
-                        .then(res => resolve(res.data))
-                        .catch(err => console.log(err));
-                });
-
-                let home = gameData.teams.away.abbreviation,
-                    away = gameData.teams.away.abbreviation;
-
-                p.then((data) => {
-                    let standings = data.records,
-                        result = null,
-                        teamInfo = [];
-
-
-                });
-            }
-
-            function writeToScreen() {
-                // const away = { backgroundImage: 'url("/images/logos/' + lineScore.teams.away.team.abbreviation +'.png")' },
-                //       home = { backgroundImage: 'url("/images/logos/' + lineScore.teams.home.team.abbreviation +'.png")' };
-
-
-
-                gameContentBody.push(<div key={gameID}>
-                    stuff goes here.
-                </div>);
-
-                console.log(gameContentBody);
-
-                self.setState({gameContentBody});
-            }
-        });
+            self.setState({gameContentBody});
+        }
     }
 
     render() {
         const game = this.props.gameData;
-        this.state.game = game.id;
+        this.state.game = game;
 
         let gameStatus = '',
             outs = '',
