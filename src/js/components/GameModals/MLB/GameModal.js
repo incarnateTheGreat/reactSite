@@ -95,16 +95,18 @@ export default class GameModalMLB extends React.Component {
               </div>
             </div>);
 
-            //Apply Inning Linescores.
-            _.forEach(data.linescore.inning, function(inning, id) {
-              gameContentBody.push(<div className='boxScore' key={Math.random()}>
-                <div className='inningContainer'>
-                    <div className='inning'>{id+1}</div>
-                    <div>{inning.away}</div>
-                  <div>{!inning.home && id == 8 ? ('X') : (inning.home)}</div>
-                </div>
-              </div>);
-            });
+            //Apply Inning Linescores if there's any data.
+            if(data.linescore.inning.length > 1) {
+                _.forEach(data.linescore.inning, function(inning, id) {
+                    gameContentBody.push(<div className='boxScore' key={Math.random()}>
+                        <div className='inningContainer'>
+                            <div className='inning'>{id+1}</div>
+                            <div className='scoreBox topInning'>{inning.away}</div>
+                            <div className='scoreBox bottomInning'>{!inning.home && data.status.status === 'Final' ? ('X') : inning.home}</div>
+                        </div>
+                    </div>);
+                });
+            }
 
             //Apply Totals.
             gameContentBody.push(<div className='boxScore' key={Math.random()}>
@@ -138,9 +140,15 @@ export default class GameModalMLB extends React.Component {
             homeScore = '',
             awayScore = '';
 
-        if(game.status.ind === 'P' || game.status.ind === 'F' || game.status.ind === 'O') {
+        if(game.status.ind === 'P' || game.status.ind === 'PW' || game.status.ind === 'F' || game.status.ind === 'O') {
             //Pre-Game, Final, or 'Game Over'
             gameStatus = (game.status.ind === 'O' ? 'F' : game.status.ind);
+
+            if(game.status.ind === 'O') {
+                gameStatus = 'F';
+            } else if(game.status.ind === 'P' || game.status.ind === 'PW') {
+                gameStatus = game.status.status;
+            }
 
             //Extra Innings
             if(parseInt(game.status.inning) > 9) {

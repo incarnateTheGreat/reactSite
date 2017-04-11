@@ -228,7 +228,7 @@ h3 {
 
 /*Game Modal MLB*/
 .boxScore {
-
+  font-size: 18px;
 }
 .boxScore .inningContainer {
   float: left;
@@ -236,6 +236,9 @@ h3 {
   text-align: center;
 }
 .boxScore .inningContainer .inning {
+  font-weight: bold;
+}
+.boxScore .inningContainer .inning .scoreBox {
   font-weight: bold;
 }
 .boxScore .inningContainer .teamName {
