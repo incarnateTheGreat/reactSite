@@ -90,8 +90,8 @@ export default class GameModalMLB extends React.Component {
             gameContentBody.push(<div className='boxScore' key={Math.random()}>
               <div className='inningContainer'>
                   <div>&nbsp;</div>
-                  <div>{awayTeam}</div>
-                  <div>{homeTeam}</div>
+                  <div className='teamName'>{awayTeam}</div>
+                  <div className='teamName'>{homeTeam}</div>
               </div>
             </div>);
 
@@ -101,7 +101,7 @@ export default class GameModalMLB extends React.Component {
                 <div className='inningContainer'>
                     <div className='inning'>{id+1}</div>
                     <div>{inning.away}</div>
-                    <div>{inning.home}</div>
+                  <div>{!inning.home && id == 8 ? ('X') : (inning.home)}</div>
                 </div>
               </div>);
             });

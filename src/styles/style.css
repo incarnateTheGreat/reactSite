@@ -238,6 +238,10 @@ h3 {
 .boxScore .inningContainer .inning {
   font-weight: bold;
 }
+.boxScore .inningContainer .teamName {
+  font-weight: bold;
+  text-align: left;
+}
 
 /*Loading Spinner*/
 @-webkit-keyframes spin {
