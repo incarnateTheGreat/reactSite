@@ -101,15 +101,16 @@ export default class GameModalMLB extends React.Component {
                     gameContentBody.push(<div className='boxScore' key={Math.random()}>
                         <div className='inningContainer'>
                             <div className='inning'>{id+1}</div>
-                            <div className='scoreBox topInning'>{inning.away}</div>
+                          {/*}<div className='scoreBox topInning'>{inning.away}</div>
                             <div className='scoreBox bottomInning'>{!inning.home && data.status.status === 'Final' ? ('X') : inning.home}</div>
+                            */}
                         </div>
                     </div>);
                 });
             }
 
             //Apply Totals.
-            gameContentBody.push(<div className='boxScore' key={Math.random()}>
+            gameContentBody.push(<div className='boxScore totals' key={Math.random()}>
               <div className='inningContainer'>
                   <div className='inning'>R</div>
                   <div>{awayRuns}</div>
