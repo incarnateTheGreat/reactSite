@@ -96,14 +96,14 @@ export default class GameModalMLB extends React.Component {
             </div>);
 
             //Apply Inning Linescores if there's any data.
+            //TODO: GO HIGHER UP IN 'LINESCORE' TO GET MORE DETAILED INFORMATION ABOUT WHAT INNING THE GAME IS IN AND IF IT'S TOP OR BOTTOM
             if(data.linescore.inning.length > 1) {
                 _.forEach(data.linescore.inning, function(inning, id) {
                     gameContentBody.push(<div className='boxScore' key={Math.random()}>
                         <div className='inningContainer'>
                             <div className='inning'>{id+1}</div>
-                          {/*}<div className='scoreBox topInning'>{inning.away}</div>
+                            <div className='scoreBox topInning'>{inning.away}</div>
                             <div className='scoreBox bottomInning'>{!inning.home && data.status.status === 'Final' ? ('X') : inning.home}</div>
-                            */}
                         </div>
                     </div>);
                 });
