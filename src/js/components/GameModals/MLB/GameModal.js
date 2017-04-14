@@ -96,14 +96,39 @@ export default class GameModalMLB extends React.Component {
             </div>);
 
             //Apply Inning Linescores if there's any data.
-            //TODO: GO HIGHER UP IN 'LINESCORE' TO GET MORE DETAILED INFORMATION ABOUT WHAT INNING THE GAME IS IN AND IF IT'S TOP OR BOTTOM
+            //TODO: GO HIGHER UP IN 'LINESCORE' TO GET MORE DETAILED INFORMATION ABOUT WHAT INNING THE GAME IS IN
+            //AND IF IT'S TOP OR BOTTOM
+
+            if(data.status.ind !== 'I') {
+              console.log("Game is active. Assign current inning.");
+            }
+
+            let currentInning = 0,
+                topInning = '',
+                bottomInning = '',
+                tester = '';
+
+            function isCurrentInning(dataStatus) {
+              if(currentInning === parseInt(dataStatus.inning)) {
+                if(dataStatus.top_inning === 'Y') {
+                  topInning = 'currentInning';
+                } else {
+                  bottomInning = 'currentInning';
+                }
+              }
+            }
+
             if(data.linescore.inning.length > 1) {
                 _.forEach(data.linescore.inning, function(inning, id) {
+                  currentInning = id + 1;
+                  isCurrentInning(data.status);
+                  console.log("top:", topInning, "bot:", bottomInning);
+
                     gameContentBody.push(<div className='boxScore' key={Math.random()}>
                         <div className='inningContainer'>
-                            <div className='inning'>{id+1}</div>
-                            <div className='scoreBox topInning'>{inning.away}</div>
-                            <div className='scoreBox bottomInning'>{!inning.home && data.status.status === 'Final' ? ('X') : inning.home}</div>
+                            <div className='inning'>{currentInning}</div>
+                            <div className={'scoreBox ' + topInning}>{inning.away}</div>
+                            <div className={'scoreBox ' + bottomInning}>{!inning.home && data.status.status === 'Final' ? ('X') : inning.home}</div>
                         </div>
                     </div>);
                 });
