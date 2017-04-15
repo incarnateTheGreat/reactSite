@@ -132,6 +132,24 @@ export default class GameModal extends React.Component {
                     });
                 });
 
+                // Three Stars
+                summaryBody.push(<div className='scoringSummary' key={Math.random()}>
+                  <div className='desc'>Three Stars</div>
+                  <div className='scorerInfo threeStars'>
+                    <div>
+                      <span><strong>1st Star:</strong></span>
+                      <span className='starName'>{liveData.decisions['firstStar'].fullName}</span>
+                    </div>
+                    <div>
+                      <span><strong>2nd Star:</strong></span>
+                      <span className='starName'>{liveData.decisions['secondStar'].fullName}</span>
+                    </div>
+                    <div>
+                      <span><strong>3rd Star:</strong></span>
+                      <span className='starName'>{liveData.decisions['thirdStar'].fullName}</span>
+                    </div>
+                  </div>
+                </div>);
                 writeToScreen();
             }
 
@@ -165,8 +183,7 @@ export default class GameModal extends React.Component {
                     </div>);
 
                     _.forEach(teamInfo, function(team, id) {
-                        let teamResult =_.head(team);
-                        console.log(teamResult);
+                        let teamResult = _.head(team);
 
                         summaryBody.push(
                             <div key={id} className='teamInfoTable'>
@@ -198,17 +215,18 @@ export default class GameModal extends React.Component {
 
                     writeToScreen();
 
-                    console.log('DIVISION STANDINGS');
-                    console.log('=================================================');
-                    _.forEach(standings, function(teamObj, id) {
-                        // console.log(teamObj);
-                        console.log(teamObj.division.name);
-                        console.log('-------------------------------------------');
-                        _.forEach(teamObj.teamRecords, function(team, i) {
-                            console.log((_.isUndefined(team.clinchIndicator) ? "    " : "X - "), team.divisionRank, ':', team.team.name, team.points, 'PTS.', '/ Conference Rank:', team.conferenceRank);
-                        });
-                        console.log('-------------------------------------------');
-                    });
+                    //Get Standings.
+                    // console.log('DIVISION STANDINGS');
+                    // console.log('=================================================');
+                    // _.forEach(standings, function(teamObj, id) {
+                    //     // console.log(teamObj);
+                    //     console.log(teamObj.division.name);
+                    //     console.log('-------------------------------------------');
+                    //     _.forEach(teamObj.teamRecords, function(team, i) {
+                    //         console.log((_.isUndefined(team.clinchIndicator) ? "    " : "X - "), team.divisionRank, ':', team.team.name, team.points, 'PTS.', '/ Conference Rank:', team.conferenceRank);
+                    //     });
+                    //     console.log('-------------------------------------------');
+                    // });
                 });
             }
 
@@ -276,7 +294,7 @@ export default class GameModal extends React.Component {
             window.open('https://www.nhl.com/gamecenter/' + gameID + '/recap/box-score');
         }.bind(this);
     }
-    
+
     render() {
         const game = this.props.gameData;
         this.state.game = game.id;

@@ -292,6 +292,7 @@ export default class Scores extends React.Component {
                     teamObj[team.name] = team;
                 });
 
+                //Get Season Data from over three days.
                 axios.get('https://statsapi.web.nhl.com/api/v1/schedule?startDate='+ yesterday +'&endDate='+ tomorrow +'')
                     .then(res => {
                         let dates = res.data.dates,

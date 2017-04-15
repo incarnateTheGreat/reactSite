@@ -225,6 +225,16 @@ h3 {
 .scoringSummary .scorerInfo {
   padding: 10px;
 }
+.scoringSummary .scorerInfo.threeStars {
+  width: 200px;
+  float: right;
+}
+.scoringSummary .scorerInfo.threeStars span {
+  float: left;
+}
+.scoringSummary .scorerInfo.threeStars span.starName {
+  float: right;
+}
 
 /*Game Modal MLB*/
 .boxScoreContainer {
