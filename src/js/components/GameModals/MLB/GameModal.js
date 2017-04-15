@@ -71,6 +71,8 @@ export default class GameModalMLB extends React.Component {
         console.log(data);
 
         let gameContentBody = [],
+            boxScore = [],
+            activePlayerData = [],
             awayTeam = data.away_name_abbrev,
             homeTeam = data.home_name_abbrev,
             awayRuns = data.linescore.r.away,
@@ -87,7 +89,7 @@ export default class GameModalMLB extends React.Component {
             //       home = { backgroundImage: 'url("/images/logos/' + lineScore.teams.home.team.abbreviation +'.png")' };
 
             //Apply Team Names.
-            gameContentBody.push(<div className='boxScore' key={Math.random()}>
+            boxScore.push(<div className='boxScore' key={Math.random()}>
               <div className='inningContainer'>
                   <div>&nbsp;</div>
                   <div className='teamName'>{awayTeam}</div>
@@ -95,63 +97,136 @@ export default class GameModalMLB extends React.Component {
               </div>
             </div>);
 
-            //Apply Inning Linescores if there's any data.
-            //TODO: GO HIGHER UP IN 'LINESCORE' TO GET MORE DETAILED INFORMATION ABOUT WHAT INNING THE GAME IS IN
-            //AND IF IT'S TOP OR BOTTOM
-
-            if(data.status.ind !== 'I') {
-              console.log("Game is active. Assign current inning.");
-            }
-
             let currentInning = 0,
                 topInning = '',
                 bottomInning = '',
-                tester = '';
+                homeInningScore = 0,
+                awayInningScore = 0,
+                inningData = [];
 
-            function isCurrentInning(dataStatus) {
-              if(currentInning === parseInt(dataStatus.inning)) {
+            //Check what inning the game is in, and if it is live or not.
+            function getInningScore(dataStatus, inning) {
+              if(currentInning === parseInt(dataStatus.inning) && (dataStatus.ind === 'I')) {
                 if(dataStatus.top_inning === 'Y') {
-                  topInning = 'currentInning';
+                  topInning = ' currentInning';
                 } else {
-                  bottomInning = 'currentInning';
+                  bottomInning = ' currentInning';
                 }
               }
+
+              function getHomeInningScore() {
+                if(!inning.home && data.status.status === 'Final') {
+                  return 'X';
+                } else if(inning.home == '') {
+                  return '0';
+                } else {
+                  return inning.home;
+                }
+              }
+
+              awayInningScore = (inning.away == '' ? '0' : inning.away);
+              homeInningScore = getHomeInningScore();
+
+              inningData.push(<div key={Math.random()}>
+                <div className={'scoreBox' + topInning}>{awayInningScore}</div>
+                <div className={'scoreBox' + bottomInning}>{homeInningScore}</div>
+              </div>)
             }
 
+            //Apply Inning Linescores if there's any data.
             if(data.linescore.inning.length > 1) {
+
+              // if(data.status.inning > (parseInt(data.scheduled_innings) + 3)) {
+              //   console.log('Current Total Innings:', data.status.inning);
+              //   //Create offset variable to show latest 9 innings.
+              // } else {
+              //   console.log("Nermal.");
+              // }
+
                 _.forEach(data.linescore.inning, function(inning, id) {
                   currentInning = id + 1;
-                  isCurrentInning(data.status);
-                  console.log("top:", topInning, "bot:", bottomInning);
+                  getInningScore(data.status, inning);
 
-                    gameContentBody.push(<div className='boxScore' key={Math.random()}>
+                    boxScore.push(<div className='boxScore' key={Math.random()}>
                         <div className='inningContainer'>
                             <div className='inning'>{currentInning}</div>
-                            <div className={'scoreBox ' + topInning}>{inning.away}</div>
-                            <div className={'scoreBox ' + bottomInning}>{!inning.home && data.status.status === 'Final' ? ('X') : inning.home}</div>
+                            {inningData}
                         </div>
                     </div>);
+
+                    inningData = [];
                 });
             }
 
             //Apply Totals.
-            gameContentBody.push(<div className='boxScore totals' key={Math.random()}>
+            boxScore.push(<div className='boxScore totals' key={Math.random()}>
               <div className='inningContainer'>
                   <div className='inning'>R</div>
-                  <div>{awayRuns}</div>
-                  <div>{homeRuns}</div>
+                  <div className='scoreBox'>{awayRuns}</div>
+                  <div className='scoreBox'>{homeRuns}</div>
               </div>
               <div className='inningContainer'>
                   <div className='inning'>H</div>
-                  <div>{awayHits}</div>
-                  <div>{homeHits}</div>
+                  <div className='scoreBox'>{awayHits}</div>
+                  <div className='scoreBox'>{homeHits}</div>
               </div>
               <div className='inningContainer'>
                   <div className='inning'>E</div>
-                  <div>{awayErrors}</div>
-                  <div>{homeErrors}</div>
+                  <div className='scoreBox'>{awayErrors}</div>
+                  <div className='scoreBox'>{homeErrors}</div>
               </div>
             </div>);
+
+            // Find Runner Data home
+            // BASES: use forEach to get BASES data
+            // BSO: use forEach to get Pitcher Batter data.
+
+            //Show Runner/Batter/Pitcher Data
+            activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
+              <div className='bases'>
+                <div className='baseContainer'>
+                  <div className='secondBase baseRow'>
+                    <div className="base onBase">&nbsp;</div>
+                  </div>
+                  <div className='thirdFirstBase baseRow'>
+                    <div className="base onBase">&nbsp;</div>
+                    <div className="base">&nbsp;</div>
+                  </div>
+                </div>
+                <div className='currentPitcherBatter'>
+                  <div>Pitcher: </div>
+                  <div>Batter: </div>
+                </div>
+              </div>
+              <div className='BSO'>
+                <div className='BSOContainer'>
+                  <div className='bsoName'>B: </div>
+                  <div className='countIt'>&nbsp;</div>
+                  <div className='countIt'>&nbsp;</div>
+                  <div>&nbsp;</div>
+                  <div>&nbsp;</div>
+                </div>
+                <div className='BSOContainer'>
+                  <div className='bsoName'>S: </div>
+                  <div className='countIt'>&nbsp;</div>
+                  <div className='countIt'>&nbsp;</div>
+                  <div>&nbsp;</div>
+                </div>
+                <div className='BSOContainer'>
+                  <div className='bsoName'>O: </div>
+                  <div className='countIt'>&nbsp;</div>
+                  <div>&nbsp;</div>
+                  <div>&nbsp;</div>
+                </div>
+              </div>
+            </div>);
+
+
+            //Combine all content
+            gameContentBody.push(<div key={Math.random()}>
+              <div className='boxScoreContainer'>{boxScore}</div>
+              <div className='activePlayerDataContainer'>{activePlayerData}</div>
+            </div>)
 
             self.setState({gameContentBody});
         }

@@ -227,26 +227,129 @@ h3 {
 }
 
 /*Game Modal MLB*/
+.boxScoreContainer {
+  /*float: left;*/
+  /*width: 55%;*/
+  padding: 0 0 0 20px;
+}
 .boxScore {
   font-size: 18px;
 }
 .boxScore .inningContainer {
   float: left;
-  padding: 10px;
+  padding: 10px 0;
   text-align: center;
 }
 .boxScore .inningContainer .inning {
   font-weight: bold;
+  background-color: #FBFBFB;
+  font-family: "BentonSans", "Helvetica Neue", sans-serif;
+  color: #999;
+  border-top: 1px solid #f2f2f2;
+  border-left: 1px solid #f2f2f2;
 }
-.boxScore .inningContainer .inning .scoreBox {
-  font-weight: bold;
+.boxScore .inningContainer .scoreBox {
+  padding: 2px 5px;
+  border: 1px solid rgba(218, 218, 218, 0.5);
+  min-height: 32px;
+  width: 70px;
+}
+@media screen and (max-width: 1320px) {
+  .boxScore .inningContainer .scoreBox {
+      width: 58px;
+  }
+}
+@media screen and (max-width: 1130px) {
+  .boxScore .inningContainer .scoreBox {
+      width: 45px;
+  }
+}
+@media screen and (max-width: 950px) {
+  .boxScore .inningContainer .scoreBox {
+      width: 35px;
+  }
+}
+.boxScore .inningContainer .scoreBox.currentInning {
+  background: rgba(218, 218, 218, 0.5);
 }
 .boxScore .inningContainer .teamName {
   font-weight: bold;
   text-align: left;
+  padding: 4px 5px;
+  width: 55px;
 }
 .boxScore.totals {
   overflow: auto;
+  color: #000;
+}
+.activePlayerDataContainer {
+  /*float: left;*/
+  /*width: 45%;*/
+  margin: 0 0 10px 24px;
+}
+.activePlayerData .bases {
+  margin: 11px 0 0;
+  padding: 0px 10px 8px 4px;
+  overflow: auto;
+}
+.activePlayerData .bases .baseRow {
+  clear: both;
+}
+.activePlayerData .bases .baseRow.secondBase .base {
+  margin: 5px 10px 2px 13px;
+}
+.activePlayerData .bases .baseRow.thirdFirstBase div.base:last-child {
+  margin: 0 0 0 6px;
+}
+.activePlayerData .bases .base {
+  border: 1px solid red;
+  width: 15px;
+  height: 15px;
+  float: left;
+  margin: 0 5px 0 0;
+  -ms-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.activePlayerData .bases .baseContainer {
+  float: left;
+}
+.activePlayerData .bases .currentPitcherBatter {
+  float: left;
+  padding: 0 0 0 15px;
+}
+.activePlayerData .bases .base.onBase {
+  background: red;
+}
+.activePlayerData .BSO {
+  overflow: auto;
+  margin: 5px 0 0;
+}
+.activePlayerData .BSO .BSOContainer {
+  float: left;
+  margin: 0 10px 0 0;
+}
+.activePlayerData .BSO div .bsoName {
+  float: left;
+  margin: 0;
+  background: transparent;
+  border: none;
+  padding: 0 16px 0 0;
+}
+.activePlayerData .BSO .BSOContainer div {
+  float: left;
+  margin: 4px 3px;
+  border-radius: 35px;
+  border: 1px solid red;
+  width: 13px;
+  height: 13px;
+}
+.activePlayerData .BSO .BSOContainer div:first-child {
+  border: none;
+  margin: 0;
+}
+.activePlayerData .BSO div div.countIt {
+  background: red;
 }
 
 /*Loading Spinner*/

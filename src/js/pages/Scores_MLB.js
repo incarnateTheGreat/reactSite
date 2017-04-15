@@ -144,7 +144,7 @@ export default class Scores_MLB extends React.Component {
             }
           });
 
-      console.log("Data Updated:", id);
+      // console.log("Data Updated:", id);
 
       this.refreshScoreboard();
     }
