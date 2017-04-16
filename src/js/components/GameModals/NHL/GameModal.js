@@ -133,23 +133,26 @@ export default class GameModal extends React.Component {
                 });
 
                 // Three Stars
-                summaryBody.push(<div className='scoringSummary' key={Math.random()}>
-                  <div className='desc'>Three Stars</div>
-                  <div className='scorerInfo threeStars'>
-                    <div>
-                      <span><strong>1st Star:</strong></span>
-                      <span className='starName'>{liveData.decisions['firstStar'].fullName}</span>
+                if(gameData.status.abstractGameState === 'Final') {
+                  summaryBody.push(<div className='scoringSummary' key={Math.random()}>
+                    <div className='desc'>Three Stars</div>
+                    <div className='scorerInfo threeStars'>
+                      <div>
+                        <span><strong>1st Star:</strong></span>
+                        <span className='starName'>{liveData.decisions['firstStar'].fullName}</span>
+                      </div>
+                      <div>
+                        <span><strong>2nd Star:</strong></span>
+                        <span className='starName'>{liveData.decisions['secondStar'].fullName}</span>
+                      </div>
+                      <div>
+                        <span><strong>3rd Star:</strong></span>
+                        <span className='starName'>{liveData.decisions['thirdStar'].fullName}</span>
+                      </div>
                     </div>
-                    <div>
-                      <span><strong>2nd Star:</strong></span>
-                      <span className='starName'>{liveData.decisions['secondStar'].fullName}</span>
-                    </div>
-                    <div>
-                      <span><strong>3rd Star:</strong></span>
-                      <span className='starName'>{liveData.decisions['thirdStar'].fullName}</span>
-                    </div>
-                  </div>
-                </div>);
+                  </div>);
+                }
+
                 writeToScreen();
             }
 

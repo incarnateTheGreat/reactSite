@@ -80,7 +80,8 @@ export default class GameModalMLB extends React.Component {
             awayHits = data.linescore.h.away,
             homeHits = data.linescore.h.home,
             awayErrors = data.linescore.e.away,
-            homeErrors = data.linescore.e.home;
+            homeErrors = data.linescore.e.home,
+            runnersOnBase = data.runners_on_base;
 
         writeToScreen();
 
@@ -177,50 +178,91 @@ export default class GameModalMLB extends React.Component {
               </div>
             </div>);
 
+            let currentRunnersOnBase = [],
+                balls = [],
+                strikes = [],
+                outs = [],
+                totalBalls = 0,
+                totalStrikes = 0,
+                totalOuts = 0;
+
             // Find Runner Data home
-            // BASES: use forEach to get BASES data
-            // BSO: use forEach to get Pitcher Batter data.
+            _.forEach(runnersOnBase, (o, id) => {
+              if(id !== 'status') currentRunnersOnBase.push(id.substr(id.length - 2).trim());
+            });
 
-            //Show Runner/Batter/Pitcher Data
-            activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
-              <div className='bases'>
-                <div className='baseContainer'>
-                  <div className='secondBase baseRow'>
-                    <div className="base onBase">&nbsp;</div>
-                  </div>
-                  <div className='thirdFirstBase baseRow'>
-                    <div className="base onBase">&nbsp;</div>
-                    <div className="base">&nbsp;</div>
-                  </div>
-                </div>
-                <div className='currentPitcherBatter'>
-                  <div>Pitcher: </div>
-                  <div>Batter: </div>
-                </div>
-              </div>
-              <div className='BSO'>
-                <div className='BSOContainer'>
-                  <div className='bsoName'>B: </div>
-                  <div className='countIt'>&nbsp;</div>
-                  <div className='countIt'>&nbsp;</div>
-                  <div>&nbsp;</div>
-                  <div>&nbsp;</div>
-                </div>
-                <div className='BSOContainer'>
-                  <div className='bsoName'>S: </div>
-                  <div className='countIt'>&nbsp;</div>
-                  <div className='countIt'>&nbsp;</div>
-                  <div>&nbsp;</div>
-                </div>
-                <div className='BSOContainer'>
-                  <div className='bsoName'>O: </div>
-                  <div className='countIt'>&nbsp;</div>
-                  <div>&nbsp;</div>
-                  <div>&nbsp;</div>
-                </div>
-              </div>
-            </div>);
+            // BSO: Calculate the tabulated Balls, Strikes, and Outs, then push the active elements.
+            console.log(data.status.b, data.status.s, data.status.o);
 
+            for(var i = 0; i < parseInt(data.status.b); i++) {
+              balls.push(<div key={Math.random()} className='countIt'>&nbsp;</div>)
+            }
+            for(var i = 0; i < parseInt(data.status.s); i++) {
+              strikes.push(<div key={Math.random()} className='countIt'>&nbsp;</div>)
+            }
+            for(var i = 0; i < parseInt(data.status.o); i++) {
+              outs.push(<div key={Math.random()} className='countIt'>&nbsp;</div>)
+            }
+
+            //Append the non-active elements to complete the BSO layout.
+            totalBalls = 4 - balls.length,
+            totalStrikes = 3 - strikes.length,
+            totalOuts = 3 - outs.length;
+
+            for(var i = 0; i < totalBalls; i++) {
+              balls.push(<div key={Math.random()} className=''>&nbsp;</div>)
+            }
+            for(var i = 0; i < totalStrikes; i++) {
+              strikes.push(<div key={Math.random()} className=''>&nbsp;</div>)
+            }
+            for(var i = 0; i < totalOuts; i++) {
+              outs.push(<div key={Math.random()} className=''>&nbsp;</div>)
+            }
+
+            if(data.status.status !== 'Final') {
+              //Show Runner/Batter/Pitcher Data
+              activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
+                <div className='bases'>
+                  <div className='baseContainer'>
+                    <div className='secondBase baseRow'>
+                      <div href='#' data-toggle="tooltip" title="Hooray!" className={'base ' + (_.includes(currentRunnersOnBase, '2b') ? 'onBase' : '')}>&nbsp;</div>
+                    </div>
+                    <div className='thirdFirstBase baseRow'>
+                      <div className={'base ' + (_.includes(currentRunnersOnBase, '3b') ? 'onBase' : '')}>&nbsp;</div>
+                      <div className={'base ' + (_.includes(currentRunnersOnBase, '1b') ? 'onBase' : '')}>&nbsp;</div>
+                    </div>
+                  </div>
+                  <div className='currentPitcherBatter'>
+                    <div><strong>Pitcher:</strong> {data.pitcher.first} {data.pitcher.last}</div>
+                    <div><strong>Batter:</strong> {data.batter.first} {data.batter.last}</div>
+                  </div>
+                </div>
+                <div className='BSO'>
+                  <div className='BSOContainer'>
+                    <div className='bsoName'>B: </div>
+                    {balls}
+                  </div>
+                  <div className='BSOContainer'>
+                    <div className='bsoName'>S: </div>
+                    {strikes}
+                  </div>
+                  <div className='BSOContainer'>
+                    <div className='bsoName'>O: </div>
+                    {outs}
+                  </div>
+                </div>
+              </div>);
+            } else if(data.status.status === 'Final') {
+              activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
+                <div className='bases'>
+                  <div className='winnerLoser'>
+                    <div><strong>WP:</strong> {data.winning_pitcher.first} {data.winning_pitcher.last} ({data.winning_pitcher.wins}-{data.winning_pitcher.losses})</div>
+                    <div><strong>LP:</strong> {data.losing_pitcher.first} {data.losing_pitcher.last} ({data.losing_pitcher.wins}-{data.losing_pitcher.losses})</div>
+                  {data.save_pitcher.first !== '' ? (<div><strong>SV:</strong> {data.save_pitcher.first} {data.save_pitcher.last} ({data.save_pitcher.saves})</div>) : ('')}
+                  </div>
+                </div>
+              </div>);
+            }
 
             //Combine all content
             gameContentBody.push(<div key={Math.random()}>

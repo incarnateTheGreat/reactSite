@@ -292,6 +292,9 @@ h3 {
   overflow: auto;
   color: #000;
 }
+.boxScore.totals .inningContainer:first-child div {
+  border-left: 1px solid rgba(189, 30, 19, 0.5);
+}
 .activePlayerDataContainer {
   /*float: left;*/
   /*width: 45%;*/
@@ -312,7 +315,7 @@ h3 {
   margin: 0 0 0 6px;
 }
 .activePlayerData .bases .base {
-  border: 1px solid red;
+  border: 1px solid rgba(189, 30, 19, 1);
   width: 15px;
   height: 15px;
   float: left;
@@ -328,8 +331,11 @@ h3 {
   float: left;
   padding: 0 0 0 15px;
 }
+.activePlayerData .bases .winnerLoser {
+  float: left;
+}
 .activePlayerData .bases .base.onBase {
-  background: red;
+  background: rgba(189, 30, 19, 1);
 }
 .activePlayerData .BSO {
   overflow: auto;
@@ -350,7 +356,7 @@ h3 {
   float: left;
   margin: 4px 3px;
   border-radius: 35px;
-  border: 1px solid red;
+  border: 1px solid rgba(189, 30, 19, 1);
   width: 13px;
   height: 13px;
 }
@@ -359,7 +365,7 @@ h3 {
   margin: 0;
 }
 .activePlayerData .BSO div div.countIt {
-  background: red;
+  background: rgba(189, 30, 19, 1);
 }
 
 /*Loading Spinner*/
