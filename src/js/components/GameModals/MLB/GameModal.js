@@ -84,14 +84,26 @@ export default class GameModalMLB extends React.Component {
     }
     getBoxscoreData(game_data_directory) {
         let self = this,
-            url = 'http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json',
+            // url = 'http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json',
+            urls = [],
             data = null;
 
-        // urls[0] = 'http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json'
-        //     urls[1] = 'http://www.mlb.com/gdcross' + game_data_directory + '/rawboxscore.json';
+        urls[0] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json');
+        urls[1] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/rawboxscore.xml');
 
         //Test call JSON Linescore from match when clicking on specific Game
-        let p = axios.get(url).then((gameData) => {
+        axios.all(urls).then((gameData) => {
+
+            console.log(gameData);
+
+            var parseString = require('xml2js').parseString;
+
+            var xml = gameData[1].data;
+            parseString(xml, function (err, result) {
+                console.log(result);
+            });
+
+
             data = gameData.data.data.game;
 
             let gameContentBody = [],
