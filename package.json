@@ -27,7 +27,8 @@
     "axios": "^0.15.3",
     "cors": "^2.8.1",
     "lodash": "^4.17.4",
-    "moment": "^2.17.1"
+    "moment": "^2.17.1",
+    "react-bootstrap": "^0.30.8"
   },
   "scripts": {
     "dev": "webpack-dev-server --content-base src --inline --hot",

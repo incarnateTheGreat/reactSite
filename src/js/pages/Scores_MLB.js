@@ -52,7 +52,6 @@ export default class Scores_MLB extends React.Component {
       //Use Axios to get Score Data.
       _.forEach(dateObj, function(date) {
         url = 'http://mlb.mlb.com/gdcross/components/game/mlb/year_'+ year +'/month_'+ month +'/day_'+ date.day +'/master_scoreboard.json';
-        console.log(url);
         p.push(axios.get(url));
       });
 

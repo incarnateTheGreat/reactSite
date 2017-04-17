@@ -75,7 +75,6 @@ h3 {
   float: right;
 }
 .scoreTable .gameStatusContainer .timeRemaining {
-  float: right;
   text-align: right;
 }
 .scoreTable .scores .team {
@@ -240,12 +239,14 @@ h3 {
 .boxScoreContainer {
   /*float: left;*/
   /*width: 55%;*/
-  padding: 0 0 0 20px;
 }
 .teamNames {
   font-size: 24px;
   font-weight: bold;
-  margin: 9px 0 10px 28px;
+}
+.startTime {
+  font-size: 16px;
+  font-weight: bold;
 }
 .boxScore {
   font-size: 18px;
@@ -259,7 +260,7 @@ h3 {
   font-weight: bold;
   background-color: #FBFBFB;
   font-family: "BentonSans", "Helvetica Neue", sans-serif;
-  color: #999;
+  color: #333;
   border-top: 1px solid #f2f2f2;
   border-left: 1px solid #f2f2f2;
 }
@@ -300,14 +301,17 @@ h3 {
 .boxScore.totals .inningContainer:first-child div {
   border-left: 1px solid rgba(189, 30, 19, 0.5);
 }
+.boxScore.totals .scoreBox {
+  background: rgba(153, 136, 136, 0.15);
+  font-weight: bold;
+}
 .activePlayerDataContainer {
   /*float: left;*/
   /*width: 45%;*/
-  margin: 0 0 10px 24px;
 }
 .activePlayerData .bases {
   margin: 11px 0 0;
-  padding: 0px 10px 8px 4px;
+  padding: 0 10px 8px 0;
   overflow: auto;
 }
 .activePlayerData .bases .baseRow {
@@ -338,6 +342,9 @@ h3 {
 }
 .activePlayerData .bases .winnerLoser {
   float: left;
+}
+.activePlayerData .bases .winnerLoser table tr.pitcherData td:last-child {
+  padding: 0 0 0 15px;
 }
 .activePlayerData .bases .base.onBase {
   background: rgba(189, 30, 19, 1);
