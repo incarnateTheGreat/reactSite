@@ -73,19 +73,53 @@ export default class GameModalMLB extends React.Component {
         let gameContentBody = [],
             boxScore = [],
             activePlayerData = [],
+            awayTeamName = data.away_team_name,
+            homeTeamName = data.home_team_name,
             awayTeam = data.away_name_abbrev,
             homeTeam = data.home_name_abbrev,
-            awayRuns = data.linescore.r.away,
-            homeRuns = data.linescore.r.home,
-            awayHits = data.linescore.h.away,
-            homeHits = data.linescore.h.home,
-            awayErrors = data.linescore.e.away,
-            homeErrors = data.linescore.e.home,
-            runnersOnBase = data.runners_on_base;
+            awayRuns = _.isUndefined(data.linescore) ? 0 : data.linescore.r.away,
+            homeRuns = _.isUndefined(data.linescore) ? 0 : data.linescore.r.home,
+            awayHits = _.isUndefined(data.linescore) ? 0 : data.linescore.h.away,
+            homeHits = _.isUndefined(data.linescore) ? 0 : data.linescore.h.home,
+            awayErrors = _.isUndefined(data.linescore) ? 0 : data.linescore.e.away,
+            homeErrors = _.isUndefined(data.linescore) ? 0 : data.linescore.e.home,
+            runnersOnBase = _.isUndefined(data.linescore) ? 0 : data.runners_on_base;
 
-        writeToScreen();
+        if(data.status.ind === 'Y' || data.status.ind === 'F') {
+          dispayGameData();
+        } else {
+          //no game data yet. display pre-game content, if any.
+          displayPregameData();
+        }
 
-        function writeToScreen() {
+        function displayPregameData() {
+          //Apply Team Names.
+          boxScore.push(<div className='boxScore' key={Math.random()}>
+            <div>
+              <div className='teamNames'>{awayTeamName} vs. {homeTeamName}</div>
+            </div>
+          </div>);
+
+          activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
+            <div className='bases'>
+              <div className='winnerLoser'>
+                <div>Probables:</div>
+                  <div><strong>{awayTeam}:</strong> {data.away_probable_pitcher.first} {data.away_probable_pitcher.last} ({data.away_probable_pitcher.wins}-{data.away_probable_pitcher.losses}) ERA: {data.away_probable_pitcher.era}</div>
+                  <div><strong>{homeTeam}:</strong> {data.home_probable_pitcher.first} {data.home_probable_pitcher.last} ({data.home_probable_pitcher.wins}-{data.home_probable_pitcher.losses}) ERA: {data.home_probable_pitcher.era}</div>
+              </div>
+            </div>
+          </div>);
+
+          //Combine all content
+          gameContentBody.push(<div key={Math.random()}>
+            <div>{boxScore}</div>
+            <div className='activePlayerDataContainer'>{activePlayerData}</div>
+          </div>)
+
+          self.setState({gameContentBody});
+        }
+
+        function dispayGameData() {
             // const away = { backgroundImage: 'url("/images/logos/' + lineScore.teams.away.team.abbreviation +'.png")' },
             //       home = { backgroundImage: 'url("/images/logos/' + lineScore.teams.home.team.abbreviation +'.png")' };
 
