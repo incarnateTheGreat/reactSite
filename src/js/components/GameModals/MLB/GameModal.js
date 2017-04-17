@@ -103,9 +103,9 @@ export default class GameModalMLB extends React.Component {
           activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
             <div className='bases'>
               <div className='winnerLoser'>
-                <div>Probables:</div>
-                  <div><strong>{awayTeam}:</strong> {data.away_probable_pitcher.first} {data.away_probable_pitcher.last} ({data.away_probable_pitcher.wins}-{data.away_probable_pitcher.losses}) ERA: {data.away_probable_pitcher.era}</div>
-                  <div><strong>{homeTeam}:</strong> {data.home_probable_pitcher.first} {data.home_probable_pitcher.last} ({data.home_probable_pitcher.wins}-{data.home_probable_pitcher.losses}) ERA: {data.home_probable_pitcher.era}</div>
+                <div><strong>Probables:</strong></div>
+              <div><strong>{awayTeam}:</strong> {data.away_probable_pitcher.first} {data.away_probable_pitcher.last} ({data.away_probable_pitcher.wins}-{data.away_probable_pitcher.losses})  <strong>ERA:</strong> {data.away_probable_pitcher.era}</div>
+            <div><strong>{homeTeam}:</strong> {data.home_probable_pitcher.first} {data.home_probable_pitcher.last} ({data.home_probable_pitcher.wins}-{data.home_probable_pitcher.losses})  <strong>ERA:</strong> {data.home_probable_pitcher.era}</div>
               </div>
             </div>
           </div>);
