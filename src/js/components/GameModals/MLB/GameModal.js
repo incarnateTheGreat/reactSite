@@ -42,7 +42,7 @@ const BaseRunnerTooltip = React.createClass({
             <OverlayTrigger
                 overlay={tooltip} placement={this.props.placement}
                 delayShow={300} delayHide={150}>
-                <span>{this.props.children}</span>
+                <div className={this.props.className}>{this.props.children}</div>
             </OverlayTrigger>
         );
     }
@@ -86,25 +86,32 @@ export default class GameModalMLB extends React.Component {
         let self = this,
             // url = 'http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json',
             urls = [],
-            data = null;
+            data = null,
+            rawBoxScore = null,
+            players = [];
 
-        urls[0] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json');
-        urls[1] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/rawboxscore.xml');
+        urls[0] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json'),
+        urls[1] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/rawboxscore.xml'),
+        urls[2] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/players.xml');
 
         //Test call JSON Linescore from match when clicking on specific Game
         axios.all(urls).then((gameData) => {
+            //Linescore
+            data = gameData[0].data.data.game;
 
-            console.log(gameData);
-
-            var parseString = require('xml2js').parseString;
-
-            var xml = gameData[1].data;
-            parseString(xml, function (err, result) {
-                console.log(result);
+            //Box Score
+            let parseString = require('xml2js').parseString,
+                boxScore_XML = gameData[1].data;
+            parseString(boxScore_XML, function (err, result) {
+                rawBoxScore = result.boxscore;
             });
 
-
-            data = gameData.data.data.game;
+            //Players
+            parseString = require('xml2js').parseString;
+            let players_XML = gameData[2].data;
+            parseString(players_XML, function (err, result) {
+                players = [result.game.team[0].player, result.game.team[1].player];
+            });
 
             let gameContentBody = [],
                 boxScore = [],
@@ -304,19 +311,19 @@ export default class GameModalMLB extends React.Component {
                     totalStrikes = 0,
                     totalOuts = 0;
 
-                // Find Runner Data home
-                _.forEach(runnersOnBase, (o, id) => {
-                    if (id !== 'status') currentRunnersOnBase.push(id.substr(id.length - 2).trim());
-                });
+                // Find Runner Data.
+                if(!_.isUndefined(data.runner_on_1b)) currentRunnersOnBase.push('1b');
+                if(!_.isUndefined(data.runner_on_2b)) currentRunnersOnBase.push('2b');
+                if(!_.isUndefined(data.runner_on_3b)) currentRunnersOnBase.push('3b');
 
                 // BSO: Calculate the tabulated Balls, Strikes, and Outs, then push the active elements.
                 console.log(data.balls, data.strikes, data.outs);
 
-                for (var i = 0; i < parseInt(data.status.balls); i++) balls.push(<div key={Math.random()}
+                for (var i = 0; i < parseInt(data.balls); i++) balls.push(<div key={Math.random()}
                                                                                   className='countIt'>&nbsp;</div>);
-                for (var i = 0; i < parseInt(data.status.strikes); i++) strikes.push(<div key={Math.random()}
+                for (var i = 0; i < parseInt(data.strikes); i++) strikes.push(<div key={Math.random()}
                                                                                     className='countIt'>&nbsp;</div>);
-                for (var i = 0; i < parseInt(data.status.outs); i++) outs.push(<div key={Math.random()}
+                for (var i = 0; i < parseInt(data.outs); i++) outs.push(<div key={Math.random()}
                                                                                  className='countIt'>&nbsp;</div>);
 
                 //Append the non-active elements to complete the BSO layout.
@@ -328,25 +335,46 @@ export default class GameModalMLB extends React.Component {
                 for (var i = 0; i < totalStrikes; i++) strikes.push(<div key={Math.random()} className=''>&nbsp;</div>);
                 for (var i = 0; i < totalOuts; i++) outs.push(<div key={Math.random()} className=''>&nbsp;</div>);
 
+                //TODO: Test Runners on Base with their Player Numbers.
+                function getPlayerInfo(playerNumber) {
+
+                  //444482
+
+                  _.forEach(playersArr, function(players) {
+                    console.log(_.find(players, function(player) {
+                      return player.$.id == playerNumber;
+                    }));
+                  });
+                }
+
                 if (data.status !== 'Final') {
+                  console.log(currentRunnersOnBase);
+
                     //Show Runner/Batter/Pitcher Data
                     activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
                         <div className='bases'>
                             <div className='baseContainer'>
                                 <div className='secondBase baseRow'>
-                                    <div data-toggle="tooltip" title="Hooray!"
-                                         className={'base ' + (_.includes(currentRunnersOnBase, '2b') ? 'onBase' : '')}>&nbsp;</div>
+                                  <BaseRunnerTooltip className={'base ' + (_.includes(currentRunnersOnBase, '2b') ? 'onBase' : '')}
+                                                     placement='top'
+                                                     tooltip={(_.includes(currentRunnersOnBase, '2b') ? getPlayerInfo(444482) : '')}
+                                                     id='tooltip-1'>&nbsp;</BaseRunnerTooltip>
                                 </div>
                                 <div className='thirdFirstBase baseRow'>
-                                    <div
-                                        className={'base ' + (_.includes(currentRunnersOnBase, '3b') ? 'onBase' : '')}>&nbsp;</div>
-                                    <div
-                                        className={'base ' + (_.includes(currentRunnersOnBase, '1b') ? 'onBase' : '')}>&nbsp;</div>
+                                  <BaseRunnerTooltip className={'base ' + (_.includes(currentRunnersOnBase, '3b') ? 'onBase' : '')}
+                                                     placement='top'
+                                                     tooltip={(_.includes(currentRunnersOnBase, '3b') ? getPlayerInfo(data.runner_on_3b) : '')}
+                                                     id='tooltip-2'>&nbsp;</BaseRunnerTooltip>
+
+                                  <BaseRunnerTooltip className={'base ' + (_.includes(currentRunnersOnBase, '1b') ? 'onBase' : '')}
+                                                     placement='right'
+                                                     tooltip={(_.includes(currentRunnersOnBase, '1b') ? getPlayerInfo(data.runner_on_1b) : '')}
+                                                     id='tooltip-3'>&nbsp;</BaseRunnerTooltip>
                                 </div>
                             </div>
                             <div className='currentPitcherBatter'>
-                                <div><strong>Pitcher:</strong> {data.pitcher.first} {data.pitcher.last}</div>
-                                <div><strong>Batter:</strong> {data.batter.first} {data.batter.last}</div>
+                                <div><strong>Pitcher:</strong> {data.current_pitcher.first} {data.current_pitcher.last}</div>
+                                <div><strong>Batter:</strong> {data.current_batter.first_name} {data.current_batter.last_name}</div>
                             </div>
                         </div>
                         <div className='BSO'>
@@ -367,16 +395,14 @@ export default class GameModalMLB extends React.Component {
                 } else if (data.status === 'Final') {
                     activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
                         <div className='bases'>
-                            <p>There's a bunch of <BaseRunnerTooltip tooltip='This here' placement='top' id='tooltip-1'> text</BaseRunnerTooltip>.</p>
-
                             <div className='winnerLoser'>
                                 <div><strong>WP:</strong> {data.winning_pitcher.first} {data.winning_pitcher.last} ({data.winning_pitcher.wins}-{data.winning_pitcher.losses})</div>
                                 <div><strong>LP:</strong> {data.losing_pitcher.first} {data.losing_pitcher.last} ({data.losing_pitcher.wins}-{data.losing_pitcher.losses})</div>
                                 {data.save_pitcher.first !== '' ? (<div><strong>SV:</strong> {data.save_pitcher.first} {data.save_pitcher.last} ({data.save_pitcher.saves})</div>) : ('')}
                             </div>
-                            <div className='winnerLoser'>
-
-                            </div>
+                        </div>
+                        <div>
+                          Attendance: {rawBoxScore.$.attendance}
                         </div>
                     </div>);
                 }
