@@ -36,15 +36,27 @@ let tweenStyle = {
 
 const BaseRunnerTooltip = React.createClass({
     render() {
-        let tooltip = <Tooltip id={this.props.id}>{this.props.tooltip}</Tooltip>;
+        // console.log(this.props);
+        if(this.props.tooltip) {
+            let tooltip = <Tooltip id={this.props.id}>{this.props.tooltip}</Tooltip>;
 
-        return (
-            <OverlayTrigger
-                overlay={tooltip} placement={this.props.placement}
-                delayShow={300} delayHide={150}>
-                <div className={this.props.className}>{this.props.children}</div>
-            </OverlayTrigger>
-        );
+            return (
+                <OverlayTrigger
+                    overlay={tooltip} placement={this.props.placement}
+                    delayShow={300} delayHide={150}>
+                    <div className={this.props.className}>{this.props.children}</div>
+                </OverlayTrigger>
+            );
+        } else {
+            let tooltip = <Tooltip id={this.props.id}>{this.props.tooltip}</Tooltip>;
+            return (
+                <OverlayTrigger
+                    overlay={tooltip} placement={this.props.placement}
+                    delayShow={300} delayHide={150}>
+                    <div className={this.props.className}>{this.props.children}</div>
+                </OverlayTrigger>
+            );
+        }
     }
 });
 
@@ -80,7 +92,6 @@ export default class GameModalMLB extends React.Component {
         setTimeout(() => {
             this.setState({modalIsOpen: false});
         }, 350);
-
     }
     getBoxscoreData(game_data_directory) {
         let self = this,
@@ -222,9 +233,9 @@ export default class GameModalMLB extends React.Component {
                     inningData = [];
 
                 //Check what inning the game is in, and if it is live or not.
-                function getInningScore(dataStatus, inning) {
-                    if (currentInning === parseInt(dataStatus.inning) && (dataStatus.ind === 'I')) {
-                        if (dataStatus.top_inning === 'Y') {
+                function getInningScore(dataObj, inning) {
+                    if (currentInning === parseInt(dataObj.inning) && (dataObj.ind === 'I')) {
+                        if (dataObj.top_inning === 'Y') {
                             topInning = ' currentInning';
                         } else {
                             bottomInning = ' currentInning';
@@ -235,14 +246,19 @@ export default class GameModalMLB extends React.Component {
                         if (!inning.home_inning_runs && data.status === 'Final') {
                             return 'X';
                         } else if (inning.home_inning_runs == '') {
-                            return '0';
+                            return '';
                         } else {
                             return inning.home_inning_runs;
                         }
                     }
 
-                    awayInningScore = (inning.away_inning_runs == '' ? '0' : inning.away_inning_runs);
-                    homeInningScore = getHomeInningScore();
+                    if(_.isArray(data.linescore)) {
+                        awayInningScore = (inning.away_inning_runs == '' ? '0' : inning.away_inning_runs);
+                        homeInningScore = getHomeInningScore();
+                    } else {
+                        awayInningScore = (inning.away_inning_runs == '' ? '0' : inning.away_inning_runs);
+                        homeInningScore = getHomeInningScore();
+                    }
 
                     inningData.push(<div key={Math.random()}>
                         <div className={'scoreBox' + topInning}>{awayInningScore}</div>
@@ -269,9 +285,10 @@ export default class GameModalMLB extends React.Component {
                     //   console.log("Nermal.");
                     // }
 
+                if(_.isArray(data.linescore)) {
                     _.forEach(data.linescore, function (inning, id) {
                         currentInning = id + 1;
-                        getInningScore(data.status, inning);
+                        getInningScore(data, inning);
 
                         boxScore.push(<div className='boxScore' key={Math.random()}>
                             <div className='inningContainer'>
@@ -282,6 +299,21 @@ export default class GameModalMLB extends React.Component {
 
                         inningData = [];
                     });
+                } else {
+                    currentInning = 1;
+                    getInningScore(data.status, 1);
+
+                    boxScore.push(<div className='boxScore' key={Math.random()}>
+                        <div className='inningContainer'>
+                            <div className='inning'>{currentInning}</div>
+                            {inningData}
+                        </div>
+                    </div>);
+
+                    inningData = [];
+                }
+
+
                 // }
 
                 //Apply Totals.
@@ -335,21 +367,26 @@ export default class GameModalMLB extends React.Component {
                 for (var i = 0; i < totalStrikes; i++) strikes.push(<div key={Math.random()} className=''>&nbsp;</div>);
                 for (var i = 0; i < totalOuts; i++) outs.push(<div key={Math.random()} className=''>&nbsp;</div>);
 
-                //TODO: Test Runners on Base with their Player Numbers.
+                //Find Runners on Base with their Player Numbers. Return their name for Tooltip.
                 function getPlayerInfo(playerNumber) {
+                    let playerOnBase = [];
 
-                  //444482
+                    //Loop through all Player IDs with passed in Player ID. Break the loop when it's found.
+                    _.forEach(players, function(playerObj) {
+                        playerOnBase = _.filter(playerObj, function(player) {
+                            return player.$.id == playerNumber;
+                        });
+                        if(playerOnBase.length > 0) return false;
+                    });
 
-                  _.forEach(playersArr, function(players) {
-                    console.log(_.find(players, function(player) {
-                      return player.$.id == playerNumber;
-                    }));
-                  });
+                    if(playerOnBase.length > 0) {
+                        return playerOnBase[0].$.first + ' ' + playerOnBase[0].$.last;
+                    } else {
+                        return '';
+                    }
                 }
 
                 if (data.status !== 'Final') {
-                  console.log(currentRunnersOnBase);
-
                     //Show Runner/Batter/Pitcher Data
                     activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
                         <div className='bases'>
@@ -357,18 +394,18 @@ export default class GameModalMLB extends React.Component {
                                 <div className='secondBase baseRow'>
                                   <BaseRunnerTooltip className={'base ' + (_.includes(currentRunnersOnBase, '2b') ? 'onBase' : '')}
                                                      placement='top'
-                                                     tooltip={(_.includes(currentRunnersOnBase, '2b') ? getPlayerInfo(444482) : '')}
+                                                     tooltip={(_.includes(currentRunnersOnBase, '2b') ? getPlayerInfo(data.runner_on_2b) : null)}
                                                      id='tooltip-1'>&nbsp;</BaseRunnerTooltip>
                                 </div>
                                 <div className='thirdFirstBase baseRow'>
                                   <BaseRunnerTooltip className={'base ' + (_.includes(currentRunnersOnBase, '3b') ? 'onBase' : '')}
                                                      placement='top'
-                                                     tooltip={(_.includes(currentRunnersOnBase, '3b') ? getPlayerInfo(data.runner_on_3b) : '')}
+                                                     tooltip={(_.includes(currentRunnersOnBase, '3b') ? getPlayerInfo(data.runner_on_3b) : null)}
                                                      id='tooltip-2'>&nbsp;</BaseRunnerTooltip>
 
                                   <BaseRunnerTooltip className={'base ' + (_.includes(currentRunnersOnBase, '1b') ? 'onBase' : '')}
                                                      placement='right'
-                                                     tooltip={(_.includes(currentRunnersOnBase, '1b') ? getPlayerInfo(data.runner_on_1b) : '')}
+                                                     tooltip={(_.includes(currentRunnersOnBase, '1b') ? getPlayerInfo(data.runner_on_1b) : null)}
                                                      id='tooltip-3'>&nbsp;</BaseRunnerTooltip>
                                 </div>
                             </div>
