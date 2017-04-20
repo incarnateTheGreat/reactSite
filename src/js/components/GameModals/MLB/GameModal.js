@@ -152,7 +152,7 @@ export default class GameModalMLB extends React.Component {
                 boxScore.push(<div className='boxScore' key={Math.random()}>
                     <div>
                         <div className='teamNames' data-tooltop="">{awayTeamName} vs. {homeTeamName}</div>
-                        <div>{data.venue}</div>
+                      <div>{data.venue}, {data.location}</div>
                     </div>
                 </div>);
 
@@ -196,7 +196,7 @@ export default class GameModalMLB extends React.Component {
                                     <td><strong>ERA:</strong> {data.home_probable_pitcher.era}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Venue:</strong> {data.venue}</td>
+                                    <td><strong>Venue:</strong> {data.venue}, {data.location}</td>
                                 </tr>
                             </table>
                         </div>
@@ -213,9 +213,6 @@ export default class GameModalMLB extends React.Component {
             }
 
             function dispayGameData() {
-                // const away = { backgroundImage: 'url("/images/logos/' + lineScore.teams.away.team.abbreviation +'.png")' },
-                //       home = { backgroundImage: 'url("/images/logos/' + lineScore.teams.home.team.abbreviation +'.png")' };
-
                 //Apply Team Names.
                 boxScore.push(<div className='boxScore' key={Math.random()}>
                     <div className='inningContainer'>
@@ -349,8 +346,6 @@ export default class GameModalMLB extends React.Component {
                 if(!_.isUndefined(data.runner_on_3b)) currentRunnersOnBase.push('3b');
 
                 // BSO: Calculate the tabulated Balls, Strikes, and Outs, then push the active elements.
-                console.log(data.balls, data.strikes, data.outs);
-
                 for (var i = 0; i < parseInt(data.balls); i++) balls.push(<div key={Math.random()}
                                                                                   className='countIt'>&nbsp;</div>);
                 for (var i = 0; i < parseInt(data.strikes); i++) strikes.push(<div key={Math.random()}
@@ -387,6 +382,7 @@ export default class GameModalMLB extends React.Component {
                 }
 
                 if (data.status !== 'Final') {
+                  console.log(data);
                     //Show Runner/Batter/Pitcher Data
                     activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
                         <div className='bases'>
@@ -428,6 +424,9 @@ export default class GameModalMLB extends React.Component {
                                 {outs}
                             </div>
                         </div>
+                        <div><strong>Last Play:</strong> {data.pbp_last}</div>
+                        <hr />
+                        <div><strong>Venue:</strong> {data.venue}, {data.location}</div>
                     </div>);
                 } else if (data.status === 'Final') {
                     activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
