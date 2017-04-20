@@ -98,14 +98,15 @@ export default class GameModalMLB extends React.Component {
             urls = [],
             data = null,
             rawBoxScore = null,
-            players = [];
+            players = [],
+            gameContentBody = [],
+            boxScore = [],
+            activePlayerData = [];
+
+            console.log('getBoxscoreData:', selectedGameData);
 
             //Display Postponed game.
             function displayPPDGameData() {
-              let gameContentBody = [],
-                  boxScore = [],
-                  activePlayerData = [];
-
                 //Apply Team Names.
                 boxScore.push(<div className='boxScore' key={Math.random()}>
                     <div>
@@ -131,8 +132,63 @@ export default class GameModalMLB extends React.Component {
                 self.setState({gameContentBody});
             }
 
+            // Display Pregame data
+            function displayPregameData() {
+              // Get Preview data.
+              urls[0] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json');
+
+              axios.all(urls).then((gameData) => {
+                //Linescore
+                data = gameData[0].data.data.game;
+
+                let awayTeamName = data.away_team_name,
+                    homeTeamName = data.home_team_name,
+                    awayTeam = data.away_name_abbrev,
+                    homeTeam = data.home_name_abbrev;
+
+                //Apply Team Names.
+                boxScore.push(<div className='boxScore' key={Math.random()}>
+                    <div>
+                        <div className='teamNames' data-tooltop="">{awayTeamName} vs. {homeTeamName}</div>
+                        <div className='startTime'><strong>{data.time_hm_lg}{data.ampm}</strong></div>
+                    </div>
+                </div>);
+
+                activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
+                    <div className='bases'>
+                        <div className='winnerLoser'>
+                            <div><strong>Probables:</strong></div>
+                            <table>
+                                <tr className='pitcherData'>
+                                    <td><strong>{awayTeam}:</strong> {data.away_probable_pitcher.first} {data.away_probable_pitcher.last} ({data.away_probable_pitcher.wins}-{data.away_probable_pitcher.losses})</td>
+                                    <td><strong>ERA:</strong> {data.away_probable_pitcher.era}</td>
+                                </tr>
+                                <tr className='pitcherData'>
+                                    <td><strong>{homeTeam}:</strong> {data.home_probable_pitcher.first} {data.home_probable_pitcher.last} ({data.home_probable_pitcher.wins}-{data.home_probable_pitcher.losses})</td>
+                                    <td><strong>ERA:</strong> {data.home_probable_pitcher.era}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Venue:</strong> {data.venue}, {data.location}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>);
+
+                //Combine all content
+                gameContentBody.push(<div key={Math.random()}>
+                    <div>{boxScore}</div>
+                    <div className='activePlayerDataContainer'>{activePlayerData}</div>
+                </div>)
+
+                self.setState({gameContentBody});
+              });
+            }
+
             if(selectedGameData.status.ind == 'DR' || selectedGameData.status.ind == 'DI') {
               displayPPDGameData();
+            } else if(selectedGameData.status.ind == 'S') {
+              displayPregameData();
             } else {
               urls[0] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json'),
               urls[1] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/rawboxscore.xml'),
@@ -158,10 +214,7 @@ export default class GameModalMLB extends React.Component {
                       players = [result.game.team[0].player, result.game.team[1].player];
                   });
 
-                  let gameContentBody = [],
-                      boxScore = [],
-                      activePlayerData = [],
-                      awayTeamName = data.away_team_name,
+                  let awayTeamName = data.away_team_name,
                       homeTeamName = data.home_team_name,
                       awayTeam = data.away_name_abbrev,
                       homeTeam = data.home_name_abbrev,
@@ -173,50 +226,7 @@ export default class GameModalMLB extends React.Component {
                       homeErrors = data.home_team_errors,
                       runnersOnBase = data.runners_on_base;
 
-                  if(data.ind === 'I' || data.ind === 'F') {
-                      dispayGameData();
-                  } else {
-                      displayPregameData();
-                  }
-
-                  function displayPregameData() {
-                      //Apply Team Names.
-                      boxScore.push(<div className='boxScore' key={Math.random()}>
-                          <div>
-                              <div className='teamNames' data-tooltop="">{awayTeamName} vs. {homeTeamName}</div>
-                              <div className='startTime'><strong>{data.time_hm_lg}{data.ampm}</strong></div>
-                          </div>
-                      </div>);
-
-                      activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
-                          <div className='bases'>
-                              <div className='winnerLoser'>
-                                  <div><strong>Probables:</strong></div>
-                                  <table>
-                                      <tr className='pitcherData'>
-                                          <td><strong>{awayTeam}:</strong> {data.away_probable_pitcher.first} {data.away_probable_pitcher.last} ({data.away_probable_pitcher.wins}-{data.away_probable_pitcher.losses})</td>
-                                          <td><strong>ERA:</strong> {data.away_probable_pitcher.era}</td>
-                                      </tr>
-                                      <tr className='pitcherData'>
-                                          <td><strong>{homeTeam}:</strong> {data.home_probable_pitcher.first} {data.home_probable_pitcher.last} ({data.home_probable_pitcher.wins}-{data.home_probable_pitcher.losses})</td>
-                                          <td><strong>ERA:</strong> {data.home_probable_pitcher.era}</td>
-                                      </tr>
-                                      <tr>
-                                          <td><strong>Venue:</strong> {data.venue}, {data.location}</td>
-                                      </tr>
-                                  </table>
-                              </div>
-                          </div>
-                      </div>);
-
-                      //Combine all content
-                      gameContentBody.push(<div key={Math.random()}>
-                          <div>{boxScore}</div>
-                          <div className='activePlayerDataContainer'>{activePlayerData}</div>
-                      </div>)
-
-                      self.setState({gameContentBody});
-                  }
+                  dispayGameData();
 
                   function dispayGameData() {
                     console.log(data);
