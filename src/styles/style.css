@@ -2,6 +2,9 @@ html, body {
   height: 100%;
   margin: 0;
 }
+hr {
+  margin: 10px 0;
+}
 h1 {
   text-decoration: none;
 }
@@ -240,6 +243,10 @@ h3 {
   /*float: left;*/
   /*width: 55%;*/
 }
+.headline {
+  font-weight: bold;
+  font-size: 18px;
+}
 .teamNames {
   font-size: 24px;
   font-weight: bold;
@@ -314,8 +321,8 @@ h3 {
   padding: 0 0 0 7px;
 }
 .activePlayerData .bases {
-  margin: 11px 0 0;
-  padding: 0 10px 8px 0;
+  margin: 6px 0 0;
+  padding: 0 10px 0px 0;
   overflow: auto;
 }
 .activePlayerData .bases .baseRow {
