@@ -34,6 +34,7 @@ let tweenStyle = {
     }
 };
 
+//Tooltip
 const BaseRunnerTooltip = React.createClass({
     render() {
         // console.log(this.props);
@@ -101,9 +102,8 @@ export default class GameModalMLB extends React.Component {
             players = [],
             gameContentBody = [],
             boxScore = [],
-            activePlayerData = [];
-
-            console.log('getBoxscoreData:', selectedGameData);
+            activePlayerData = [],
+            batterData = [];
 
             //Display Postponed game.
             function displayPPDGameData() {
@@ -126,7 +126,7 @@ export default class GameModalMLB extends React.Component {
                 //Combine all content
                 gameContentBody.push(<div key={Math.random()}>
                     <div className='boxScoreContainer'>{boxScore}</div>
-                    <div className='activePlayerDataContainer'>{activePlayerData}</div>
+                    <div className='activePlayerDataContainer shortHeight'>{activePlayerData}</div>
                 </div>);
 
                 self.setState({gameContentBody});
@@ -178,7 +178,7 @@ export default class GameModalMLB extends React.Component {
                 //Combine all content
                 gameContentBody.push(<div key={Math.random()}>
                     <div>{boxScore}</div>
-                    <div className='activePlayerDataContainer'>{activePlayerData}</div>
+                    <div className='activePlayerDataContainer shortHeight'>{activePlayerData}</div>
                 </div>)
 
                 self.setState({gameContentBody});
@@ -204,7 +204,6 @@ export default class GameModalMLB extends React.Component {
                       boxScore_XML = gameData[1].data;
                   parseString(boxScore_XML, function (err, result) {
                       rawBoxScore = result.boxscore;
-                      console.log(rawBoxScore);
                   });
 
                   //Players
@@ -214,22 +213,18 @@ export default class GameModalMLB extends React.Component {
                       players = [result.game.team[0].player, result.game.team[1].player];
                   });
 
-                  let awayTeamName = data.away_team_name,
-                      homeTeamName = data.home_team_name,
-                      awayTeam = data.away_name_abbrev,
+                  let awayTeam = data.away_name_abbrev,
                       homeTeam = data.home_name_abbrev,
                       awayRuns = data.away_team_runs,
                       homeRuns = data.home_team_runs,
                       awayHits = data.away_team_hits,
                       homeHits = data.home_team_hits,
                       awayErrors = data.away_team_errors,
-                      homeErrors = data.home_team_errors,
-                      runnersOnBase = data.runners_on_base;
+                      homeErrors = data.home_team_errors;
 
                   dispayGameData();
 
                   function dispayGameData() {
-                    console.log(data);
                       //Apply Team Names.
                       boxScore.push(<div className='boxScore' key={Math.random()}>
                           <div className='inningContainer'>
@@ -266,11 +261,12 @@ export default class GameModalMLB extends React.Component {
                               }
                           }
 
+                          //If 'linescore' is not an array, it is only the 1st inning.
                           if(_.isArray(data.linescore)) {
                               awayInningScore = (inning.away_inning_runs == '' ? '0' : inning.away_inning_runs);
                               homeInningScore = getHomeInningScore();
                           } else {
-                              awayInningScore = (inning.away_inning_runs == '' ? '0' : inning.away_inning_runs);
+                              awayInningScore = (dataObj.away_inning_runs == '' ? '0' : dataObj.away_inning_runs);
                               homeInningScore = getHomeInningScore();
                           }
 
@@ -299,6 +295,7 @@ export default class GameModalMLB extends React.Component {
                           //   console.log("Nermal.");
                           // }
 
+                      //If 'linescore' is not an array, it is only the 1st inning.
                       if(_.isArray(data.linescore)) {
                           _.forEach(data.linescore, function (inning, id) {
                               currentInning = id + 1;
@@ -315,7 +312,7 @@ export default class GameModalMLB extends React.Component {
                           });
                       } else {
                           currentInning = 1;
-                          getInningScore(data.status, 1);
+                          getInningScore(data.linescore, 1);
 
                           boxScore.push(<div className='boxScore' key={Math.random()}>
                               <div className='inningContainer'>
@@ -395,11 +392,60 @@ export default class GameModalMLB extends React.Component {
                           }
                       }
 
-                      if (data.status !== 'Final') {
+                      function getBatterBoxScoreData() {
+                          //Print out Box Scores of Batter Data.
+                          let batterDataHeaders = ['name_display_first_last', 'ab', 'r', 'h', 'e', 'rbi', 'bb', 'so', 'bam_avg', 'bam_obp', 'bam_slg'],
+                              teamName = '',
+                              thData = [],
+                              tdData = [];
+
+                          _.forEach(batterDataHeaders, function(header) {
+                              if(header === 'name_display_first_last') {
+                                  thData.push(<th key={Math.random()} className='notNumeric'>Batter</th>);
+                              } else {
+                                  thData.push(<th key={Math.random()}>{_.includes(header, 'bam_') ? header.slice(4) : header}</th>);
+                              }
+                          });
+
+                          //Loop through each Team and draw out Tables.
+                          _.forEach(rawBoxScore.team, function(batterInfo) {
+                              teamName = batterInfo.$.full_name;
+
+                              _.forEach(batterInfo.batting[0].batter, function(batter) {
+                                  _.forEach(batterDataHeaders, function(header) {
+                                      if(batter.$.pos !== 'P') {
+                                          tdData.push(<td key={Math.random()} className={header === 'name_display_first_last' ? 'notNumeric' : ''}>{_.result(_.find(batter, header), header)}</td>);
+                                      }
+                                  });
+
+                                  batterData.push(<tr key={Math.random()}>
+                                      {tdData}
+                                  </tr>);
+
+                                  tdData = [];
+                              });
+
+                              activePlayerData.push(<div className='batterData' key={Math.random()}>
+                                  <table className='batterDataTable'>
+                                      <tr className='teamNameRow'>
+                                          <td colSpan='11'>{teamName}</td>
+                                      </tr>
+                                      <tr>
+                                          {thData}
+                                      </tr>
+                                      {batterData}
+                                  </table>
+                              </div>);
+
+                              batterData = [];
+                          });
+                      }
+
+                      if (data.status !== 'Game Over' && data.status !== 'Final') {
                           //Show Runner/Batter/Pitcher Data
                           activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
                               <div className='bases'>
-                                  <div className='baseContainer'>
+                                  <div className={'baseContainer ' + (data.status === 'Warmup' || data.status === 'Pre-Game' ? 'disable' : '')}>
                                       <div className='secondBase baseRow'>
                                         <BaseRunnerTooltip className={'base ' + (_.includes(currentRunnersOnBase, '2b') ? 'onBase' : '')}
                                                            placement='top'
@@ -418,12 +464,21 @@ export default class GameModalMLB extends React.Component {
                                                            id='tooltip-3'>&nbsp;</BaseRunnerTooltip>
                                       </div>
                                   </div>
-                                  <div className='currentPitcherBatter'>
-                                      <div><strong>Pitcher:</strong> {data.current_pitcher.first} {data.current_pitcher.last}</div>
-                                      <div><strong>Batter:</strong> {data.current_batter.first_name} {data.current_batter.last_name}</div>
-                                  </div>
+
+                                  { (data.status === 'Warmup' || data.status === 'Pre-Game') ? (
+                                      <div className='currentPitcherBatter'>
+                                          <h3>Starting Pitchers</h3>
+                                          <div><strong>{data.away_name_abbrev}:</strong> {data.away_probable_pitcher.first} {data.away_probable_pitcher.last}</div>
+                                          <div><strong>{data.home_name_abbrev}:</strong> {data.home_probable_pitcher.first} {data.home_probable_pitcher.last}</div>
+                                      </div>
+                                  ) : (
+                                      <div className='currentPitcherBatter'>
+                                          <div><strong>Pitcher:</strong> {data.current_pitcher.first} {data.current_pitcher.last}</div>
+                                          <div><strong>Batter:</strong> {data.current_batter.first_name} {data.current_batter.last_name} -- {data.current_batter.avg}</div>
+                                      </div>
+                                  ) }
                               </div>
-                              <div className='BSO'>
+                              <div className={'BSO ' + (data.status === 'Warmup' || data.status === 'Pre-Game' ? 'disable' : '')}>
                                   <div className='BSOContainer'>
                                       <div className='bsoName'>B:</div>
                                       {balls}
@@ -437,13 +492,16 @@ export default class GameModalMLB extends React.Component {
                                       {outs}
                                   </div>
                               </div>
-                              <div><strong>Last Play:</strong> {data.pbp_last}</div>
+                              <div className={(data.status === 'Warmup' || data.status === 'Pre-Game' ? 'disable' : '')}><strong>Last Play:</strong> {data.pbp_last}</div>
                               <hr />
                               <div><strong>Weather:</strong> {rawBoxScore.$.weather}</div>
                               <div><strong>Wind:</strong> {rawBoxScore.$.wind}</div>
                               <div><strong>Venue:</strong> {data.venue}, {data.location}</div>
                           </div>);
-                      } else if (data.status === 'Final') {
+
+                          getBatterBoxScoreData();
+
+                      } else if (data.status === 'Final' || data.status === 'Game Over') {
                           activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
                               <div className='bases'>
                                   <div className='winnerLoser'>
@@ -458,6 +516,8 @@ export default class GameModalMLB extends React.Component {
                               <div><strong>Venue:</strong> {data.venue}, {data.location}</div>
                               <div><strong>Attendance:</strong> {rawBoxScore.$.attendance}</div>
                           </div>);
+
+                          getBatterBoxScoreData();
                       }
 
                       //Combine all content
@@ -504,7 +564,7 @@ export default class GameModalMLB extends React.Component {
         } else if(game.status.ind === 'IR') {
             //Temporary Delay
             gameStatus = game.status.inning_state + ' ' + game.status.inning + ' -- ' + game.status.status + ' (' + game.status.reason +')';
-        } else if(game.status.ind === 'I') {
+        } else if(game.status.ind === 'I' || game.status.ind === 'MC') {
             //In Progress
             gameStatus = game.status.inning_state.substring(0, 3) + ' ' + game.status.inning;
             outs = game.status.o + ' OUT';

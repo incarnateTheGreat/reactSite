@@ -316,14 +316,22 @@ h3 {
   font-weight: bold;
 }
 .activePlayerDataContainer {
-  /*float: left;*/
-  /*width: 45%;*/
-  padding: 0 0 0 7px;
+  float: none;
+  width: 100%;
+  height: 560px;
+  padding: 0 10px 0 7px;
+  overflow-y: scroll;
+}
+.activePlayerDataContainer.shortHeight {
+  height: 100%;
+}
+.activePlayerData {
+  overflow: auto;
 }
 .activePlayerData .bases {
   margin: 6px 0 0;
   padding: 0 10px 0px 0;
-  overflow: auto;
+  overflow: hidden;
 }
 .activePlayerData .bases .baseRow {
   clear: both;
@@ -345,12 +353,14 @@ h3 {
   transform: rotate(45deg);
 }
 .activePlayerData .bases .baseContainer {
-  float: left;
-  padding: 0 0 0 4px;
+   float: left;
+   padding: 0 15px 0 4px;
+ }
+.disable {
+  display: none;
 }
 .activePlayerData .bases .currentPitcherBatter {
   float: left;
-  padding: 0 0 0 15px;
 }
 .activePlayerData .bases .winnerLoser {
   float: left;
@@ -362,7 +372,7 @@ h3 {
   background: rgba(189, 30, 19, 1);
 }
 .activePlayerData .BSO {
-  overflow: auto;
+  overflow: hidden;
   margin: 5px 0 0;
 }
 .activePlayerData .BSO .BSOContainer {
@@ -390,6 +400,38 @@ h3 {
 }
 .activePlayerData .BSO div div.countIt {
   background: rgba(189, 30, 19, 1);
+}
+.batterData {
+  width: 100%;
+}
+.batterData .batterDataTable {
+  margin: 10px 0 0;
+}
+.batterData .batterDataTable tr:nth-child(odd) {
+  background: rgba(218, 218, 218, 0.2);
+  border-top: 1px solid rgba(218, 218, 218, 0.5);
+  border-bottom: 1px solid rgba(218, 218, 218, 0.5);
+}
+.batterData .batterDataTable tr td,
+.batterData .batterDataTable tr th{
+  padding: 2px 0;
+  width: 1%;
+  text-align: right;
+}
+.batterData .batterDataTable tr th {
+  text-transform: uppercase;
+}
+.batterData .batterDataTable tr.teamNameRow {
+  background: none;
+  border-bottom: 1px solid black;
+  font-size: 18px;
+  font-weight: bold;
+}
+.batterData .batterDataTable tr.teamNameRow td {
+  text-align: left;
+}
+.batterData .batterDataTable tr .notNumeric {
+  text-align: left;
 }
 
 /*Loading Spinner*/
