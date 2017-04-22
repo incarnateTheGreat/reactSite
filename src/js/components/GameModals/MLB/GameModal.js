@@ -24,7 +24,7 @@ const customStyles = {
         padding               : '10px 20px 10px',
         borderRadius          : '7px 7px 0px 0px',
         overflow              : 'hidden',
-        width                 : '70%'
+        width                 : '90%'
     }
 };
 
@@ -396,6 +396,7 @@ export default class GameModalMLB extends React.Component {
                           //Print out Box Scores of Batter Data.
                           let batterDataHeaders = ['name_display_first_last', 'ab', 'r', 'h', 'e', 'rbi', 'bb', 'so', 'bam_avg', 'bam_obp', 'bam_slg'],
                               teamName = '',
+                              batterOrderNumber = '',
                               thData = [],
                               tdData = [];
 
@@ -411,10 +412,28 @@ export default class GameModalMLB extends React.Component {
                           _.forEach(rawBoxScore.team, function(batterInfo) {
                               teamName = batterInfo.$.full_name;
 
-                              _.forEach(batterInfo.batting[0].batter, function(batter) {
+                              // Arrange the Batting Order in sequence.
+                              let batterObj = _.sortBy(batterInfo.batting[0].batter, function(el) {
+                                return parseInt(el.$.bat_order);
+                              });
+
+                              _.forEach(batterObj, function(batter) {
+                                if(_.has(batter, 'pinch_hit')) {
+                                  batterOrderNumber = batter.$.note;
+                                } else if(batter.$.bat_order.length == 4) {
+                                  //Remove the '00's from 'bat_order' variable.
+                                  batterOrderNumber = batter.$.bat_order.slice(0, -3) + ' - ';
+                                } else {
+                                  batterOrderNumber = batter.$.bat_order.slice(0, -2) + ' - ';
+                                }
+
                                   _.forEach(batterDataHeaders, function(header) {
                                       if(batter.$.pos !== 'P') {
-                                          tdData.push(<td key={Math.random()} className={header === 'name_display_first_last' ? 'notNumeric' : ''}>{_.result(_.find(batter, header), header)}</td>);
+                                          tdData.push(<td key={Math.random()} className={header === 'name_display_first_last' ? 'notNumeric' : ''}>
+                                            {header === 'name_display_first_last' ? batterOrderNumber : ''}
+                                            {_.result(_.find(batter, header), header)}
+                                            {header === 'name_display_first_last' ? ' - ' + batter.$.pos : ''}
+                                          </td>);
                                       }
                                   });
 
