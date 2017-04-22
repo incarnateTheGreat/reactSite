@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
+import classNames from 'classnames';
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 
 // import BaseRunnerTooltip from '../../../components/Tooltip';
@@ -396,7 +397,6 @@ export default class GameModalMLB extends React.Component {
                           //Print out Box Scores of Batter Data.
                           let batterDataHeaders = ['name_display_first_last', 'ab', 'r', 'h', 'e', 'rbi', 'bb', 'so', 'bam_avg', 'bam_obp', 'bam_slg'],
                               teamName = '',
-                              batterOrderNumber = '',
                               thData = [],
                               tdData = [];
 
@@ -413,27 +413,37 @@ export default class GameModalMLB extends React.Component {
                               teamName = batterInfo.$.full_name;
 
                               // Arrange the Batting Order in sequence.
-                              let batterObj = _.sortBy(batterInfo.batting[0].batter, function(el) {
-                                return parseInt(el.$.bat_order);
-                              });
+                              let batterClasses = '',
+                                  batterDisplayName = '',
+                                  batterPosition = '',
+                                  batterObj = _.sortBy(batterInfo.batting[0].batter, function(o) {
+                                      return parseInt(o.$.bat_order);
+                                  });
 
+                              // Draw Table.
                               _.forEach(batterObj, function(batter) {
-                                if(_.has(batter, 'pinch_hit')) {
-                                  batterOrderNumber = batter.$.note;
-                                } else if(batter.$.bat_order.length == 4) {
-                                  //Remove the '00's from 'bat_order' variable.
-                                  batterOrderNumber = batter.$.bat_order.slice(0, -3) + ' - ';
-                                } else {
-                                  batterOrderNumber = batter.$.bat_order.slice(0, -2) + ' - ';
-                                }
-
                                   _.forEach(batterDataHeaders, function(header) {
                                       if(batter.$.pos !== 'P') {
-                                          tdData.push(<td key={Math.random()} className={header === 'name_display_first_last' ? 'notNumeric' : ''}>
-                                            {header === 'name_display_first_last' ? batterOrderNumber : ''}
-                                            {_.result(_.find(batter, header), header)}
-                                            {header === 'name_display_first_last' ? ' - ' + batter.$.pos : ''}
-                                          </td>);
+                                        console.log(batter.$.name, batter.$.bat_order, _.includes(batter.$.bat_order, '00'));
+                                        //Assign classes based on if Batter is a Pinch Hitter.
+                                        //Also assigns class for Batter column.
+                                        batterClasses = classNames({
+                                          'pinchHitter': _.has(batter, 'pinch_hit') || !_.includes(batter.$.bat_order, '00'),
+                                          'notNumeric': header === 'name_display_first_last'
+                                        });
+
+                                        if(header === 'name_display_first_last') {
+                                          batterDisplayName = batter.$.name,
+                                          batterPosition = batter.$.pos;
+                                        } else {
+                                          batterDisplayName = _.result(_.find(batter, header), header);
+                                          batterPosition = '';
+                                        }
+
+                                        tdData.push(<td key={Math.random()} className={batterClasses}>
+                                          {batterDisplayName}
+                                          <span className='playerPosition'>{batterPosition}</span>
+                                        </td>);
                                       }
                                   });
 

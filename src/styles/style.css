@@ -430,8 +430,17 @@ h3 {
 .batterData .batterDataTable tr.teamNameRow td {
   text-align: left;
 }
-.batterData .batterDataTable tr .notNumeric {
+.batterData .batterDataTable tr th.notNumeric,
+.batterData .batterDataTable tr td.notNumeric {
   text-align: left;
+  width: 2%;
+}
+.batterData .batterDataTable tr .notNumeric .playerPosition {
+  font-weight: bold;
+  padding: 0 0 0 5px;
+}
+.batterData .batterDataTable tr .pinchHitter {
+  padding: 0 0 0 10px;
 }
 
 /*Loading Spinner*/
