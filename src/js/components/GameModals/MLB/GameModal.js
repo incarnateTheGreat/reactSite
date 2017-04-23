@@ -100,6 +100,7 @@ export default class GameModalMLB extends React.Component {
             urls = [],
             data = null,
             rawBoxScore = null,
+            boxscore = null,
             players = [],
             gameContentBody = [],
             boxScore = [],
@@ -193,14 +194,15 @@ export default class GameModalMLB extends React.Component {
             } else {
               urls[0] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json'),
               urls[1] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/rawboxscore.xml'),
-              urls[2] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/players.xml');
+              urls[2] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/players.xml'),
+              urls[3] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/boxscore.json');
 
               //Test call JSON Linescore from match when clicking on specific Game
               axios.all(urls).then((gameData) => {
                   //Linescore
                   data = gameData[0].data.data.game;
 
-                  //Box Score
+                  //Raw Box Score
                   let parseString = require('xml2js').parseString,
                       boxScore_XML = gameData[1].data;
                   parseString(boxScore_XML, function (err, result) {
@@ -213,6 +215,9 @@ export default class GameModalMLB extends React.Component {
                   parseString(players_XML, function (err, result) {
                       players = [result.game.team[0].player, result.game.team[1].player];
                   });
+
+                  //Boxscore
+                  boxscore = gameData[3].data.data;
 
                   let awayTeam = data.away_name_abbrev,
                       homeTeam = data.home_name_abbrev,
@@ -398,7 +403,9 @@ export default class GameModalMLB extends React.Component {
                           let batterDataHeaders = ['name_display_first_last', 'ab', 'r', 'h', 'e', 'rbi', 'bb', 'so', 'bam_avg', 'bam_obp', 'bam_slg'],
                               teamName = '',
                               thData = [],
-                              tdData = [];
+                              tdData = [],
+                              tempArr = [],
+                              notes = [];
 
                           _.forEach(batterDataHeaders, function(header) {
                               if(header === 'name_display_first_last') {
@@ -409,42 +416,51 @@ export default class GameModalMLB extends React.Component {
                           });
 
                           //Loop through each Team and draw out Tables.
-                          _.forEach(rawBoxScore.team, function(batterInfo) {
+                          _.forEach(rawBoxScore.team, function(batterInfo, teamCount) {
                               teamName = batterInfo.$.full_name;
 
                               // Arrange the Batting Order in sequence.
                               let batterClasses = '',
                                   batterDisplayName = '',
                                   batterPosition = '',
+                                  batterNote = '',
+                                  //Setting the correct Batting Order.
                                   batterObj = _.sortBy(batterInfo.batting[0].batter, function(o) {
                                       return parseInt(o.$.bat_order);
+                                  });
+
+                                  //Filtering out Pitchers if the selected game is from the American League.
+                                  batterObj = _.filter(batterObj, function(o) {
+                                    if(selectedGameData.league === 'AA') {
+                                      if(o.$.pos !== 'P') return o.$;
+                                    } else {
+                                      return o.$;
+                                    }
                                   });
 
                               // Draw Table.
                               _.forEach(batterObj, function(batter) {
                                   _.forEach(batterDataHeaders, function(header) {
-                                      if(batter.$.pos !== 'P') {
-                                        console.log(batter.$.name, batter.$.bat_order, _.includes(batter.$.bat_order, '00'));
-                                        //Assign classes based on if Batter is a Pinch Hitter.
-                                        //Also assigns class for Batter column.
-                                        batterClasses = classNames({
-                                          'pinchHitter': _.has(batter, 'pinch_hit') || !_.includes(batter.$.bat_order, '00'),
-                                          'notNumeric': header === 'name_display_first_last'
-                                        });
+                                      //Assign classes based on if Batter is a Pinch Hitter.
+                                      //Also assigns class for Batter column.
+                                      batterClasses = classNames({
+                                        'pinchHitter': _.has(batter, 'pinch_hit') || !_.includes(batter.$.bat_order, '00'),
+                                        'notNumeric': header === 'name_display_first_last'
+                                      });
 
-                                        if(header === 'name_display_first_last') {
-                                          batterDisplayName = batter.$.name,
-                                          batterPosition = batter.$.pos;
-                                        } else {
-                                          batterDisplayName = _.result(_.find(batter, header), header);
-                                          batterPosition = '';
-                                        }
-
-                                        tdData.push(<td key={Math.random()} className={batterClasses}>
-                                          {batterDisplayName}
-                                          <span className='playerPosition'>{batterPosition}</span>
-                                        </td>);
+                                      if(header === 'name_display_first_last') {
+                                        batterNote = _.has(batter.$, 'note') ? batter.$.note : '';
+                                        batterDisplayName = batterNote + batter.$.name;
+                                        batterPosition = batter.$.pos;
+                                      } else {
+                                        batterDisplayName = _.result(_.find(batter, header), header);
+                                        batterPosition = '';
                                       }
+
+                                      tdData.push(<td key={Math.random()} className={batterClasses}>
+                                        {batterDisplayName}
+                                        <span className='playerPosition'>{batterPosition}</span>
+                                      </td>);
                                   });
 
                                   batterData.push(<tr key={Math.random()}>
@@ -454,6 +470,31 @@ export default class GameModalMLB extends React.Component {
                                   tdData = [];
                               });
 
+                              // Find Notes for Boxscores.
+                              _.forEach(boxscore.boxscore.batting, function(battingTeam, id) {
+                                if(_.has(battingTeam, 'note')) {
+                                  //Put Batting data in temp object for sorting.
+                                  tempArr.push(battingTeam);
+                                }
+                              });
+
+                              // If there are Notes, then sort them by 'Away' team first to match the order of the Boxscores.
+                              if(tempArr.length > 0) {
+                                tempArr = _.sortBy(tempArr, function(o) {
+                                  return o.team_flag;
+                                }, ['asc']);
+
+                                // Parse the XML Notes into JSON.
+                                _.forEach(tempArr, function(arr) {
+                                  parseString(arr.note, function (err, result) {
+                                    _.forEach(result, function(o) {
+                                      notes.push(o);
+                                    });
+                                  });
+                                });
+                              }
+
+                              //Push Batter Data.
                               activePlayerData.push(<div className='batterData' key={Math.random()}>
                                   <table className='batterDataTable'>
                                       <tr className='teamNameRow'>
@@ -462,11 +503,16 @@ export default class GameModalMLB extends React.Component {
                                       <tr>
                                           {thData}
                                       </tr>
-                                      {batterData}
+                                          {batterData}
+                                      <tr>
+                                        <td colSpan='11' className='notNumeric'>{notes[teamCount]}</td>
+                                      </tr>
                                   </table>
                               </div>);
 
                               batterData = [];
+                              tempArr = [];
+                              notes = [];
                           });
                       }
 
