@@ -25,6 +25,7 @@ const customStyles = {
         padding               : '10px 20px 10px',
         borderRadius          : '7px 7px 0px 0px',
         overflow              : 'hidden',
+        minHeight             : '500px',
         width                 : '90%'
     }
 };
@@ -76,10 +77,56 @@ export default class GameModalMLB extends React.Component {
         this.openModal = this.openModal.bind(this);
         this.afterOpenModal = this.afterOpenModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
+
+        this.loader = document.getElementsByClassName("loader")[0];
+    }
+
+    componentDidUpdate() {
+      if(!this.state.gameContentBody) {
+        this.showLoadingSpinner();
+      } else {
+        this.hideLoadingSpinner();
+      }
     }
 
     openModal() {
         this.setState({modalIsOpen: true});
+    }
+
+    showLoadingSpinner() {
+      this.loader.style.opacity = "1";
+      this.loader.style.zIndex = "201";
+    }
+
+    hideLoadingSpinner() {
+      this.loader.style.opacity = "0";
+      this.loader.style.zIndex = "-1";
+    }
+
+    loadingSpinner() {
+      const loaderTimeoutIntervals = {
+        'liveGames': [27000, 30000],
+        'noLiveGames': [117000, 120000]
+      };
+
+      //Control the frequency of refresh intervals depending on whether there are Live Games in progress or not.
+      function getTimeoutIntervals() {
+        return liveGames.length > 0 ? 'liveGames' : 'noLiveGames';
+      }
+
+      //Display Loader.
+      let loader = document.getElementsByClassName("loader")[0];
+      this.timeoutOpenLoader = setTimeout(() => {
+          loader.style.opacity = "1";
+          loader.style.zIndex = "1";
+      }, loaderTimeoutIntervals[getTimeoutIntervals()][0]);
+
+      //Refresh the Scoreboard Data at every interval, then hide Loader.
+      this.timeoutCloseLoader = setTimeout(() => {
+          loader.style.opacity = "0";
+          loader.style.zIndex = "-1";
+        this.buildScoreboard();
+      }, loaderTimeoutIntervals[getTimeoutIntervals()][1]);
     }
 
     afterOpenModal() {
