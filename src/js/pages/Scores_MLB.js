@@ -92,9 +92,7 @@ export default class Scores_MLB extends React.Component {
 
         //After all Promises have completed, build out the Scoreboards.
         setTimeout(() => {
-          _.forEach(this.gameDataObjects, function(game, id) {
-            self.buildScoreboard(game, id);
-          });
+          self.buildScoreboard(this.gameDataObjects);
         }, 350);
       });
     }
@@ -103,7 +101,7 @@ export default class Scores_MLB extends React.Component {
       return game.status.ind === 'I' || game.status.ind === 'IR';
     }
 
-    buildScoreboard(gameData, id) {
+    buildScoreboard(gameData) {
       // Filter different dates.
       let yesterdayGamesSection = [],
           todayGamesSection = [],
@@ -112,38 +110,37 @@ export default class Scores_MLB extends React.Component {
           self = this;
 
           _.forEach(gameData, function(game, gameID) {
-            if(id === 'today') {
-              //Today's Games
-              todayGamesSection.push(<div key={gameID}>
-                  {self.renderGameOutput(game, gameID)}
-              </div>);
-
-              self.setState({todayGamesSection});
-            } else if(id === 'yesterday'){
-              //Yesterday's Games
-              yesterdayGamesSection.push(<div key={gameID}>
-                  {self.renderGameOutput(game, gameID)}
-              </div>);
-
-              self.setState({yesterdayGamesSection});
-            } else if(id === 'tomorrow'){
-              //Tomorrow's Games
-              tomorrowGamesSection.push(<div key={gameID}>
-                  {self.renderGameOutput(game, gameID)}
-              </div>);
-
-              self.setState({tomorrowGamesSection});
-            } else if(id === 'live') {
-              //Live Games
-              liveGameSection.push(<div key={gameID}>
-                {self.renderGameOutput(game, gameID)}
-              </div>);
-
-              self.setState({liveGameSection});
-            }
+            _.forEach(game, function(o, i) {
+              if(gameID === 'today') {
+                //Today's Games
+                todayGamesSection.push(<div key={Math.random()}>
+                    {self.renderGameOutput(o, gameID)}
+                </div>);
+              } else if(gameID === 'yesterday'){
+                //Yesterday's Games
+                yesterdayGamesSection.push(<div key={Math.random()}>
+                    {self.renderGameOutput(o, gameID)}
+                </div>);
+              } else if(gameID === 'tomorrow'){
+                //Tomorrow's Games
+                tomorrowGamesSection.push(<div key={Math.random()}>
+                    {self.renderGameOutput(o, gameID)}
+                </div>);
+              } else if(gameID === 'live') {
+                //Live Games
+                liveGameSection.push(<div key={Math.random()}>
+                  {self.renderGameOutput(o, gameID)}
+                </div>);
+              }
+            });
           });
 
-      // console.log("Data Updated:", id);
+          self.setState({
+            liveGameSection: liveGameSection,
+            yesterdayGamesSection: yesterdayGamesSection,
+            todayGamesSection: todayGamesSection,
+            tomorrowGamesSection: tomorrowGamesSection
+          });
 
       this.refreshScoreboard();
     }
@@ -152,28 +149,34 @@ export default class Scores_MLB extends React.Component {
       let self = this;
 
       const loaderTimeoutIntervals = {
-        'liveGames': [5000, 8000],
+        'liveGames': [27000, 30000],
         'noLiveGames': [117000, 120000]
       };
 
-      // //Control the frequency of refresh intervals depending on whether there are Live Games in progress or not.
-      // function getTimeoutIntervals() {
-      //   return self.gameDataObjects.live.length > 0 ? 'liveGames' : 'noLiveGames';
-      // }
-      //
-      // //Display Loader.
-      // let loader = document.getElementsByClassName("loader")[0];
-      // this.timeoutOpenLoader = setTimeout(() => {
-      //     loader.style.opacity = "1";
-      //     loader.style.zIndex = "1";
-      // }, loaderTimeoutIntervals[getTimeoutIntervals()][0]);
-      //
-      // //Refresh the Scoreboard Data at every interval, then hide Loader.
-      // this.timeoutCloseLoader = setTimeout(() => {
-      //     loader.style.opacity = "0";
-      //     loader.style.zIndex = "-1";
-      //   this.setGameDataOutput();
-      // }, loaderTimeoutIntervals[getTimeoutIntervals()][1]);
+      //Control the frequency of refresh intervals depending on whether there are Live Games in progress or not.
+      function getTimeoutIntervals() {
+        return self.gameDataObjects.live.length > 0 ? 'liveGames' : 'noLiveGames';
+      }
+
+      //Display Loader.
+      let loader = document.getElementsByClassName("loader")[0];
+      this.timeoutOpenLoader = setTimeout(() => {
+          loader.style.opacity = "1";
+          loader.style.zIndex = "1";
+      }, loaderTimeoutIntervals[getTimeoutIntervals()][0]);
+
+      //Refresh the Scoreboard Data at every interval, then hide Loader.
+      this.timeoutCloseLoader = setTimeout(() => {
+          loader.style.opacity = "0";
+          loader.style.zIndex = "-1";
+          self.gameDataObjects = {
+            yesterday: [],
+            today: [],
+            tomorrow: [],
+            live: []
+          };
+          this.setGameDataOutput();
+      }, loaderTimeoutIntervals[getTimeoutIntervals()][1]);
     }
 
     getNumberOfColumns(games) {
