@@ -19,7 +19,13 @@ export default class Scores_MLB extends React.Component {
     }
 
     componentWillMount() {
+      // console.log('before:', this.state);
       this.setGameDataOutput();
+    }
+
+    componentDidUpdate() {
+      // console.log('after:', this.state);
+      // console.log("Did update.");
     }
 
     setGameDataOutput() {
@@ -149,7 +155,7 @@ export default class Scores_MLB extends React.Component {
       let self = this;
 
       const loaderTimeoutIntervals = {
-        'liveGames': [5000, 7000],
+        'liveGames': [27000, 30000],
         'noLiveGames': [117000, 120000]
       };
 
