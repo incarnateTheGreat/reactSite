@@ -11,14 +11,7 @@ export default class Scores_MLB extends React.Component {
             liveGameSection: null,
             yesterdayGamesSection: null,
             todayGamesSection: null,
-            tomorrowGamesSection: null,
-        };
-
-        this.gameDataObjects = {
-          yesterday: [],
-          today: [],
-          tomorrow: [],
-          live: []
+            tomorrowGamesSection: null
         };
 
         this.timeoutOpenLoader = null;
@@ -56,6 +49,13 @@ export default class Scores_MLB extends React.Component {
       });
 
       axios.all(p).then((datesWithGames) => {
+        let gameDataObjects = {
+          yesterday: [],
+          today: [],
+          tomorrow: [],
+          live: []
+        };
+
         _.forEach((datesWithGames), (dayData) => {
             let gameData = dayData.data.data.games.game,
                 objectDay = dayData.data.data.games.day;
@@ -64,27 +64,27 @@ export default class Scores_MLB extends React.Component {
               //Today's Game Data
               _.forEach(gameData, function(game) {
                 if(self.isGameLive(game)) {
-                  self.gameDataObjects.live.push(game);
+                  gameDataObjects.live.push(game);
                 } else {
-                  self.gameDataObjects.today.push(game);
+                  gameDataObjects.today.push(game);
                 }
               });
             } else if(objectDay == dateObj.tomorrow.day) {
               //Tomorrow's Game Data
               _.forEach(gameData, function(game) {
                 if(self.isGameLive(game)) {
-                  self.gameDataObjects.live.push(game);
+                  gameDataObjects.live.push(game);
                 } else {
-                  self.gameDataObjects.tomorrow.push(game);
+                  gameDataObjects.tomorrow.push(game);
                 }
               });
             } else if(objectDay == dateObj.yesterday.day) {
               //Yesterday's Game Data
               _.forEach(gameData, function(game) {
                 if(self.isGameLive(game)) {
-                  self.gameDataObjects.live.push(game);
+                  gameDataObjects.live.push(game);
                 } else {
-                  self.gameDataObjects.yesterday.push(game);
+                  gameDataObjects.yesterday.push(game);
                 }
               });
             }
@@ -92,7 +92,7 @@ export default class Scores_MLB extends React.Component {
 
         //After all Promises have completed, build out the Scoreboards.
         setTimeout(() => {
-          self.buildScoreboard(this.gameDataObjects);
+          self.buildScoreboard(gameDataObjects);
         }, 350);
       });
     }
@@ -113,22 +113,22 @@ export default class Scores_MLB extends React.Component {
             _.forEach(game, function(o, i) {
               if(gameID === 'today') {
                 //Today's Games
-                todayGamesSection.push(<div key={Math.random()}>
+                todayGamesSection.push(<div key={i}>
                     {self.renderGameOutput(o, gameID)}
                 </div>);
               } else if(gameID === 'yesterday'){
                 //Yesterday's Games
-                yesterdayGamesSection.push(<div key={Math.random()}>
+                yesterdayGamesSection.push(<div key={i}>
                     {self.renderGameOutput(o, gameID)}
                 </div>);
               } else if(gameID === 'tomorrow'){
                 //Tomorrow's Games
-                tomorrowGamesSection.push(<div key={Math.random()}>
+                tomorrowGamesSection.push(<div key={i}>
                     {self.renderGameOutput(o, gameID)}
                 </div>);
               } else if(gameID === 'live') {
                 //Live Games
-                liveGameSection.push(<div key={Math.random()}>
+                liveGameSection.push(<div key={i}>
                   {self.renderGameOutput(o, gameID)}
                 </div>);
               }
@@ -149,13 +149,13 @@ export default class Scores_MLB extends React.Component {
       let self = this;
 
       const loaderTimeoutIntervals = {
-        'liveGames': [27000, 30000],
+        'liveGames': [5000, 7000],
         'noLiveGames': [117000, 120000]
       };
 
       //Control the frequency of refresh intervals depending on whether there are Live Games in progress or not.
       function getTimeoutIntervals() {
-        return self.gameDataObjects.live.length > 0 ? 'liveGames' : 'noLiveGames';
+        return self.state.liveGameSection.length > 0 ? 'liveGames' : 'noLiveGames';
       }
 
       //Display Loader.
@@ -169,12 +169,6 @@ export default class Scores_MLB extends React.Component {
       this.timeoutCloseLoader = setTimeout(() => {
           loader.style.opacity = "0";
           loader.style.zIndex = "-1";
-          self.gameDataObjects = {
-            yesterday: [],
-            today: [],
-            tomorrow: [],
-            live: []
-          };
           this.setGameDataOutput();
       }, loaderTimeoutIntervals[getTimeoutIntervals()][1]);
     }

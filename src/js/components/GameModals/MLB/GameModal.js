@@ -3,6 +3,7 @@ import axios from 'axios';
 import Modal from 'react-modal';
 import classNames from 'classnames';
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
+//http://codepen.io/lemanse/pen/ZbwJxe
 
 // import BaseRunnerTooltip from '../../../components/Tooltip';
 
@@ -81,26 +82,38 @@ export default class GameModalMLB extends React.Component {
         this.loader = document.getElementsByClassName("loader")[0];
     }
 
-    componentDidUpdate() {
-      if(!this.state.gameContentBody) {
-        this.showLoadingSpinner();
-      } else {
-        this.hideLoadingSpinner();
-      }
+    openModal() {
+      this.showLoadingSpinner();
+      this.setState({modalIsOpen: true});
     }
 
-    openModal() {
-        this.setState({modalIsOpen: true});
+    afterOpenModal() {
+        tweenStyle['content'].opacity = '1';
+        this.setState({modalStyle: _.merge(customStyles, tweenStyle)});
+        this.getBoxscoreData(this.state.game, this.state.game.game_data_directory);
+        console.log(this.state.gameContentBody);
+        this.hideLoadingSpinner();
+    }
+
+    closeModal() {
+        tweenStyle['content'].opacity = '0';
+        this.setState({modalStyle: _.merge(customStyles, tweenStyle)});
+        setTimeout(() => {
+            this.setState({modalIsOpen: false});
+        }, 350);
     }
 
     showLoadingSpinner() {
       this.loader.style.opacity = "1";
       this.loader.style.zIndex = "201";
+      console.log(this.loader);
+      console.log("Show Modal Spinner.");
     }
 
     hideLoadingSpinner() {
       this.loader.style.opacity = "0";
       this.loader.style.zIndex = "-1";
+        console.log("Hide Modal Spinner.");
     }
 
     loadingSpinner() {
@@ -119,29 +132,18 @@ export default class GameModalMLB extends React.Component {
       this.timeoutOpenLoader = setTimeout(() => {
           loader.style.opacity = "1";
           loader.style.zIndex = "1";
+          console.log("Modal Start.");
       }, loaderTimeoutIntervals[getTimeoutIntervals()][0]);
 
       //Refresh the Scoreboard Data at every interval, then hide Loader.
       this.timeoutCloseLoader = setTimeout(() => {
           loader.style.opacity = "0";
           loader.style.zIndex = "-1";
+          console.log("Modal End.");
         this.buildScoreboard();
       }, loaderTimeoutIntervals[getTimeoutIntervals()][1]);
     }
 
-    afterOpenModal() {
-        tweenStyle['content'].opacity = '1';
-        this.setState({modalStyle: _.merge(customStyles, tweenStyle)});
-        this.getBoxscoreData(this.state.game, this.state.game.game_data_directory);
-    }
-
-    closeModal() {
-        tweenStyle['content'].opacity = '0';
-        this.setState({modalStyle: _.merge(customStyles, tweenStyle)});
-        setTimeout(() => {
-            this.setState({modalIsOpen: false});
-        }, 350);
-    }
     getBoxscoreData(selectedGameData, game_data_directory) {
         let self = this,
             urls = [],
