@@ -444,6 +444,7 @@ export default class GameModalMLB extends React.Component {
                       function getBatterBoxScoreData() {
                           //Print out Box Scores of Batter Data.
                           let batterDataHeaders = ['name_display_first_last', 'ab', 'r', 'h', 'e', 'rbi', 'bb', 'so', 'bam_avg', 'bam_obp', 'bam_slg'],
+                              pitcherDataHeaders = ['name_display_first_last', 'ip', 'h', 'r', 'er', 'bb', 'so', 'hr'],
                               teamName = '',
                               thData = [],
                               tdData = [],
@@ -467,17 +468,14 @@ export default class GameModalMLB extends React.Component {
                                   batterDisplayName = '',
                                   batterPosition = '',
                                   batterNote = '',
-                                  pitcherObj = batterInfo.pitching[0].pitcher,
+                                  // pitcherObj = batterInfo.pitching[0].pitcher,
                                   //Setting the correct Batting Order.
                                   batterObj = _.sortBy(batterInfo.batting[0].batter, function(o) {
                                       return parseInt(o.$.bat_order);
-                                  });
-
-                                  //Pitchers
-                                  _.forEach(pitcherObj, function(pitcher, i) {
-                                    // console.log(pitcher);
-                                    console.log(pitcher.$.name_display_first_last, pitcher.$.pitch_order);
-                                    //_.includes(batter.$.bat_order, '00'),
+                                  }),
+                                  //Setting the correct Pitching Order.
+                                  pitcherObj = _.sortBy(batterInfo.pitching[0].pitcher, function(o) {
+                                      return parseInt(o.$.pitch_order);
                                   });
 
                                   //Filtering out Pitchers if the selected game is from the American League.
@@ -489,7 +487,7 @@ export default class GameModalMLB extends React.Component {
                                     }
                                   });
 
-                              // Draw Table.
+                              // Draw Batter Table.
                               _.forEach(batterObj, function(batter) {
                                   _.forEach(batterDataHeaders, function(header) {
                                       //Assign classes based on if Batter is a Pinch Hitter.
@@ -517,6 +515,56 @@ export default class GameModalMLB extends React.Component {
                                   batterData.push(<tr key={Math.random()}>
                                       {tdData}
                                   </tr>);
+
+                                  tdData = [];
+                              });
+
+                              // Draw Pitcher Table.
+                              _.forEach(pitcherObj, function(pitcher) {
+                                  console.log(pitcher);
+                                  // console.log(pitcher.$.name_display_first_last, ':', pitcher.$.out, _.round(pitcher.$.out / 3, 2) % 1);
+                                  
+                                  function isInt(n) {
+                                      return n % 1 === 0;
+                                  }
+                                  
+                                  //Calculate IP
+                                  if(isInt(pitcher.$.out)) {
+                                    //Return whole number
+                                      console.log('IP:', pitcher.$.out / 3);
+                                  } else {
+                                    //Return float
+                                      let f = _.round(pitcher.$.out / 3, 2);
+                                      console.log('IP:', f % 1);
+                                  }
+                                  
+
+                                  _.forEach(pitcherDataHeaders, function(header) {
+                                      // //Assign classes based on if Batter is a Pinch Hitter.
+                                      // //Also assigns class for Batter column.
+                                      // batterClasses = classNames({
+                                      //     'pinchHitter': _.has(batter, 'pinch_hit') || !_.includes(batter.$.bat_order, '00'),
+                                      //     'notNumeric': header === 'name_display_first_last'
+                                      // });
+                                      //
+                                      // if(header === 'name_display_first_last') {
+                                      //     batterNote = _.has(batter.$, 'note') ? batter.$.note : '';
+                                      //     batterDisplayName = batterNote + batter.$.name;
+                                      //     batterPosition = batter.$.pos;
+                                      // } else {
+                                      //     batterDisplayName = _.result(_.find(batter, header), header);
+                                      //     batterPosition = '';
+                                      // }
+                                      //
+                                      // tdData.push(<td key={Math.random()} className={batterClasses}>
+                                      //     {batterDisplayName}
+                                      //     <span className='playerPosition'>{batterPosition}</span>
+                                      // </td>);
+                                  });
+
+                                  // batterData.push(<tr key={Math.random()}>
+                                  //     {tdData}
+                                  // </tr>);
 
                                   tdData = [];
                               });
