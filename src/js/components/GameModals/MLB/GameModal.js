@@ -91,7 +91,6 @@ export default class GameModalMLB extends React.Component {
         tweenStyle['content'].opacity = '1';
         this.setState({modalStyle: _.merge(customStyles, tweenStyle)});
         this.getBoxscoreData(this.state.game, this.state.game.game_data_directory);
-        console.log(this.state.gameContentBody);
         this.hideLoadingSpinner();
     }
 
@@ -106,14 +105,11 @@ export default class GameModalMLB extends React.Component {
     showLoadingSpinner() {
       this.loader.style.opacity = "1";
       this.loader.style.zIndex = "201";
-      console.log(this.loader);
-      console.log("Show Modal Spinner.");
     }
 
     hideLoadingSpinner() {
       this.loader.style.opacity = "0";
       this.loader.style.zIndex = "-1";
-        console.log("Hide Modal Spinner.");
     }
 
     loadingSpinner() {
@@ -132,14 +128,12 @@ export default class GameModalMLB extends React.Component {
       this.timeoutOpenLoader = setTimeout(() => {
           loader.style.opacity = "1";
           loader.style.zIndex = "1";
-          console.log("Modal Start.");
       }, loaderTimeoutIntervals[getTimeoutIntervals()][0]);
 
       //Refresh the Scoreboard Data at every interval, then hide Loader.
       this.timeoutCloseLoader = setTimeout(() => {
           loader.style.opacity = "0";
           loader.style.zIndex = "-1";
-          console.log("Modal End.");
         this.buildScoreboard();
       }, loaderTimeoutIntervals[getTimeoutIntervals()][1]);
     }
@@ -473,9 +467,17 @@ export default class GameModalMLB extends React.Component {
                                   batterDisplayName = '',
                                   batterPosition = '',
                                   batterNote = '',
+                                  pitcherObj = batterInfo.pitching[0].pitcher,
                                   //Setting the correct Batting Order.
                                   batterObj = _.sortBy(batterInfo.batting[0].batter, function(o) {
                                       return parseInt(o.$.bat_order);
+                                  });
+
+                                  //Pitchers
+                                  _.forEach(pitcherObj, function(pitcher, i) {
+                                    // console.log(pitcher);
+                                    console.log(pitcher.$.name_display_first_last, pitcher.$.pitch_order);
+                                    //_.includes(batter.$.bat_order, '00'),
                                   });
 
                                   //Filtering out Pitchers if the selected game is from the American League.
