@@ -2,6 +2,9 @@ import React from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
 import classNames from 'classnames';
+
+let Fraction = require('fractional').Fraction;
+
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 //http://codepen.io/lemanse/pen/ZbwJxe
 
@@ -452,7 +455,8 @@ export default class GameModalMLB extends React.Component {
                               pitcherDataHeaders = ['name_display_first_last', 'ip', 'h', 'r', 'er', 'bb', 'so', 'hr'],
                               teamName = '',
                               thData = [],
-                              tdData = [],
+                              tdBatterData = [],
+                              tdPitcherData = [],
                               tempArr = [],
                               notes = [];
 
@@ -470,6 +474,7 @@ export default class GameModalMLB extends React.Component {
 
                               // Arrange the Batting Order in sequence.
                               let batterClasses = '',
+                                  pitcherClasses = '',
                                   batterDisplayName = '',
                                   batterPosition = '',
                                   batterNote = '',
@@ -511,44 +516,52 @@ export default class GameModalMLB extends React.Component {
                                         batterPosition = '';
                                       }
 
-                                      tdData.push(<td key={Math.random()} className={batterClasses}>
+                                      tdBatterData.push(<td key={Math.random()} className={batterClasses}>
                                         {batterDisplayName}
                                         <span className='playerPosition'>{batterPosition}</span>
                                       </td>);
                                   });
 
                                   batterData.push(<tr key={Math.random()}>
-                                      {tdData}
+                                      {tdBatterData}
                                   </tr>);
 
-                                  tdData = [];
+                                  tdBatterData = [];
                               });
 
                               // Draw Pitcher Table.
                               _.forEach(pitcherObj, function(pitcher) {
-                                  console.log(pitcher);
-                                  // console.log(pitcher.$.name_display_first_last, ':', pitcher.$.out, _.round(pitcher.$.out / 3, 2) % 1);
+                                  // console.log(pitcher);
 
-                                  function isInt(n) {
-                                      return n % 1 === 0;
+                                  function getInningsPitched() {
+                                      let calcIP = null;
+
+                                      function isInt(n) {
+                                          return n % 3 === 0;
+                                      }
+
+                                      //If the Number of Outs returns a Modulous of 0, then treat the result as a whole number and append a decimal place.
+                                      if(isInt(pitcher.$.out)) {
+                                          calcIP = parseFloat((pitcher.$.out) / 3).toFixed(1);
+                                      } else {
+                                          //Add base number of Innings Pitched and then calculate the fraction of the decimal places down to the lowest common denominator.
+                                          let f = _.round(pitcher.$.out / 3, 2),
+                                              baseInningCount = parseInt(f),
+                                              decimals = f - baseInningCount,
+                                              dividedFig = (f - baseInningCount) / 3,
+                                              roundFig = Math.round(dividedFig * 10) / 10;
+
+                                          calcIP = baseInningCount + roundFig;
+                                      }
+                                      
+                                      return calcIP;
                                   }
 
-                                  //Calculate IP
-                                  if(isInt(pitcher.$.out)) {
-                                    //Return whole number
-                                      console.log('IP:', pitcher.$.out / 3);
-                                  } else {
-                                    //Return float
-                                      let f = _.round(pitcher.$.out / 3, 2);
-                                      console.log('IP:', f % 1);
-                                  }
-
+                                  //Get Innings Pitched
+                                  let ip = getInningsPitched(pitcher.$.out);
 
                                   _.forEach(pitcherDataHeaders, function(header) {
-                                      // //Assign classes based on if Batter is a Pinch Hitter.
-                                      // //Also assigns class for Batter column.
-                                      // batterClasses = classNames({
-                                      //     'pinchHitter': _.has(batter, 'pinch_hit') || !_.includes(batter.$.bat_order, '00'),
+                                      // pitcherClasses = classNames({
                                       //     'notNumeric': header === 'name_display_first_last'
                                       // });
                                       //
@@ -561,17 +574,17 @@ export default class GameModalMLB extends React.Component {
                                       //     batterPosition = '';
                                       // }
                                       //
-                                      // tdData.push(<td key={Math.random()} className={batterClasses}>
+                                      // tdPitcherData.push(<td key={Math.random()} className={batterClasses}>
                                       //     {batterDisplayName}
                                       //     <span className='playerPosition'>{batterPosition}</span>
                                       // </td>);
                                   });
 
                                   // batterData.push(<tr key={Math.random()}>
-                                  //     {tdData}
+                                  //     {tdPitcherData}
                                   // </tr>);
 
-                                  tdData = [];
+                                  tdPitcherData = [];
                               });
 
                               // Find Notes for Boxscores.
