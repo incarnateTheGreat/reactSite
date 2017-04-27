@@ -186,15 +186,18 @@ export default class GameModalMLB extends React.Component {
                 //Linescore
                 data = gameData[0].data.data.game;
 
+                console.log(data);
+
                 let awayTeamName = data.away_team_name,
                     homeTeamName = data.home_team_name,
                     awayTeam = data.away_name_abbrev,
-                    homeTeam = data.home_name_abbrev;
+                    homeTeam = data.home_name_abbrev,
+                    doubleHeader = (data.double_header_sw !== 'N' ? '(Game ' + data.game_nbr + ' of Double Header)' : '');
 
                 //Apply Team Names.
                 boxScore.push(<div className='boxScore' key={Math.random()}>
                     <div>
-                        <div className='teamNames' data-tooltop="">{awayTeamName} vs. {homeTeamName}</div>
+                        <div className='teamNames' data-tooltop="">{awayTeamName} vs. {homeTeamName} {doubleHeader}</div>
                         <div className='startTime'><strong>{data.time_hm_lg}{data.ampm}</strong></div>
                     </div>
                 </div>);
@@ -204,17 +207,19 @@ export default class GameModalMLB extends React.Component {
                         <div className='winnerLoser'>
                             <div><strong>Probables:</strong></div>
                             <table>
-                                <tr className='pitcherData'>
-                                    <td><strong>{awayTeam}:</strong> {data.away_probable_pitcher.first} {data.away_probable_pitcher.last} ({data.away_probable_pitcher.wins}-{data.away_probable_pitcher.losses})</td>
-                                    <td><strong>ERA:</strong> {data.away_probable_pitcher.era}</td>
-                                </tr>
-                                <tr className='pitcherData'>
-                                    <td><strong>{homeTeam}:</strong> {data.home_probable_pitcher.first} {data.home_probable_pitcher.last} ({data.home_probable_pitcher.wins}-{data.home_probable_pitcher.losses})</td>
-                                    <td><strong>ERA:</strong> {data.home_probable_pitcher.era}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Venue:</strong> {data.venue}, {data.location}</td>
-                                </tr>
+                              <tbody>
+                                  <tr className='pitcherData'>
+                                      <td><strong>{awayTeam}:</strong> {data.away_probable_pitcher.first} {data.away_probable_pitcher.last} ({data.away_probable_pitcher.wins}-{data.away_probable_pitcher.losses})</td>
+                                      <td><strong>ERA:</strong> {data.away_probable_pitcher.era}</td>
+                                  </tr>
+                                  <tr className='pitcherData'>
+                                      <td><strong>{homeTeam}:</strong> {data.home_probable_pitcher.first} {data.home_probable_pitcher.last} ({data.home_probable_pitcher.wins}-{data.home_probable_pitcher.losses})</td>
+                                      <td><strong>ERA:</strong> {data.home_probable_pitcher.era}</td>
+                                  </tr>
+                                  <tr>
+                                      <td><strong>Venue:</strong> {data.venue}, {data.location}</td>
+                                  </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -523,11 +528,11 @@ export default class GameModalMLB extends React.Component {
                               _.forEach(pitcherObj, function(pitcher) {
                                   console.log(pitcher);
                                   // console.log(pitcher.$.name_display_first_last, ':', pitcher.$.out, _.round(pitcher.$.out / 3, 2) % 1);
-                                  
+
                                   function isInt(n) {
                                       return n % 1 === 0;
                                   }
-                                  
+
                                   //Calculate IP
                                   if(isInt(pitcher.$.out)) {
                                     //Return whole number
@@ -537,7 +542,7 @@ export default class GameModalMLB extends React.Component {
                                       let f = _.round(pitcher.$.out / 3, 2);
                                       console.log('IP:', f % 1);
                                   }
-                                  
+
 
                                   _.forEach(pitcherDataHeaders, function(header) {
                                       // //Assign classes based on if Batter is a Pinch Hitter.
@@ -596,6 +601,7 @@ export default class GameModalMLB extends React.Component {
                               //Push Batter Data.
                               activePlayerData.push(<div className='batterData' key={Math.random()}>
                                   <table className='batterDataTable'>
+                                    <tbody>
                                       <tr className='teamNameRow'>
                                           <td colSpan='11'>{teamName}</td>
                                       </tr>
@@ -606,6 +612,7 @@ export default class GameModalMLB extends React.Component {
                                       <tr>
                                         <td colSpan='11' className='notNumeric'>{notes[teamCount]}</td>
                                       </tr>
+                                    </tbody>
                                   </table>
                               </div>);
 
