@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
 import classNames from 'classnames';
-import {OverlayTrigger, Tooltip} from "react-bootstrap";
+import {OverlayTrigger, Tooltip, Tab, Tabs} from "react-bootstrap";
 //http://codepen.io/lemanse/pen/ZbwJxe
 
 // import BaseRunnerTooltip from '../../../components/Tooltip';
@@ -71,9 +71,15 @@ export default class GameModalMLB extends React.Component {
         this.state = {
             modalIsOpen: false,
             gameContentBody: null,
+            boxScoreBody_awayTeam: null,
+            boxScoreBody_homeTeam: null,
             game: null,
-            modalStyle: _.merge(customStyles, tweenStyle)
+            modalStyle: _.merge(customStyles, tweenStyle),
+            activeTab: 1 // Takes active tab from props if it is defined there
         };
+
+        // Bind the handleSelect function already here (not in the render function)
+        this.handleSelect = this.handleSelect.bind(this);
 
         this.openModal = this.openModal.bind(this);
         this.afterOpenModal = this.afterOpenModal.bind(this);
@@ -112,6 +118,14 @@ export default class GameModalMLB extends React.Component {
       this.loader.style.zIndex = "-1";
     }
 
+    handleSelect(selectedTab) {
+        // The active tab must be set into the state so that
+        // the Tabs component knows about the change and re-renders.
+        this.setState({
+            activeTab: selectedTab
+        });
+    }
+
     loadingSpinner() {
       const loaderTimeoutIntervals = {
         'liveGames': [27000, 30000],
@@ -143,10 +157,12 @@ export default class GameModalMLB extends React.Component {
             urls = [],
             data = null,
             rawBoxScore = null,
-            boxscore = null,
+            boxscoreData = null,
+            gameDataObj = [],
             players = [],
             gameContentBody = [],
-            boxScore = [],
+            boxScoreBody_awayTeam = [],
+            boxScoreBody_homeTeam = [],
             activePlayerData = [],
             pitcherData = [],
             batterData = [];
@@ -154,7 +170,7 @@ export default class GameModalMLB extends React.Component {
             //Display Postponed game.
             function displayPPDGameData() {
                 //Apply Team Names.
-                boxScore.push(<div className='boxScore' key={Math.random()}>
+                gameDataObj.push(<div className='boxScore' key={Math.random()}>
                     <div>
                         <div className='teamNames'>{selectedGameData.away_team_name} vs. {selectedGameData.home_team_name}</div>
                         <div>{selectedGameData.venue}, {selectedGameData.location}</div>
@@ -196,7 +212,7 @@ export default class GameModalMLB extends React.Component {
                     doubleHeader = (data.double_header_sw !== 'N' ? '(Game ' + data.game_nbr + ' of Double Header)' : '');
 
                 //Apply Team Names.
-                boxScore.push(<div className='boxScore' key={Math.random()}>
+                gameDataObj.push(<div className='boxScore' key={Math.random()}>
                     <div>
                         <div className='teamNames' data-tooltop="">{awayTeamName} vs. {homeTeamName} {doubleHeader}</div>
                         <div className='startTime'><strong>{data.time_hm_lg}{data.ampm}</strong></div>
@@ -228,9 +244,9 @@ export default class GameModalMLB extends React.Component {
 
                 //Combine all content
                 gameContentBody.push(<div key={Math.random()}>
-                    <div>{boxScore}</div>
+                    <div>{gameDataObj}</div>
                     <div className='activePlayerDataContainer shortHeight'>{activePlayerData}</div>
-                </div>)
+                </div>);
 
                 self.setState({gameContentBody});
               });
@@ -266,7 +282,7 @@ export default class GameModalMLB extends React.Component {
                   });
 
                   //Boxscore
-                  boxscore = gameData[3].data.data;
+                  boxscoreData = gameData[3].data.data;
 
                   let awayTeam = data.away_name_abbrev,
                       homeTeam = data.home_name_abbrev,
@@ -281,7 +297,7 @@ export default class GameModalMLB extends React.Component {
 
                   function dispayGameData() {
                       //Apply Team Names.
-                      boxScore.push(<div className='boxScore' key={Math.random()}>
+                      gameDataObj.push(<div className='boxScore' key={Math.random()}>
                           <div className='inningContainer'>
                               <div>&nbsp;</div>
                               <div className='teamName'>{awayTeam}</div>
@@ -333,7 +349,7 @@ export default class GameModalMLB extends React.Component {
 
                       //Apply Inning Linescores if there's any data.
                       // if (_.isUndefined(data.linescore.inning.length)) {
-                      //     boxScore.push(<div className='boxScore' key={Math.random()}>
+                      //     gameDataObj.push(<div className='boxScore' key={Math.random()}>
                       //         <div className='inningContainer'>
                       //             <div className='inning'>{currentInning}</div>
                       //             {inningData}
@@ -356,7 +372,7 @@ export default class GameModalMLB extends React.Component {
                               currentInning = id + 1;
                               getInningScore(data, inning);
 
-                              boxScore.push(<div className='boxScore' key={Math.random()}>
+                              gameDataObj.push(<div className='boxScore' key={Math.random()}>
                                   <div className='inningContainer'>
                                       <div className='inning'>{currentInning}</div>
                                       {inningData}
@@ -369,7 +385,7 @@ export default class GameModalMLB extends React.Component {
                           currentInning = 1;
                           getInningScore(data.linescore, 1);
 
-                          boxScore.push(<div className='boxScore' key={Math.random()}>
+                          gameDataObj.push(<div className='boxScore' key={Math.random()}>
                               <div className='inningContainer'>
                                   <div className='inning'>{currentInning}</div>
                                   {inningData}
@@ -380,7 +396,7 @@ export default class GameModalMLB extends React.Component {
                       }
 
                       //Apply Totals.
-                      boxScore.push(<div className='boxScore totals' key={Math.random()}>
+                      gameDataObj.push(<div className='boxScore totals' key={Math.random()}>
                           <div className='inningContainer'>
                               <div className='inning'>R</div>
                               <div className='scoreBox'>{awayRuns}</div>
@@ -535,17 +551,15 @@ export default class GameModalMLB extends React.Component {
                               _.forEach(pitcherDataHeaders, function(header) {
                                   if(header === 'name_display_first_last') {
                                       thPitcherData.push(<th key={Math.random()} className='notNumeric'>Pitchers</th>);
+                                  } else if (header === 'np') {
+                                      thPitcherData.push(<th key={Math.random()}>pc-st</th>);
                                   } else {
                                       thPitcherData.push(<th key={Math.random()}>{_.includes(header, 'bam_') ? header.slice(4) : header}</th>);
                                   }
                               });
 
-                              console.log(teamName);
-
                               // Draw Pitcher Table.
                               _.forEach(pitcherObj, function(pitcher) {
-                                  console.log(pitcher);
-
                                   function getInningsPitched() {
                                       let calcIP = null;
 
@@ -562,7 +576,6 @@ export default class GameModalMLB extends React.Component {
                                           //of the decimal places down to the lowest common denominator.
                                           let f = _.round(pitcher.$.out / 3, 2),
                                               baseInningCount = parseInt(f),
-                                              decimals = f - baseInningCount,
                                               dividedFig = (f - baseInningCount) / 3,
                                               roundFig = Math.round(dividedFig * 10) / 10;
 
@@ -580,16 +593,16 @@ export default class GameModalMLB extends React.Component {
                                       if(header === 'name_display_first_last') {
                                           pitcherDisplayName = pitcher.$.name;
                                       } else if(header === 'ip') {
-                                        //Get Innings Pitched
-                                        pitcherDisplayName = getInningsPitched(pitcher.$.out);
+                                          //Get Innings Pitched
+                                          pitcherDisplayName = getInningsPitched(pitcher.$.out);
                                       } else if(header === 'np') {
-                                        pitcherDisplayName = pitcher.$.np + '-' + pitcher.$.s;
+                                          pitcherDisplayName = pitcher.$.np + '-' + pitcher.$.s;
                                       } else {
-                                        pitcherDisplayName = _.result(_.find(pitcher, header), header);
+                                          pitcherDisplayName = _.result(_.find(pitcher, header), header);
                                       }
 
                                       tdPitcherData.push(<td key={Math.random()} className={pitcherClasses}>
-                                        {pitcherDisplayName === 'np' ? ('pc-st') : pitcherDisplayName}
+                                          {pitcherDisplayName}
                                       </td>);
                                   });
 
@@ -601,7 +614,7 @@ export default class GameModalMLB extends React.Component {
                               });
 
                               // Find Notes for Boxscores.
-                              _.forEach(boxscore.boxscore.batting, function(battingTeam, id) {
+                              _.forEach(boxscoreData.boxscore.batting, function(battingTeam, id) {
                                 if(_.has(battingTeam, 'note')) {
                                   //Put Batting data in temp object for sorting.
                                   tempArr.push(battingTeam);
@@ -624,7 +637,7 @@ export default class GameModalMLB extends React.Component {
                                 });
                               }
 
-                              //Push Batter Data.
+                              //Push Pitcher & Batter Data.
                               activePlayerData.push(<div className='batterData' key={Math.random()}>
                                   <table className='batterDataTable'>
                                     <tbody>
@@ -716,7 +729,7 @@ export default class GameModalMLB extends React.Component {
                           getBatterBoxScoreData();
 
                       } else if (data.status === 'Final' || data.status === 'Game Over') {
-                          activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
+                          gameDataObj.push(<div className='activePlayerData' key={Math.random()}>
                               <div className='bases'>
                                   <div className='winnerLoser'>
                                       <div><strong>WP:</strong> {data.winning_pitcher.first} {data.winning_pitcher.last} ({data.winning_pitcher.wins}-{data.winning_pitcher.losses})</div>
@@ -734,16 +747,28 @@ export default class GameModalMLB extends React.Component {
                           getBatterBoxScoreData();
                       }
 
-                      //Combine all content
+                      //Combine Score and Location Data
                       gameContentBody.push(<div key={Math.random()}>
                           {data.status === 'Final' ? (
                           <div className='headline'>{rawBoxScore.team[0].$.short_name} ({rawBoxScore.team[0].$.wins}-{rawBoxScore.team[0].$.losses}) vs.&nbsp;
                                {rawBoxScore.team[1].$.short_name} ({rawBoxScore.team[1].$.wins}-{rawBoxScore.team[1].$.losses})</div>) : ('')}
-                          <div className='boxScoreContainer'>{boxScore}</div>
-                          <div className='activePlayerDataContainer'>{activePlayerData}</div>
+                          <div className='boxScoreContainer'>{gameDataObj}</div>
                       </div>);
 
+                      console.log(activePlayerData);
+
+                      //Combine Boxscore Data
+                      _.forEach(activePlayerData, function(team, i) {
+                          if(i === 0) {
+                              boxScoreBody_awayTeam.push(<div key={Math.random()} className='activePlayerDataContainer'>{activePlayerData[i]}</div>);
+                          } else {
+                              boxScoreBody_homeTeam.push(<div key={Math.random()} className='activePlayerDataContainer'>{activePlayerData[i]}</div>);
+                          }
+                      });
+
                       self.setState({gameContentBody});
+                      self.setState({boxScoreBody_awayTeam});
+                      self.setState({boxScoreBody_homeTeam});
                   }
               });
             }
@@ -816,7 +841,16 @@ export default class GameModalMLB extends React.Component {
                     contentLabel="Game Modal MLB">
 
                     {this.state.modalIsOpen ? (
-                        <div key={game.id}>{this.state.gameContentBody}</div>
+                        <div key={game.id}>
+                            {this.state.gameContentBody}
+
+                            {(game.status.ind !== 'DR' || game.status.ind !== 'DI') ? (
+                                <Tabs activeKey={this.state.activeTab} onSelect={this.handleSelect}>
+                                    <Tab eventKey={1} title="Tab 1">{this.state.boxScoreBody_awayTeam}</Tab>
+                                    <Tab eventKey={2} title="Tab 2">{this.state.boxScoreBody_homeTeam}</Tab>
+                                </Tabs>
+                            ) : ('')}
+                        </div>
                     ) : ''}
                 </Modal>
             </div>
