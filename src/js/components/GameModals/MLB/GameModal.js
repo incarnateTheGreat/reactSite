@@ -2,9 +2,6 @@ import React from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
 import classNames from 'classnames';
-
-let Fraction = require('fractional').Fraction;
-
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 //http://codepen.io/lemanse/pen/ZbwJxe
 
@@ -151,6 +148,7 @@ export default class GameModalMLB extends React.Component {
             gameContentBody = [],
             boxScore = [],
             activePlayerData = [],
+            pitcherData = [],
             batterData = [];
 
             //Display Postponed game.
@@ -452,19 +450,21 @@ export default class GameModalMLB extends React.Component {
                       function getBatterBoxScoreData() {
                           //Print out Box Scores of Batter Data.
                           let batterDataHeaders = ['name_display_first_last', 'ab', 'r', 'h', 'e', 'rbi', 'bb', 'so', 'bam_avg', 'bam_obp', 'bam_slg'],
-                              pitcherDataHeaders = ['name_display_first_last', 'ip', 'h', 'r', 'er', 'bb', 'so', 'hr'],
+                              pitcherDataHeaders = ['name_display_first_last', 'ip', 'h', 'r', 'er', 'bb', 'so', 'hr', 'np', 'bam_era'],
                               teamName = '',
-                              thData = [],
+                              thBatterData = [],
                               tdBatterData = [],
+                              thPitcherData = [],
                               tdPitcherData = [],
                               tempArr = [],
                               notes = [];
 
+                          //Print out Headers for Batters
                           _.forEach(batterDataHeaders, function(header) {
                               if(header === 'name_display_first_last') {
-                                  thData.push(<th key={Math.random()} className='notNumeric'>Batter</th>);
+                                  thBatterData.push(<th key={Math.random()} className='notNumeric'>Batter</th>);
                               } else {
-                                  thData.push(<th key={Math.random()}>{_.includes(header, 'bam_') ? header.slice(4) : header}</th>);
+                                  thBatterData.push(<th key={Math.random()}>{_.includes(header, 'bam_') ? header.slice(4) : header}</th>);
                               }
                           });
 
@@ -475,10 +475,12 @@ export default class GameModalMLB extends React.Component {
                               // Arrange the Batting Order in sequence.
                               let batterClasses = '',
                                   pitcherClasses = '',
+                                  pitcherDisplayName = '',
+                                  pitcherPosition = '',
+                                  pitcherNote = '',
                                   batterDisplayName = '',
                                   batterPosition = '',
                                   batterNote = '',
-                                  // pitcherObj = batterInfo.pitching[0].pitcher,
                                   //Setting the correct Batting Order.
                                   batterObj = _.sortBy(batterInfo.batting[0].batter, function(o) {
                                       return parseInt(o.$.bat_order);
@@ -529,9 +531,20 @@ export default class GameModalMLB extends React.Component {
                                   tdBatterData = [];
                               });
 
+                              //Print out Headers for Pitchers
+                              _.forEach(pitcherDataHeaders, function(header) {
+                                  if(header === 'name_display_first_last') {
+                                      thPitcherData.push(<th key={Math.random()} className='notNumeric'>Pitchers</th>);
+                                  } else {
+                                      thPitcherData.push(<th key={Math.random()}>{_.includes(header, 'bam_') ? header.slice(4) : header}</th>);
+                                  }
+                              });
+
+                              console.log(teamName);
+
                               // Draw Pitcher Table.
                               _.forEach(pitcherObj, function(pitcher) {
-                                  // console.log(pitcher);
+                                  console.log(pitcher);
 
                                   function getInningsPitched() {
                                       let calcIP = null;
@@ -540,11 +553,13 @@ export default class GameModalMLB extends React.Component {
                                           return n % 3 === 0;
                                       }
 
-                                      //If the Number of Outs returns a Modulous of 0, then treat the result as a whole number and append a decimal place.
+                                      //If the Number of Outs returns a Modulous of 0,
+                                      //then treat the result as a whole number and append a decimal place.
                                       if(isInt(pitcher.$.out)) {
                                           calcIP = parseFloat((pitcher.$.out) / 3).toFixed(1);
                                       } else {
-                                          //Add base number of Innings Pitched and then calculate the fraction of the decimal places down to the lowest common denominator.
+                                          //Add base number of Innings Pitched and then calculate the fraction
+                                          //of the decimal places down to the lowest common denominator.
                                           let f = _.round(pitcher.$.out / 3, 2),
                                               baseInningCount = parseInt(f),
                                               decimals = f - baseInningCount,
@@ -553,36 +568,34 @@ export default class GameModalMLB extends React.Component {
 
                                           calcIP = baseInningCount + roundFig;
                                       }
-                                      
+
                                       return calcIP;
                                   }
 
-                                  //Get Innings Pitched
-                                  let ip = getInningsPitched(pitcher.$.out);
-
                                   _.forEach(pitcherDataHeaders, function(header) {
-                                      // pitcherClasses = classNames({
-                                      //     'notNumeric': header === 'name_display_first_last'
-                                      // });
-                                      //
-                                      // if(header === 'name_display_first_last') {
-                                      //     batterNote = _.has(batter.$, 'note') ? batter.$.note : '';
-                                      //     batterDisplayName = batterNote + batter.$.name;
-                                      //     batterPosition = batter.$.pos;
-                                      // } else {
-                                      //     batterDisplayName = _.result(_.find(batter, header), header);
-                                      //     batterPosition = '';
-                                      // }
-                                      //
-                                      // tdPitcherData.push(<td key={Math.random()} className={batterClasses}>
-                                      //     {batterDisplayName}
-                                      //     <span className='playerPosition'>{batterPosition}</span>
-                                      // </td>);
+                                      pitcherClasses = classNames({
+                                          'notNumeric': header === 'name_display_first_last'
+                                      });
+
+                                      if(header === 'name_display_first_last') {
+                                          pitcherDisplayName = pitcher.$.name;
+                                      } else if(header === 'ip') {
+                                        //Get Innings Pitched
+                                        pitcherDisplayName = getInningsPitched(pitcher.$.out);
+                                      } else if(header === 'np') {
+                                        pitcherDisplayName = pitcher.$.np + '-' + pitcher.$.s;
+                                      } else {
+                                        pitcherDisplayName = _.result(_.find(pitcher, header), header);
+                                      }
+
+                                      tdPitcherData.push(<td key={Math.random()} className={pitcherClasses}>
+                                        {pitcherDisplayName === 'np' ? ('pc-st') : pitcherDisplayName}
+                                      </td>);
                                   });
 
-                                  // batterData.push(<tr key={Math.random()}>
-                                  //     {tdPitcherData}
-                                  // </tr>);
+                                  pitcherData.push(<tr key={Math.random()}>
+                                      {tdPitcherData}
+                                  </tr>);
 
                                   tdPitcherData = [];
                               });
@@ -618,18 +631,25 @@ export default class GameModalMLB extends React.Component {
                                       <tr className='teamNameRow'>
                                           <td colSpan='11'>{teamName}</td>
                                       </tr>
-                                      <tr>
-                                          {thData}
+                                      <tr className='batterHeaderRow'>
+                                          {thBatterData}
                                       </tr>
                                           {batterData}
                                       <tr>
                                         <td colSpan='11' className='notNumeric'>{notes[teamCount]}</td>
                                       </tr>
+                                      <tr><td>&nbsp;</td></tr>
+                                      <tr className='pitcherHeaderRow'>
+                                          {thPitcherData}
+                                      </tr>
+                                          {pitcherData}
                                     </tbody>
                                   </table>
                               </div>);
 
+                              thPitcherData = [];
                               batterData = [];
+                              pitcherData = [];
                               tempArr = [];
                               notes = [];
                           });
