@@ -656,7 +656,11 @@ export default class GameModalMLB extends React.Component {
                                       <tr>
                                         <td colSpan='11' className='notNumeric'>{notes[teamCount]}</td>
                                       </tr>
-                                      <tr><td>&nbsp;</td></tr>
+                                    </tbody>
+                                  </table>
+                                  <br />
+                                  <table className='batterDataTable'>
+                                    <tbody>
                                       <tr className='pitcherHeaderRow'>
                                           {thPitcherData}
                                       </tr>
