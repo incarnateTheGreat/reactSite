@@ -318,7 +318,7 @@ h3 {
 .activePlayerDataContainer {
   float: none;
   width: 100%;
-  height: 560px;
+  height: 300px;
   padding: 0 10px 0 7px;
   overflow-y: scroll;
 }
@@ -327,11 +327,16 @@ h3 {
 }
 .activePlayerData {
   overflow: auto;
+  padding: 0 0 15px;
 }
 .activePlayerData .bases {
   margin: 6px 0 0;
   padding: 0 10px 0px 0;
   overflow: hidden;
+  float: left;
+}
+.activePlayerData .venueData {
+  float: left;
 }
 .activePlayerData .bases .baseRow {
   clear: both;
@@ -442,6 +447,7 @@ h3 {
 .batterData .batterDataTable tr .pinchHitter {
   padding: 0 0 0 10px;
 }
+
 
 /*Loading Spinner*/
 @-webkit-keyframes spin {

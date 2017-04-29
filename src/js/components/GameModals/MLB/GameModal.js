@@ -25,9 +25,10 @@ const customStyles = {
         transition            : 'all 0.35s ease',
         padding               : '10px 20px 10px',
         borderRadius          : '7px 7px 0px 0px',
-        overflow              : 'hidden',
+        overflowY             : 'auto',
         minHeight             : '500px',
-        width                 : '90%'
+        width                 : '90%',
+        height                : '90%'
     }
 };
 
@@ -72,6 +73,8 @@ export default class GameModalMLB extends React.Component {
             modalIsOpen: false,
             gameContentBody: null,
             boxScoreBody_awayTeam: null,
+            boxScoreBody_awayTeamName: null,
+            boxScoreBody_homeTeamName: null,
             boxScoreBody_homeTeam: null,
             game: null,
             modalStyle: _.merge(customStyles, tweenStyle),
@@ -203,8 +206,6 @@ export default class GameModalMLB extends React.Component {
                 //Linescore
                 data = gameData[0].data.data.game;
 
-                console.log(data);
-
                 let awayTeamName = data.away_team_name,
                     homeTeamName = data.home_team_name,
                     awayTeam = data.away_name_abbrev,
@@ -249,12 +250,15 @@ export default class GameModalMLB extends React.Component {
                 </div>);
 
                 self.setState({gameContentBody});
+                console.log(self.state);
               });
             }
 
-            if(selectedGameData.status.ind == 'DR' || selectedGameData.status.ind == 'DI') {
+            console.log(selectedGameData.status);
+
+            if(selectedGameData.status.ind === 'DR' || selectedGameData.status.ind === 'DI') {
               displayPPDGameData();
-            } else if(selectedGameData.status.ind == 'S') {
+            } else if(selectedGameData.status.ind === 'S') {
               displayPregameData();
             } else {
               urls[0] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json'),
@@ -372,6 +376,7 @@ export default class GameModalMLB extends React.Component {
                               currentInning = id + 1;
                               getInningScore(data, inning);
 
+                              //TODO: Wrap this in a container.
                               gameDataObj.push(<div className='boxScore' key={Math.random()}>
                                   <div className='inningContainer'>
                                       <div className='inning'>{currentInning}</div>
@@ -670,7 +675,7 @@ export default class GameModalMLB extends React.Component {
 
                       if (data.status !== 'Game Over' && data.status !== 'Final') {
                           //Show Runner/Batter/Pitcher Data
-                          activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
+                          gameDataObj.push(<div className='activePlayerData' key={Math.random()}>
                               <div className='bases'>
                                   <div className={'baseContainer ' + (data.status === 'Warmup' || data.status === 'Pre-Game' ? 'disable' : '')}>
                                       <div className='secondBase baseRow'>
@@ -720,28 +725,30 @@ export default class GameModalMLB extends React.Component {
                                   </div>
                               </div>
                               <div className={(data.status === 'Warmup' || data.status === 'Pre-Game' ? 'disable' : '')}><strong>Last Play:</strong> {data.pbp_last}</div>
-                              <hr />
-                              <div><strong>Weather:</strong> {rawBoxScore.$.weather}</div>
-                              <div><strong>Wind:</strong> {rawBoxScore.$.wind}</div>
-                              <div><strong>Venue:</strong> {data.venue}, {data.location}</div>
+                              <div className='venueData'>
+                                <div><strong>Weather:</strong> {rawBoxScore.$.weather}</div>
+                                <div><strong>Wind:</strong> {rawBoxScore.$.wind}</div>
+                                <div><strong>Venue:</strong> {data.venue}, {data.location}</div>
+                              </div>
                           </div>);
 
                           getBatterBoxScoreData();
 
                       } else if (data.status === 'Final' || data.status === 'Game Over') {
                           gameDataObj.push(<div className='activePlayerData' key={Math.random()}>
-                              <div className='bases'>
-                                  <div className='winnerLoser'>
-                                      <div><strong>WP:</strong> {data.winning_pitcher.first} {data.winning_pitcher.last} ({data.winning_pitcher.wins}-{data.winning_pitcher.losses})</div>
-                                      <div><strong>LP:</strong> {data.losing_pitcher.first} {data.losing_pitcher.last} ({data.losing_pitcher.wins}-{data.losing_pitcher.losses})</div>
-                                      {data.save_pitcher.first !== '' ? (<div><strong>SV:</strong> {data.save_pitcher.first} {data.save_pitcher.last} ({data.save_pitcher.saves})</div>) : ('')}
-                                  </div>
-                              </div>
-                              <hr />
+                            <div className='bases'>
+                                <div className='winnerLoser'>
+                                    <div><strong>WP:</strong> {data.winning_pitcher.first} {data.winning_pitcher.last} ({data.winning_pitcher.wins}-{data.winning_pitcher.losses})</div>
+                                    <div><strong>LP:</strong> {data.losing_pitcher.first} {data.losing_pitcher.last} ({data.losing_pitcher.wins}-{data.losing_pitcher.losses})</div>
+                                    {data.save_pitcher.first !== '' ? (<div><strong>SV:</strong> {data.save_pitcher.first} {data.save_pitcher.last} ({data.save_pitcher.saves})</div>) : ('')}
+                                </div>
+                            </div>
+                            <div className='venueData'>
                               <div><strong>Weather:</strong> {rawBoxScore.$.weather}</div>
                               <div><strong>Wind:</strong> {rawBoxScore.$.wind}</div>
                               <div><strong>Venue:</strong> {data.venue}, {data.location}</div>
                               <div><strong>Attendance:</strong> {rawBoxScore.$.attendance}</div>
+                            </div>
                           </div>);
 
                           getBatterBoxScoreData();
@@ -754,8 +761,6 @@ export default class GameModalMLB extends React.Component {
                                {rawBoxScore.team[1].$.short_name} ({rawBoxScore.team[1].$.wins}-{rawBoxScore.team[1].$.losses})</div>) : ('')}
                           <div className='boxScoreContainer'>{gameDataObj}</div>
                       </div>);
-
-                      console.log(activePlayerData);
 
                       //Combine Boxscore Data
                       _.forEach(activePlayerData, function(team, i) {
@@ -844,7 +849,7 @@ export default class GameModalMLB extends React.Component {
                         <div key={game.id}>
                             {this.state.gameContentBody}
 
-                            {(game.status.ind !== 'DR' || game.status.ind !== 'DI') ? (
+                            {(game.status.ind === 'I' || game.status.ind === 'MC' || game.status.ind === 'P' || game.status.ind === 'PW' || game.status.ind === 'F' || game.status.ind === 'O') ? (
                                 <Tabs activeKey={this.state.activeTab} onSelect={this.handleSelect}>
                                     <Tab eventKey={1} title="Tab 1">{this.state.boxScoreBody_awayTeam}</Tab>
                                     <Tab eventKey={2} title="Tab 2">{this.state.boxScoreBody_homeTeam}</Tab>
