@@ -255,13 +255,12 @@ export default class GameModalMLB extends React.Component {
                 </div>);
 
                 self.setState({gameContentBody});
-                console.log(self.state);
               });
             }
 
             if(selectedGameData.status.ind === 'DR' || selectedGameData.status.ind === 'DI') {
               displayPPDGameData();
-            } else if(selectedGameData.status.ind === 'S') {
+            } else if(selectedGameData.status.ind === 'S' || selectedGameData.status.ind === 'P') {
               displayPregameData();
             } else {
               urls[0] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json'),
@@ -290,8 +289,6 @@ export default class GameModalMLB extends React.Component {
 
                   //Boxscore
                   boxscoreData = gameData[3].data.data;
-
-                  console.log(boxscoreData.boxscore.pitching);
 
                   let awayTeam = data.away_name_abbrev,
                       homeTeam = data.home_name_abbrev,
@@ -891,7 +888,7 @@ export default class GameModalMLB extends React.Component {
                         <div key={game.id}>
                             {this.state.gameContentBody}
 
-                            {(game.status.ind === 'I' || game.status.ind === 'MC' || game.status.ind === 'P' || game.status.ind === 'PW' || game.status.ind === 'F' || game.status.ind === 'O') ? (
+                            {(game.status.ind === 'I' || game.status.ind === 'MC' || game.status.ind === 'PW' || game.status.ind === 'F' || game.status.ind === 'O') ? (
                                 <Tabs id='boxScoreTabs' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
                                     <Tab eventKey={1} title={game.away_name_abbrev}>{this.state.boxScoreBody_awayTeam}</Tab>
                                     <Tab eventKey={2} title={game.home_name_abbrev}>{this.state.boxScoreBody_homeTeam}</Tab>
