@@ -892,9 +892,9 @@ export default class GameModalMLB extends React.Component {
                             {this.state.gameContentBody}
 
                             {(game.status.ind === 'I' || game.status.ind === 'MC' || game.status.ind === 'P' || game.status.ind === 'PW' || game.status.ind === 'F' || game.status.ind === 'O') ? (
-                                <Tabs activeKey={this.state.activeTab} onSelect={this.handleSelect}>
-                                    <Tab eventKey={1} title="Tab 1">{this.state.boxScoreBody_awayTeam}</Tab>
-                                    <Tab eventKey={2} title="Tab 2">{this.state.boxScoreBody_homeTeam}</Tab>
+                                <Tabs id='boxScoreTabs' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
+                                    <Tab eventKey={1} title={game.away_name_abbrev}>{this.state.boxScoreBody_awayTeam}</Tab>
+                                    <Tab eventKey={2} title={game.home_name_abbrev}>{this.state.boxScoreBody_homeTeam}</Tab>
                                 </Tabs>
                             ) : ('')}
                         </div>
