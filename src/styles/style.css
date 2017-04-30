@@ -447,6 +447,9 @@ h3 {
 .batterData .batterDataTable tr .pinchHitter {
   padding: 0 0 0 10px;
 }
+.batterData .batterDataTable tr.pitcherTotalsRow td {
+  border-top: 1px solid #999;
+}
 
 
 /*Loading Spinner*/

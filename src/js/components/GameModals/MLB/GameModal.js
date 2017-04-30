@@ -92,14 +92,19 @@ export default class GameModalMLB extends React.Component {
     }
 
     openModal() {
+      let self = this;
+
       this.showLoadingSpinner();
-      this.setState({modalIsOpen: true});
+      this.getBoxscoreData(this.state.game, this.state.game.game_data_directory, function() {
+        setTimeout(() => {
+          self.setState({modalIsOpen: true});
+        }, 350);
+      });
     }
 
     afterOpenModal() {
         tweenStyle['content'].opacity = '1';
         this.setState({modalStyle: _.merge(customStyles, tweenStyle)});
-        this.getBoxscoreData(this.state.game, this.state.game.game_data_directory);
         this.hideLoadingSpinner();
     }
 
@@ -155,7 +160,7 @@ export default class GameModalMLB extends React.Component {
       }, loaderTimeoutIntervals[getTimeoutIntervals()][1]);
     }
 
-    getBoxscoreData(selectedGameData, game_data_directory) {
+    getBoxscoreData(selectedGameData, game_data_directory, callback) {
         let self = this,
             urls = [],
             data = null,
@@ -190,7 +195,7 @@ export default class GameModalMLB extends React.Component {
 
                 //Combine all content
                 gameContentBody.push(<div key={Math.random()}>
-                    <div className='boxScoreContainer'>{boxScore}</div>
+                    <div className='boxScoreContainer'>{gameDataObj}</div>
                     <div className='activePlayerDataContainer shortHeight'>{activePlayerData}</div>
                 </div>);
 
@@ -254,8 +259,6 @@ export default class GameModalMLB extends React.Component {
               });
             }
 
-            console.log(selectedGameData.status);
-
             if(selectedGameData.status.ind === 'DR' || selectedGameData.status.ind === 'DI') {
               displayPPDGameData();
             } else if(selectedGameData.status.ind === 'S') {
@@ -287,6 +290,8 @@ export default class GameModalMLB extends React.Component {
 
                   //Boxscore
                   boxscoreData = gameData[3].data.data;
+
+                  console.log(boxscoreData.boxscore.pitching);
 
                   let awayTeam = data.away_name_abbrev,
                       homeTeam = data.home_name_abbrev,
@@ -563,33 +568,33 @@ export default class GameModalMLB extends React.Component {
                                   }
                               });
 
-                              // Draw Pitcher Table.
-                              _.forEach(pitcherObj, function(pitcher) {
-                                  function getInningsPitched() {
-                                      let calcIP = null;
+                              function getInningsPitched(outs) {
+                                  let calcIP = null;
 
-                                      function isInt(n) {
-                                          return n % 3 === 0;
-                                      }
-
-                                      //If the Number of Outs returns a Modulous of 0,
-                                      //then treat the result as a whole number and append a decimal place.
-                                      if(isInt(pitcher.$.out)) {
-                                          calcIP = parseFloat((pitcher.$.out) / 3).toFixed(1);
-                                      } else {
-                                          //Add base number of Innings Pitched and then calculate the fraction
-                                          //of the decimal places down to the lowest common denominator.
-                                          let f = _.round(pitcher.$.out / 3, 2),
-                                              baseInningCount = parseInt(f),
-                                              dividedFig = (f - baseInningCount) / 3,
-                                              roundFig = Math.round(dividedFig * 10) / 10;
-
-                                          calcIP = baseInningCount + roundFig;
-                                      }
-
-                                      return calcIP;
+                                  function isInt(n) {
+                                      return n % 3 === 0;
                                   }
 
+                                  //If the Number of Outs returns a Modulous of 0,
+                                  //then treat the result as a whole number and append a decimal place.
+                                  if(isInt(outs)) {
+                                      calcIP = parseFloat((outs) / 3).toFixed(1);
+                                  } else {
+                                      //Add base number of Innings Pitched and then calculate the fraction
+                                      //of the decimal places down to the lowest common denominator.
+                                      let f = _.round(outs / 3, 2),
+                                          baseInningCount = parseInt(f),
+                                          dividedFig = (f - baseInningCount) / 3,
+                                          roundFig = Math.round(dividedFig * 10) / 10;
+
+                                      calcIP = baseInningCount + roundFig;
+                                  }
+
+                                  return calcIP;
+                              }
+
+                              // Draw Pitcher Table.
+                              _.forEach(pitcherObj, function(pitcher) {
                                   _.forEach(pitcherDataHeaders, function(header) {
                                       pitcherClasses = classNames({
                                           'notNumeric': header === 'name_display_first_last'
@@ -642,6 +647,36 @@ export default class GameModalMLB extends React.Component {
                                 });
                               }
 
+                              //Assemble Pitcher Totals
+                              let pitcherTotalsData = [],
+                                  pc = 0;
+
+                              //TODO: Sort out all pitchers properly to get total pitch count.
+                              _.forEach(boxscoreData.boxscore.pitching, function(p, i) {
+                                console.log(p.pitcher[i]);
+                                pc += parseInt(p.pitcher[i].np);
+                                // _.forEach(p, function(o) {
+                                //   console.log(o);
+                                // })
+                              });
+
+                              console.log("Total PC:", pc);
+
+                              console.log("---------------------------------");
+
+                                pitcherTotalsData.push(<tr className='pitcherTotalsRow' key={Math.random()}>
+                                     <td className='notNumeric'><strong>TOTALS</strong></td>
+                                     <td>{getInningsPitched(boxscoreData.boxscore.pitching[teamCount].out)}</td>
+                                     <td>{boxscoreData.boxscore.pitching[teamCount].h}</td>
+                                     <td>{boxscoreData.boxscore.pitching[teamCount].r}</td>
+                                     <td>{boxscoreData.boxscore.pitching[teamCount].er}</td>
+                                     <td>{boxscoreData.boxscore.pitching[teamCount].bb}</td>
+                                     <td>{boxscoreData.boxscore.pitching[teamCount].so}</td>
+                                     <td>{boxscoreData.boxscore.pitching[teamCount].hr}</td>
+                                     <td>---</td>
+                                     <td>{boxscoreData.boxscore.pitching[teamCount].era}</td>
+                                </tr>);
+
                               //Push Pitcher & Batter Data.
                               activePlayerData.push(<div className='batterData' key={Math.random()}>
                                   <table className='batterDataTable'>
@@ -665,6 +700,7 @@ export default class GameModalMLB extends React.Component {
                                           {thPitcherData}
                                       </tr>
                                           {pitcherData}
+                                          {pitcherTotalsData}
                                     </tbody>
                                   </table>
                               </div>);
@@ -781,6 +817,8 @@ export default class GameModalMLB extends React.Component {
                   }
               });
             }
+
+            callback();
     }
 
     render() {
