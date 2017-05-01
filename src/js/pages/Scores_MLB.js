@@ -19,38 +19,38 @@ export default class Scores_MLB extends React.Component {
     }
 
     componentWillMount() {
-      // console.log('before:', this.state);
       this.setGameDataOutput();
-    }
-
-    componentDidUpdate() {
-      // console.log('after:', this.state);
-      // console.log("Did update.");
     }
 
     setGameDataOutput() {
       const self = this,
+            dateStringFormat = '[year_]YYYY/[month_]MM/[day_]DD',
             dateObj = {
               yesterday: {
-                day: moment().subtract(1, 'day').format('DD')
+                day: moment().subtract(1, 'day')
               },
               today: {
-                day: moment().format('DD')
+                day: moment()
               },
               tomorrow: {
-                day: moment().add(1, 'day').format('DD')
+                day: moment().add(1, 'day')
               }
             };
 
       //Loop through Live, Today, and Yesterday's games.
       let p = [],
-          year = moment().format('YYYY'),
-          month = moment().format('MM'),
+          year = '',
+          month = '',
+          day = '',
           url = '';
 
       //Use Axios to get Score Data.
       _.forEach(dateObj, function(date) {
-        url = 'http://mlb.mlb.com/gdcross/components/game/mlb/year_'+ year +'/month_'+ month +'/day_'+ date.day +'/master_scoreboard.json';
+          year = date.day.format('YYYY'),
+          month = date.day.format('MM'),
+          day = date.day.format('DD');
+
+          url = 'http://mlb.mlb.com/gdcross/components/game/mlb/year_'+ year +'/month_'+ month +'/day_'+ day +'/master_scoreboard.json';
         p.push(axios.get(url));
       });
 
@@ -62,13 +62,11 @@ export default class Scores_MLB extends React.Component {
           live: []
         };
 
-        console.log(datesWithGames);
-
         _.forEach((datesWithGames), (dayData) => {
             let gameData = dayData.data.data.games.game,
                 objectDay = dayData.data.data.games.day;
 
-            if(objectDay == dateObj.today.day) {
+            if(objectDay == dateObj.today.day.format('DD')) {
               //Today's Game Data
               _.forEach(gameData, function(game) {
                 if(self.isGameLive(game)) {
@@ -77,7 +75,7 @@ export default class Scores_MLB extends React.Component {
                   gameDataObjects.today.push(game);
                 }
               });
-            } else if(objectDay == dateObj.tomorrow.day) {
+            } else if(objectDay == dateObj.tomorrow.day.format('DD')) {
               //Tomorrow's Game Data
               _.forEach(gameData, function(game) {
                 if(self.isGameLive(game)) {
@@ -86,7 +84,7 @@ export default class Scores_MLB extends React.Component {
                   gameDataObjects.tomorrow.push(game);
                 }
               });
-            } else if(objectDay == dateObj.yesterday.day) {
+            } else if(objectDay == dateObj.yesterday.day.format('DD')) {
               //Yesterday's Game Data
               _.forEach(gameData, function(game) {
                 if(self.isGameLive(game)) {

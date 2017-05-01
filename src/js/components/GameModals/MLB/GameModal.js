@@ -7,7 +7,7 @@ import {OverlayTrigger, Tooltip, Tab, Tabs} from "react-bootstrap";
 
 // import BaseRunnerTooltip from '../../../components/Tooltip';
 
-const customStyles = {
+let customStyles = {
     overlay : {
         zIndex                : '200'
     },
@@ -25,10 +25,8 @@ const customStyles = {
         transition            : 'all 0.35s ease',
         padding               : '10px 20px 10px',
         borderRadius          : '7px 7px 0px 0px',
-        overflowY             : 'auto',
-        minHeight             : '500px',
-        width                 : '90%',
-        height                : '90%'
+        overflow              : 'hidden',
+        width                 : '90%'
     }
 };
 
@@ -41,7 +39,6 @@ let tweenStyle = {
 //Tooltip
 const BaseRunnerTooltip = React.createClass({
     render() {
-        // console.log(this.props);
         if(this.props.tooltip) {
             let tooltip = <Tooltip id={this.props.id}>{this.props.tooltip}</Tooltip>;
 
@@ -78,7 +75,9 @@ export default class GameModalMLB extends React.Component {
             boxScoreBody_homeTeam: null,
             game: null,
             modalStyle: _.merge(customStyles, tweenStyle),
-            activeTab: 1 // Takes active tab from props if it is defined there
+            activeTab: 1, // Takes active tab from props if it is defined there,
+            browserHeight: 0,
+            browserWidth: 0
         };
 
         // Bind the handleSelect function already here (not in the render function)
@@ -97,7 +96,8 @@ export default class GameModalMLB extends React.Component {
       this.showLoadingSpinner();
       this.getBoxscoreData(this.state.game, this.state.game.game_data_directory, function() {
         setTimeout(() => {
-          self.setState({modalIsOpen: true});
+            self.setState({modalIsOpen: true});
+            window.onresize();
         }, 350);
       });
     }
@@ -124,6 +124,35 @@ export default class GameModalMLB extends React.Component {
     hideLoadingSpinner() {
       this.loader.style.opacity = "0";
       this.loader.style.zIndex = "-1";
+    }
+    
+    getBrowserSize() {
+        window.onresize = function() {
+            let browserWidth = 0,
+                browserHeight = 0;
+
+            if( typeof( window.innerWidth ) == 'number' ) {
+                //Non-IE
+                browserWidth = window.innerWidth;
+                browserHeight = window.innerHeight;
+            } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+                //IE 6+ in 'standards compliant mode'
+                browserWidth = document.documentElement.clientWidth;
+                browserHeight = document.documentElement.clientHeight;
+            } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+                //IE 4 compatible
+                browserWidth = document.body.clientWidth;
+                browserHeight = document.body.clientHeight;
+            }
+            
+            document.getElementsByClassName('ReactModal__Content ReactModal__Content--after-open')[0].style.height = (browserHeight - 100) + 'px';
+            let headlineContainer_height = document.getElementsByClassName('headlineContainer')[0].offsetHeight;
+
+            console.log('Modal:', browserHeight);
+            console.log('Headline Container:', document.getElementsByClassName('headlineContainer')[0].offsetHeight);
+
+            document.getElementsByClassName('activePlayerDataContainer')[0].style.height = (browserHeight) + 'px';
+        }
     }
 
     handleSelect(selectedTab) {
@@ -556,7 +585,7 @@ export default class GameModalMLB extends React.Component {
                               //Print out Headers for Pitchers
                               _.forEach(pitcherDataHeaders, function(header) {
                                   if(header === 'name_display_first_last') {
-                                      thPitcherData.push(<th key={Math.random()} className='notNumeric'>Pitchers</th>);
+                                      thPitcherData.push(<th key={Math.random()} className='notNumeric'>Pitcher</th>);
                                   } else if (header === 'np') {
                                       thPitcherData.push(<th key={Math.random()}>pc-st</th>);
                                   } else {
@@ -794,7 +823,7 @@ export default class GameModalMLB extends React.Component {
                       }
 
                       //Combine Score and Location Data
-                      gameContentBody.push(<div key={Math.random()}>
+                      gameContentBody.push(<div className='headlineContainer' key={Math.random()}>
                           {data.status === 'Final' ? (
                           <div className='headline'>{rawBoxScore.team[0].$.short_name} ({rawBoxScore.team[0].$.wins}-{rawBoxScore.team[0].$.losses}) vs.&nbsp;
                                {rawBoxScore.team[1].$.short_name} ({rawBoxScore.team[1].$.wins}-{rawBoxScore.team[1].$.losses})</div>) : ('')}
@@ -823,6 +852,10 @@ export default class GameModalMLB extends React.Component {
     render() {
         const game = this.props.gameData;
         this.state.game = game;
+        
+        this.getBrowserSize();
+
+        // console.log(this.state);
 
         let gameStatus = '',
             outs = '',
