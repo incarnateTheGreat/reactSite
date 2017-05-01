@@ -378,7 +378,6 @@ export default class GameModalMLB extends React.Component {
                               currentInning = id + 1;
                               getInningScore(data, inning);
 
-                              //TODO: Wrap this in a container.
                               gameDataObj.push(<div className='boxScore' key={Math.random()}>
                                   <div className='inningContainer'>
                                       <div className='inning'>{currentInning}</div>
@@ -646,15 +645,18 @@ export default class GameModalMLB extends React.Component {
 
                               //Assemble Pitcher Totals
                               let pitcherTotalsData = [],
+                                  pitchers = [],
                                   pc = 0;
 
                               //TODO: Sort out all pitchers properly to get total pitch count.
-                              _.forEach(boxscoreData.boxscore.pitching, function(p, i) {
-                                console.log(p.pitcher[i]);
-                                pc += parseInt(p.pitcher[i].np);
-                                // _.forEach(p, function(o) {
-                                //   console.log(o);
-                                // })
+                              pitchers = _.filter(boxscoreData.boxscore.pitching[teamCount], function(j, i) {
+                                return i === 'pitcher';
+                              });
+
+                              console.log(pitchers);
+
+                              pc = _.sumBy(pitchers, function(o) {
+                                console.log(o);
                               });
 
                               console.log("Total PC:", pc);
