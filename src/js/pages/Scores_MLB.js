@@ -62,6 +62,8 @@ export default class Scores_MLB extends React.Component {
           live: []
         };
 
+        console.log(datesWithGames);
+
         _.forEach((datesWithGames), (dayData) => {
             let gameData = dayData.data.data.games.game,
                 objectDay = dayData.data.data.games.day;
