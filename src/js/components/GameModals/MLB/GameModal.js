@@ -75,9 +75,7 @@ export default class GameModalMLB extends React.Component {
             boxScoreBody_homeTeam: null,
             game: null,
             modalStyle: _.merge(customStyles, tweenStyle),
-            activeTab: 1, // Takes active tab from props if it is defined there,
-            browserHeight: 0,
-            browserWidth: 0
+            activeTab: 0 // Takes active tab from props if it is defined there,
         };
 
         // Bind the handleSelect function already here (not in the render function)
@@ -125,8 +123,10 @@ export default class GameModalMLB extends React.Component {
       this.loader.style.opacity = "0";
       this.loader.style.zIndex = "-1";
     }
-    
+
     getBrowserSize() {
+      let self = this;
+
         window.onresize = function() {
             let browserWidth = 0,
                 browserHeight = 0;
@@ -144,14 +144,26 @@ export default class GameModalMLB extends React.Component {
                 browserWidth = document.body.clientWidth;
                 browserHeight = document.body.clientHeight;
             }
-            
-            document.getElementsByClassName('ReactModal__Content ReactModal__Content--after-open')[0].style.height = (browserHeight - 100) + 'px';
-            let headlineContainer_height = document.getElementsByClassName('headlineContainer')[0].offsetHeight;
 
-            console.log('Modal:', browserHeight);
-            console.log('Headline Container:', document.getElementsByClassName('headlineContainer')[0].offsetHeight);
+            let modalHeight = (browserHeight - 25),
+                headlineContainer_height = 0,
+                activePlayerDataContainer_height = 0;
 
-            document.getElementsByClassName('activePlayerDataContainer')[0].style.height = (browserHeight) + 'px';
+            //If Pre-game or PPD, reduce the height of the Modal. Otherwise, fit the proper height.
+            if(document.getElementsByClassName('tab-pane').length <= 0) {
+              activePlayerDataContainer_height = document.getElementsByClassName('headlineContainer')[0].offsetHeight;
+            } else {
+              headlineContainer_height = document.getElementsByClassName('headlineContainer')[0].offsetHeight;
+              activePlayerDataContainer_height = (modalHeight - headlineContainer_height) - 100 + 'px';
+              document.getElementsByClassName('ReactModal__Content ReactModal__Content--after-open')[0].style.height = modalHeight + 'px';
+            }
+
+            //Force-assign heights to Active Player Data Container.
+            if(self.state.activeTab == 0 || _.isUndefined(self.state.activeTab)) {
+              document.getElementsByClassName('activePlayerDataContainer')[0].style.height = activePlayerDataContainer_height;
+            } else {
+              document.getElementsByClassName('activePlayerDataContainer')[1].style.height = activePlayerDataContainer_height;
+            }
         }
     }
 
@@ -160,6 +172,8 @@ export default class GameModalMLB extends React.Component {
         // the Tabs component knows about the change and re-renders.
         this.setState({
             activeTab: selectedTab
+        }, function() {
+          window.onresize();
         });
     }
 
@@ -207,7 +221,7 @@ export default class GameModalMLB extends React.Component {
             //Display Postponed game.
             function displayPPDGameData() {
                 //Apply Team Names.
-                gameDataObj.push(<div className='boxScore' key={Math.random()}>
+                gameDataObj.push(<div className='headlineContainer boxScore' key={Math.random()}>
                     <div>
                         <div className='teamNames'>{selectedGameData.away_team_name} vs. {selectedGameData.home_team_name}</div>
                         <div>{selectedGameData.venue}, {selectedGameData.location}</div>
@@ -247,7 +261,7 @@ export default class GameModalMLB extends React.Component {
                     doubleHeader = (data.double_header_sw !== 'N' ? '(Game ' + data.game_nbr + ' of Double Header)' : '');
 
                 //Apply Team Names.
-                gameDataObj.push(<div className='boxScore' key={Math.random()}>
+                gameDataObj.push(<div className='headlineContainer boxScore' key={Math.random()}>
                     <div>
                         <div className='teamNames' data-tooltop="">{awayTeamName} vs. {homeTeamName} {doubleHeader}</div>
                         <div className='startTime'><strong>{data.time_hm_lg}{data.ampm}</strong></div>
@@ -852,7 +866,7 @@ export default class GameModalMLB extends React.Component {
     render() {
         const game = this.props.gameData;
         this.state.game = game;
-        
+
         this.getBrowserSize();
 
         // console.log(this.state);
@@ -925,8 +939,8 @@ export default class GameModalMLB extends React.Component {
 
                             {(game.status.ind === 'I' || game.status.ind === 'MC' || game.status.ind === 'PW' || game.status.ind === 'F' || game.status.ind === 'O') ? (
                                 <Tabs id='boxScoreTabs' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
-                                    <Tab eventKey={1} title={game.away_name_abbrev}>{this.state.boxScoreBody_awayTeam}</Tab>
-                                    <Tab eventKey={2} title={game.home_name_abbrev}>{this.state.boxScoreBody_homeTeam}</Tab>
+                                    <Tab eventKey={0} title={game.away_name_abbrev}>{this.state.boxScoreBody_awayTeam}</Tab>
+                                    <Tab eventKey={1} title={game.home_name_abbrev}>{this.state.boxScoreBody_homeTeam}</Tab>
                                 </Tabs>
                             ) : ('')}
                         </div>
