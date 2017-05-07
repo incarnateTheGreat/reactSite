@@ -127,6 +127,7 @@ export default class GameModalMLB extends React.Component {
       let self = this;
 
         window.onresize = function() {
+          if(self.state.modalIsOpen) {
             let browserWidth = 0,
                 browserHeight = 0;
 
@@ -164,6 +165,7 @@ export default class GameModalMLB extends React.Component {
               document.getElementsByClassName('activePlayerDataContainer')[1].style.height = activePlayerDataContainer_height;
             }
         }
+      }
     }
 
     handleSelect(selectedTab) {
@@ -246,8 +248,6 @@ export default class GameModalMLB extends React.Component {
 
             // Display Pregame data
             function displayPregameData() {
-              let self = this;
-
               // Get Preview data.
               urls[0] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json');
 
