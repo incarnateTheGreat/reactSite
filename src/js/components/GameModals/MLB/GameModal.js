@@ -45,16 +45,7 @@ const BaseRunnerTooltip = React.createClass({
             return (
                 <OverlayTrigger
                     overlay={tooltip} placement={this.props.placement}
-                    delayShow={300} delayHide={150}>
-                    <div className={this.props.className}>{this.props.children}</div>
-                </OverlayTrigger>
-            );
-        } else {
-            let tooltip = <Tooltip id={this.props.id}>{this.props.tooltip}</Tooltip>;
-            return (
-                <OverlayTrigger
-                    overlay={tooltip} placement={this.props.placement}
-                    delayShow={300} delayHide={150}>
+                    delayShow={0} delayHide={0}>
                     <div className={this.props.className}>{this.props.children}</div>
                 </OverlayTrigger>
             );
@@ -84,6 +75,7 @@ export default class GameModalMLB extends React.Component {
         this.openModal = this.openModal.bind(this);
         this.afterOpenModal = this.afterOpenModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
+        this.loadPlayerProfile = this.loadPlayerProfile.bind(this);
 
         this.loader = document.getElementsByClassName("loader")[0];
     }
@@ -122,6 +114,13 @@ export default class GameModalMLB extends React.Component {
     hideLoadingSpinner() {
       this.loader.style.opacity = "0";
       this.loader.style.zIndex = "-1";
+    }
+
+    loadPlayerProfile() {
+      let playerID = 451192;
+      const mlbUrl = 'http://www.milb.com/player/index.jsp?player_id=' + playerID;
+
+      window.open(mlbUrl);
     }
 
     getBrowserSize() {
@@ -247,6 +246,8 @@ export default class GameModalMLB extends React.Component {
 
             // Display Pregame data
             function displayPregameData() {
+              let self = this;
+
               // Get Preview data.
               urls[0] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json');
 
@@ -689,35 +690,34 @@ export default class GameModalMLB extends React.Component {
                               //Assemble Pitcher Totals
                               let pitcherTotalsData = [],
                                   pitchers = [],
-                                  pc = 0;
+                                  pc = 0,
+                                  s = 0;
 
-                              //TODO: Sort out all pitchers properly to get total pitch count.
+                              //Sort out all pitchers properly to get total pitch count.
                               pitchers = _.filter(boxscoreData.boxscore.pitching[teamCount], function(j, i) {
                                 return i === 'pitcher';
                               });
 
-                              console.log(pitchers);
-
-                              pc = _.sumBy(pitchers, function(o) {
-                                console.log(o);
+                              pc = _.sumBy(pitchers[0], function(pitcher, i) {
+                                return parseInt(pitcher.np);
                               });
 
-                              console.log("Total PC:", pc);
+                              s = _.sumBy(pitchers[0], function(pitcher, i) {
+                                return parseInt(pitcher.s);
+                              });
 
-                              console.log("---------------------------------");
-
-                                pitcherTotalsData.push(<tr className='pitcherTotalsRow' key={Math.random()}>
-                                     <td className='notNumeric'><strong>TOTALS</strong></td>
-                                     <td>{getInningsPitched(boxscoreData.boxscore.pitching[teamCount].out)}</td>
-                                     <td>{boxscoreData.boxscore.pitching[teamCount].h}</td>
-                                     <td>{boxscoreData.boxscore.pitching[teamCount].r}</td>
-                                     <td>{boxscoreData.boxscore.pitching[teamCount].er}</td>
-                                     <td>{boxscoreData.boxscore.pitching[teamCount].bb}</td>
-                                     <td>{boxscoreData.boxscore.pitching[teamCount].so}</td>
-                                     <td>{boxscoreData.boxscore.pitching[teamCount].hr}</td>
-                                     <td>---</td>
-                                     <td>{boxscoreData.boxscore.pitching[teamCount].era}</td>
-                                </tr>);
+                              pitcherTotalsData.push(<tr className='pitcherTotalsRow' key={Math.random()}>
+                                   <td className='notNumeric'><strong>TOTALS</strong></td>
+                                   <td>{getInningsPitched(boxscoreData.boxscore.pitching[teamCount].out)}</td>
+                                   <td>{boxscoreData.boxscore.pitching[teamCount].h}</td>
+                                   <td>{boxscoreData.boxscore.pitching[teamCount].r}</td>
+                                   <td>{boxscoreData.boxscore.pitching[teamCount].er}</td>
+                                   <td>{boxscoreData.boxscore.pitching[teamCount].bb}</td>
+                                   <td>{boxscoreData.boxscore.pitching[teamCount].so}</td>
+                                   <td>{boxscoreData.boxscore.pitching[teamCount].hr}</td>
+                                   <td>{pc}-{s}</td>
+                                   <td>{boxscoreData.boxscore.pitching[teamCount].era}</td>
+                              </tr>);
 
                               //Push Pitcher & Batter Data.
                               activePlayerData.push(<div className='batterData' key={Math.random()}>
@@ -761,21 +761,28 @@ export default class GameModalMLB extends React.Component {
                               <div className='bases'>
                                   <div className={'baseContainer ' + (data.status === 'Warmup' || data.status === 'Pre-Game' ? 'disable' : '')}>
                                       <div className='secondBase baseRow'>
-                                        <BaseRunnerTooltip className={'base ' + (_.includes(currentRunnersOnBase, '2b') ? 'onBase' : '')}
-                                                           placement='top'
-                                                           tooltip={(_.includes(currentRunnersOnBase, '2b') ? getPlayerInfo(data.runner_on_2b) : null)}
-                                                           id='tooltip-1'>&nbsp;</BaseRunnerTooltip>
+                                        { (_.includes(currentRunnersOnBase, '2b')) ? (
+                                          <BaseRunnerTooltip className={'base onBase'}
+                                                             placement='top'
+                                                             tooltip={getPlayerInfo(data.runner_on_2b)}
+                                                             id='tooltip-1'>&nbsp;</BaseRunnerTooltip>) :
+                                           (<div className='base'>&nbsp;</div>) }
                                       </div>
                                       <div className='thirdFirstBase baseRow'>
-                                        <BaseRunnerTooltip className={'base ' + (_.includes(currentRunnersOnBase, '3b') ? 'onBase' : '')}
-                                                           placement='top'
-                                                           tooltip={(_.includes(currentRunnersOnBase, '3b') ? getPlayerInfo(data.runner_on_3b) : null)}
-                                                           id='tooltip-2'>&nbsp;</BaseRunnerTooltip>
+                                        { (_.includes(currentRunnersOnBase, '3b')) ? (
+                                          <BaseRunnerTooltip className={'base onBase'}
+                                                             placement='top'
+                                                             onClick={self.loadPlayerProfile}
+                                                             tooltip={getPlayerInfo(data.runner_on_3b)}
+                                                             id='tooltip-1'>&nbsp;</BaseRunnerTooltip>) :
+                                           (<div className='base'>&nbsp;</div>) }
 
-                                        <BaseRunnerTooltip className={'base ' + (_.includes(currentRunnersOnBase, '1b') ? 'onBase' : '')}
-                                                           placement='right'
-                                                           tooltip={(_.includes(currentRunnersOnBase, '1b') ? getPlayerInfo(data.runner_on_1b) : null)}
-                                                           id='tooltip-3'>&nbsp;</BaseRunnerTooltip>
+                                        { (_.includes(currentRunnersOnBase, '1b')) ? (
+                                          <BaseRunnerTooltip className={'base onBase'}
+                                                             placement='top'
+                                                             tooltip={getPlayerInfo(data.runner_on_1b)}
+                                                             id='tooltip-1'>&nbsp;</BaseRunnerTooltip>) :
+                                           (<div className='base'>&nbsp;</div>) }
                                       </div>
                                   </div>
 
@@ -791,6 +798,12 @@ export default class GameModalMLB extends React.Component {
                                           <div><strong>Batter:</strong> {data.current_batter.first_name} {data.current_batter.last_name} -- {data.current_batter.avg}</div>
                                       </div>
                                   ) }
+
+                                  <div className='venueData'>
+                                    <div><strong>Weather:</strong> {rawBoxScore.$.weather}</div>
+                                    <div><strong>Wind:</strong> {rawBoxScore.$.wind}</div>
+                                    <div><strong>Venue:</strong> {data.venue}, {data.location}</div>
+                                  </div>
                               </div>
                               <div className={'BSO ' + (data.status === 'Warmup' || data.status === 'Pre-Game' ? 'disable' : '')}>
                                   <div className='BSOContainer'>
@@ -805,12 +818,8 @@ export default class GameModalMLB extends React.Component {
                                       <div className='bsoName'>O:</div>
                                       {outs}
                                   </div>
-                              </div>
-                              <div className={(data.status === 'Warmup' || data.status === 'Pre-Game' ? 'disable' : '')}><strong>Last Play:</strong> {data.pbp_last}</div>
-                              <div className='venueData'>
-                                <div><strong>Weather:</strong> {rawBoxScore.$.weather}</div>
-                                <div><strong>Wind:</strong> {rawBoxScore.$.wind}</div>
-                                <div><strong>Venue:</strong> {data.venue}, {data.location}</div>
+                                  <br />
+                                <div className={(data.status === 'Warmup' || data.status === 'Pre-Game' ? 'disable' : 'lastPlayDesc')}><strong>Last Play:</strong> {data.pbp_last}</div>
                               </div>
                           </div>);
 
@@ -830,6 +839,7 @@ export default class GameModalMLB extends React.Component {
                               <div><strong>Wind:</strong> {rawBoxScore.$.wind}</div>
                               <div><strong>Venue:</strong> {data.venue}, {data.location}</div>
                               <div><strong>Attendance:</strong> {rawBoxScore.$.attendance}</div>
+                            <div onClick={self.loadPlayerProfile}>Test link. Remove when fully working.</div>
                             </div>
                           </div>);
 

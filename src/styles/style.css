@@ -333,7 +333,8 @@ h3 {
   float: left;
 }
 .activePlayerData .venueData {
-  float: left;
+  clear: both;
+  padding: 10px 0 0;
 }
 .activePlayerData .bases .baseRow {
   clear: both;
@@ -380,6 +381,9 @@ h3 {
 .activePlayerData .BSO .BSOContainer {
   float: left;
   margin: 0 10px 0 0;
+}
+.activePlayerData .BSO .lastPlayDesc {
+  padding: 26px 0 0;
 }
 .activePlayerData .BSO div .bsoName {
   float: left;
