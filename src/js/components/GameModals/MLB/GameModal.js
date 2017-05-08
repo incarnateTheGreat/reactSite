@@ -37,50 +37,54 @@ let tweenStyle = {
 };
 
 //Tooltip
-const BaseRunnerTooltip = React.createClass({
-  getInfo(callback) {
-    axios.get('http://www.mlb.com/gdcross/components/game/mlb/year_2017/batters/133225.xml')
+export class BaseRunnerTooltip extends React.Component {
+// const BaseRunnerTooltip = React.createClass({
+  constructor(props) {
+    super(props);
+  }
+
+  getInfo(playerProfile, callback) {
+    axios.get('http://www.mlb.com/gdcross/components/game/mlb/year_2017/batters/' + playerProfile + '.xml')
          .then(function (response) {
            // console.log(response);
+
+           console.log("success.");
 
            let parseString = require('xml2js').parseString,
                batter_XML = response.data,
                batter_JSON = null;
            parseString(batter_XML, function (err, result) {
                batter_JSON = result.batting.$;
-               console.log(batter_JSON);
-
                callback(batter_JSON);
-
            });
 
          }).catch(function (error) {
+           console.log("fail.");
            console.log(error);
          });
-  },
+  }
 
   render() {
       if(this.props.tooltip) {
-        console.log(this.props);
-        this.getInfo(function(json) {
+        this.getInfo(this.props.playerProfile, function(json) {
+          console.log(json);
+        })
+          // let tooltip = <Tooltip id={this.props.id}>{this.props.tooltip}</Tooltip>;
           let popover = (<Popover id="popover-positioned-left" title="Popover left">
                           <strong>test</strong>
                          </Popover>);
 
           return (
-            <OverlayTrigger trigger='click' placement={this.props.placement}
+            <OverlayTrigger trigger='click'
                 delayShow={0} delayHide={0} overlay={popover}>
                 <div className={this.props.className}>{this.props.children}</div>
             </OverlayTrigger>
           );
-        })
-          // let tooltip = <Tooltip id={this.props.id}>{this.props.tooltip}</Tooltip>;
-
-
 
       }
   }
-});
+// });
+}
 
 export default class GameModalMLB extends React.Component {
     constructor() {
@@ -787,7 +791,7 @@ export default class GameModalMLB extends React.Component {
                                           <BaseRunnerTooltip className={'base onBase'}
                                                              placement='top'
                                                              playerProfile={data.runner_on_2b}
-                                                             tooltip={getPlayerInfo(data.runner_on_2b)}
+                                                            //  tooltip={getPlayerInfo(data.runner_on_2b)}
                                                              id='2b'>&nbsp;</BaseRunnerTooltip>) :
                                            (<div className='base'>&nbsp;</div>) }
                                       </div>
@@ -796,7 +800,7 @@ export default class GameModalMLB extends React.Component {
                                           <BaseRunnerTooltip className={'base onBase'}
                                                              placement='top'
                                                              playerProfile={data.runner_on_3b}
-                                                             tooltip={getPlayerInfo(data.runner_on_3b)}
+                                                            //  tooltip={getPlayerInfo(data.runner_on_3b)}
                                                              id='3b'>&nbsp;</BaseRunnerTooltip>) :
                                            (<div className='base'>&nbsp;</div>) }
 
@@ -804,7 +808,7 @@ export default class GameModalMLB extends React.Component {
                                           <BaseRunnerTooltip className={'base onBase'}
                                                              placement='top'
                                                              playerProfile={data.runner_on_1b}
-                                                             tooltip={getPlayerInfo(data.runner_on_1b)}
+                                                            //  tooltip={getPlayerInfo(data.runner_on_1b)}
                                                              id='1b'>&nbsp;</BaseRunnerTooltip>) :
                                            (<div className='base'>&nbsp;</div>) }
                                       </div>
