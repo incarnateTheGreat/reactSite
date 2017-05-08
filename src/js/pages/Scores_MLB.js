@@ -15,6 +15,8 @@ export default class Scores_MLB extends React.Component {
             filters: null
         };
 
+        this.todayGamesFilter = [];
+
         this.timeoutOpenLoader = null;
         this.timeoutCloseLoader = null;
     }
@@ -192,9 +194,16 @@ export default class Scores_MLB extends React.Component {
     }
 
     render() {
-        _.forEach(this.state.todayGamesSection, function(game) {
-            console.log(game.props.children.props.gameData.home_team_city, game.props.children.props.gameData.away_team_city, game.props.children.props.gameData.league);
+        //https://www.youtube.com/watch?v=OlVkYnVXPl0
+        let filtered = _.filter(this.state.todayGamesSection, function(game) {
+            let gameData = game.props.children.props.gameData;
+            return gameData.league === "NN";
         });
+
+        _.forEach(filtered, function(game) {
+            console.log(game.props.children.props.gameData);
+        });
+
         return (
             <div>
                 <div class="loader"></div>
@@ -248,12 +257,26 @@ export default class Scores_MLB extends React.Component {
     }
 }
 
-// https://facebook.github.io/react/docs/thinking-in-react.html
 class FilterSrvc extends React.Component {
+    constructor() {
+        super();
+
+        this.state = {
+            filterText: ''
+        };
+    }
+    
+    updateSearch(e) {
+        this.setState({filterText: e.target.value});
+    }
+    
     render() {
         return (
             <form>
-                <input type="text" placeholder="Search..." value={this.props.filterText} />
+                <input type='text'
+                       placeholder='Filter the League'
+                       onChange={this.updateSearch.bind(this)}
+                       value={this.state.filterText} />
             </form>
         );
     }
