@@ -11,7 +11,8 @@ export default class Scores_MLB extends React.Component {
             liveGameSection: null,
             yesterdayGamesSection: null,
             todayGamesSection: null,
-            tomorrowGamesSection: null
+            tomorrowGamesSection: null,
+            filters: null
         };
 
         this.timeoutOpenLoader = null;
@@ -191,6 +192,9 @@ export default class Scores_MLB extends React.Component {
     }
 
     render() {
+        _.forEach(this.state.todayGamesSection, function(game) {
+            console.log(game.props.children.props.gameData.home_team_city, game.props.children.props.gameData.away_team_city, game.props.children.props.gameData.league);
+        });
         return (
             <div>
                 <div class="loader"></div>
@@ -199,6 +203,10 @@ export default class Scores_MLB extends React.Component {
                 <hr/>
                 <h2>MLB Scores</h2>
                 <div className="scoreTableContainer">
+                    <h2>Filters</h2>
+                    <div className="gameGroupContainer">
+                       <FilterSrvc></FilterSrvc>
+                    </div>
                     <h2>Live</h2>
                     <div className="gameGroupContainer">
                       {!this.state.liveGameSection ? (
@@ -236,6 +244,17 @@ export default class Scores_MLB extends React.Component {
                     </div>
                 </div>
             </div>
+        );
+    }
+}
+
+// https://facebook.github.io/react/docs/thinking-in-react.html
+class FilterSrvc extends React.Component {
+    render() {
+        return (
+            <form>
+                <input type="text" placeholder="Search..." value={this.props.filterText} />
+            </form>
         );
     }
 }

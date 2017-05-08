@@ -65,23 +65,21 @@ export class BaseRunnerTooltip extends React.Component {
   }
 
   render() {
-      if(this.props.tooltip) {
+    if(this.props.tooltip) {
         this.getInfo(this.props.playerProfile, function(json) {
-          console.log(json);
+            console.log(json);
         })
-          // let tooltip = <Tooltip id={this.props.id}>{this.props.tooltip}</Tooltip>;
-          let popover = (<Popover id="popover-positioned-left" title="Popover left">
-                          <strong>test</strong>
-                         </Popover>);
-
-          return (
-            <OverlayTrigger trigger='click'
-                delayShow={0} delayHide={0} overlay={popover}>
-                <div className={this.props.className}>{this.props.children}</div>
+        // let tooltip = <Tooltip id={this.props.id}>{this.props.tooltip}</Tooltip>;
+        let popover = (<Popover id="popover-positioned-left" title="Popover left">
+                        <strong>test</strong>
+                        </Popover>);
+        
+        return (
+            <OverlayTrigger trigger='click'delayShow={0} delayHide={0} overlay={popover}>
+                            <div className={this.props.className}>{this.props.children}</div>
             </OverlayTrigger>
-          );
-
-      }
+        );
+    }
   }
 // });
 }
@@ -905,8 +903,6 @@ export default class GameModalMLB extends React.Component {
         this.state.game = game;
 
         this.getBrowserSize();
-
-        // console.log(this.state);
 
         let gameStatus = '',
             outs = '',
