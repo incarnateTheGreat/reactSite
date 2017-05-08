@@ -867,7 +867,6 @@ export default class GameModalMLB extends React.Component {
                               <div><strong>Wind:</strong> {rawBoxScore.$.wind}</div>
                               <div><strong>Venue:</strong> {data.venue}, {data.location}</div>
                               <div><strong>Attendance:</strong> {rawBoxScore.$.attendance}</div>
-                            <div onClick={self.loadPlayerProfile}>Test link. Remove when fully working.</div>
                             </div>
                           </div>);
 
