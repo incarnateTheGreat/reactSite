@@ -11,16 +11,15 @@ export default class Scores_MLB extends React.Component {
             liveGameSection: null,
             yesterdayGamesSection: null,
             todayGamesSection: null,
+            returnTodayGames: null,
             tomorrowGamesSection: null,
             filters: null
         };
 
-        this.todayGamesFilter = [];
-
         this.timeoutOpenLoader = null;
         this.timeoutCloseLoader = null;
     }
-
+    
     componentWillMount() {
       this.setGameDataOutput();
     }
@@ -99,10 +98,13 @@ export default class Scores_MLB extends React.Component {
             }
         });
 
+
+
         //After all Promises have completed, build out the Scoreboards.
-        setTimeout(() => {
+        // setTimeout(() => {
           self.buildScoreboard(gameDataObjects);
-        }, 350);
+
+        // }, 350);
       });
     }
 
@@ -194,16 +196,6 @@ export default class Scores_MLB extends React.Component {
     }
 
     render() {
-        //https://www.youtube.com/watch?v=OlVkYnVXPl0
-        let filtered = _.filter(this.state.todayGamesSection, function(game) {
-            let gameData = game.props.children.props.gameData;
-            return gameData.league === "NN";
-        });
-
-        _.forEach(filtered, function(game) {
-            console.log(game.props.children.props.gameData);
-        });
-
         return (
             <div>
                 <div class="loader"></div>
@@ -213,25 +205,28 @@ export default class Scores_MLB extends React.Component {
                 <h2>MLB Scores</h2>
                 <div className="scoreTableContainer">
                     <h2>Filters</h2>
-                    <div className="gameGroupContainer">
-                       <FilterSrvc></FilterSrvc>
-                    </div>
                     <h2>Live</h2>
                     <div className="gameGroupContainer">
-                      {!this.state.liveGameSection ? (
-                        <h4>There are currently no Live Games.</h4>
-                      ) : (
-                        this.state.liveGameSection
-                      )}
+                        <FilterSrvc data={this.state.liveGameSection}></FilterSrvc>
+                      {
+                          // !this.state.liveGameSection ? (
+                      //   <h4>There are currently no Live Games.</h4>
+                      // ) : (
+                      //   this.state.liveGameSection
+                      // )
+                      }
                     </div>
                     <hr />
                     <h2>Today's Games: {moment().format("dddd M/DD")}</h2>
                     <div className="gameGroupContainer">
-                        {!this.state.todayGamesSection ? (
-                          <h4>There are no Games today.</h4>
-                        ) : (
-                          this.state.todayGamesSection
-                        )}
+                        <FilterSrvc data={this.state.todayGamesSection}></FilterSrvc>
+                        {
+                        //     !this.state.todayGamesSection ? (
+                        //   <h4>There are no Games today.</h4>
+                        // ) : (
+                        //   this.state.todayGamesSection
+                        // )
+                        }
                     </div>
                     <hr />
                     <h2>Yesterday's Games: {moment().subtract(1, 'day').format("dddd M/DD")}</h2>
@@ -262,21 +257,46 @@ class FilterSrvc extends React.Component {
         super();
 
         this.state = {
-            filterText: ''
+            filterText: '',
+            filteredGameData: []
         };
+        //This.props.data should have data in it on the initial load.
+        // this.gameData = this.props.data;
+        this.gameData = null;
     }
     
     updateSearch(e) {
-        this.setState({filterText: e.target.value});
+        let filtered = _.filter(this.gameData, function(game) {
+            let gameObj = game.props.children.props.gameData;
+            return (gameObj.league === e.target.value.toUpperCase() && e.target.value.length == 2) || (e.target.value.length == 0);
+        });
+
+        // _.forEach(filtered, function(game) {
+        //     let gameObj = game.props.children.props.gameData;
+        //     console.log(gameObj.away_team_city, 'vs.', gameObj.home_team_city, gameObj.league);
+        // });
+
+        this.setState({
+            filterText: e.target.value,
+            filteredGameData: filtered
+        });
     }
     
     render() {
+        this.gameData = this.props.data;
+
         return (
             <form>
                 <input type='text'
                        placeholder='Filter the League'
                        onChange={this.updateSearch.bind(this)}
                        value={this.state.filterText} />
+
+                <div className="gameGroupContainer">
+                    {!this.state.filteredGameData ? (
+                        <h4>There are no games to display.</h4>
+                    ) : ( this.state.filteredGameData )}
+                </div>
             </form>
         );
     }
