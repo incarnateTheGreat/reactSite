@@ -1,5 +1,6 @@
 import React from "react";
 import axios from 'axios';
+import shallowCompare from 'react-addons-shallow-compare';
 
 import GameModalMLB from "../components/GameModals/MLB/GameModal";
 
@@ -13,99 +14,110 @@ export default class Scores_MLB extends React.Component {
             todayGamesSection: null,
             returnTodayGames: null,
             tomorrowGamesSection: null,
-            filters: null
+            gameDataObjects: null
         };
 
         this.timeoutOpenLoader = null;
         this.timeoutCloseLoader = null;
     }
-    
-    componentWillMount() {
-      this.setGameDataOutput();
+
+    componentDidMount() {
+        let self = this;
+
+        this.setGameDataOutput(function(dateObj, p) {
+            self.fetchData(dateObj, p);
+        });
     }
 
-    setGameDataOutput() {
-      const self = this,
-            dateStringFormat = '[year_]YYYY/[month_]MM/[day_]DD',
-            dateObj = {
-              yesterday: {
-                day: moment().subtract(1, 'day')
-              },
-              today: {
-                day: moment()
-              },
-              tomorrow: {
-                day: moment().add(1, 'day')
-              }
+    fetchData(dateObj, p) {
+        let self = this;
+
+        axios.all(p).then((datesWithGames) => {
+            let gameDataObjects = {
+                yesterday: [],
+                today: [],
+                tomorrow: [],
+                live: []
             };
 
-      //Loop through Live, Today, and Yesterday's games.
-      let p = [],
-          year = '',
-          month = '',
-          day = '',
-          url = '';
+            _.forEach((datesWithGames), (dayData) => {
+                let gameData = dayData.data.data.games.game,
+                    objectDay = dayData.data.data.games.day;
 
-      //Use Axios to get Score Data.
-      _.forEach(dateObj, function(date) {
-          year = date.day.format('YYYY'),
-          month = date.day.format('MM'),
-          day = date.day.format('DD');
+                if(objectDay == dateObj.today.day.format('DD')) {
+                    //Today's Game Data
+                    _.forEach(gameData, function(game) {
+                        if(self.isGameLive(game)) {
+                            gameDataObjects.live.push(game);
+                        } else {
+                            gameDataObjects.today.push(game);
+                        }
+                    });
+                } else if(objectDay == dateObj.tomorrow.day.format('DD')) {
+                    //Tomorrow's Game Data
+                    _.forEach(gameData, function(game) {
+                        if(self.isGameLive(game)) {
+                            gameDataObjects.live.push(game);
+                        } else {
+                            gameDataObjects.tomorrow.push(game);
+                        }
+                    });
+                } else if(objectDay == dateObj.yesterday.day.format('DD')) {
+                    //Yesterday's Game Data
+                    _.forEach(gameData, function(game) {
+                        if(self.isGameLive(game)) {
+                            gameDataObjects.live.push(game);
+                        } else {
+                            gameDataObjects.yesterday.push(game);
+                        }
+                    });
+                }
+            });
 
-          url = 'http://mlb.mlb.com/gdcross/components/game/mlb/year_'+ year +'/month_'+ month +'/day_'+ day +'/master_scoreboard.json';
-        p.push(axios.get(url));
-      });
+            self.setState({gameDataObjects: gameDataObjects});
 
-      axios.all(p).then((datesWithGames) => {
-        let gameDataObjects = {
-          yesterday: [],
-          today: [],
-          tomorrow: [],
-          live: []
+            //After all Promises have completed, build out the Scoreboards.
+            self.buildScoreboard(gameDataObjects);
+        });
+    }
+
+    shouldComponentUpdate(a,b) {
+        // console.log(a, b);
+        return true;
+    }
+
+    setGameDataOutput(callback) {
+        const dateObj = {
+            yesterday: {
+                day: moment().subtract(1, 'day')
+            },
+            today: {
+                day: moment()
+            },
+            tomorrow: {
+                day: moment().add(1, 'day')
+            }
         };
 
-        _.forEach((datesWithGames), (dayData) => {
-            let gameData = dayData.data.data.games.game,
-                objectDay = dayData.data.data.games.day;
+        //Loop through Live, Today, and Yesterday's games.
+        let p = [],
+            year = '',
+            month = '',
+            day = '',
+            url = '';
 
-            if(objectDay == dateObj.today.day.format('DD')) {
-              //Today's Game Data
-              _.forEach(gameData, function(game) {
-                if(self.isGameLive(game)) {
-                  gameDataObjects.live.push(game);
-                } else {
-                  gameDataObjects.today.push(game);
-                }
-              });
-            } else if(objectDay == dateObj.tomorrow.day.format('DD')) {
-              //Tomorrow's Game Data
-              _.forEach(gameData, function(game) {
-                if(self.isGameLive(game)) {
-                  gameDataObjects.live.push(game);
-                } else {
-                  gameDataObjects.tomorrow.push(game);
-                }
-              });
-            } else if(objectDay == dateObj.yesterday.day.format('DD')) {
-              //Yesterday's Game Data
-              _.forEach(gameData, function(game) {
-                if(self.isGameLive(game)) {
-                  gameDataObjects.live.push(game);
-                } else {
-                  gameDataObjects.yesterday.push(game);
-                }
-              });
-            }
+        //Use Axios to get Score Data.
+        _.forEach(dateObj, function (date) {
+            year = date.day.format('YYYY'),
+                month = date.day.format('MM'),
+                day = date.day.format('DD');
+
+            url = 'http://mlb.mlb.com/gdcross/components/game/mlb/year_' + year + '/month_' + month + '/day_' + day + '/master_scoreboard.json';
+            p.push(axios.get(url));
         });
 
-
-
-        //After all Promises have completed, build out the Scoreboards.
-        // setTimeout(() => {
-          self.buildScoreboard(gameDataObjects);
-
-        // }, 350);
-      });
+        //Return parameters for Axios call.
+        _.isUndefined(callback) ? this.fetchData(dateObj, p) : callback(dateObj, p);
     }
 
     isGameLive(game) {
@@ -253,16 +265,13 @@ export default class Scores_MLB extends React.Component {
 }
 
 class FilterSrvc extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.state = {
             filterText: '',
             filteredGameData: []
         };
-        //This.props.data should have data in it on the initial load.
-        // this.gameData = this.props.data;
-        this.gameData = null;
     }
     
     updateSearch(e) {
@@ -271,15 +280,28 @@ class FilterSrvc extends React.Component {
             return (gameObj.league === e.target.value.toUpperCase() && e.target.value.length == 2) || (e.target.value.length == 0);
         });
 
-        // _.forEach(filtered, function(game) {
-        //     let gameObj = game.props.children.props.gameData;
-        //     console.log(gameObj.away_team_city, 'vs.', gameObj.home_team_city, gameObj.league);
-        // });
-
         this.setState({
             filterText: e.target.value,
             filteredGameData: filtered
         });
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if(!_.isNull(nextProps.data)) {
+            this.gameData = nextProps.data;
+
+            let filtered = _.filter(this.gameData, function(game) {
+                return game.props.children.props.gameData;
+            });
+
+            this.setState({
+                filteredGameData: filtered
+            });
+        }
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return shallowCompare(this, nextProps, nextState);
     }
     
     render() {
