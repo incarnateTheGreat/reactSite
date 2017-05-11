@@ -44,32 +44,43 @@ export class BaseRunnerTooltip extends React.Component {
   }
 
   getInfo(playerProfile, callback) {
+      console.log(playerProfile);
     axios.get('http://www.mlb.com/gdcross/components/game/mlb/year_2017/batters/' + playerProfile + '.xml')
          .then(function (response) {
-           // console.log(response);
-
-           console.log("success.");
-
            let parseString = require('xml2js').parseString,
                batter_XML = response.data,
                batter_JSON = null;
            parseString(batter_XML, function (err, result) {
-               batter_JSON = result.batting.$;
-               callback(batter_JSON);
-           });
+               let gameID = result.batting.$.game_id.split('/');
 
+               axios.get('http://mlb.mlb.com/gdcross/components/game/mlb/year_' + gameID[0] + '/month_' + gameID[1] + '/day_' + gameID[2] + '/gid_' + gameID[0] + '_' + gameID[1] + '_' + gameID[2] + '_' + gameID[3] + '/batters/' + playerProfile +'.xml')
+
+
+                   .then(function (batter) {
+                       console.log(batter);
+                       // console.log(result);
+                       // batter_JSON = result.batting.$;
+                       // callback(batter_JSON);
+                   });
+
+
+
+           });
          }).catch(function (error) {
            console.log("fail.");
            console.log(error);
          });
   }
 
+  componentDidMount() {
+      let self = this;
+
+      this.getInfo(this.props.playerProfile, function(json) {
+          console.log(json);
+      })
+  }
+
   render() {
-    // if(this.props.tooltip) {
-    //     this.getInfo(this.props.playerProfile, function(json) {
-    //         console.log(json);
-    //     })
-        // let tooltip = <Tooltip id={this.props.id}>A PLayer</Tooltip>;
         let popover = (<Popover id="popover-positioned-left" title="Popover left">
                         <strong>test</strong>
                         </Popover>);
@@ -79,9 +90,7 @@ export class BaseRunnerTooltip extends React.Component {
                             <div className={this.props.className}>{this.props.children}</div>
             </OverlayTrigger>
         );
-    // }
   }
-// });
 }
 
 export default class GameModalMLB extends React.Component {
@@ -785,11 +794,11 @@ export default class GameModalMLB extends React.Component {
                               <div className='bases'>
                                   <div className={'baseContainer ' + (data.status === 'Warmup' || data.status === 'Pre-Game' ? 'disable' : '')}>
                                       <div className='secondBase baseRow'>
-                                        { (_.includes(currentRunnersOnBase, '2b')) ? (
+                                        { (!_.includes(currentRunnersOnBase, '2b')) ? (
                                           <BaseRunnerTooltip className={'base onBase'}
                                                              placement='top'
-                                                             playerProfile={data.runner_on_2b}
-                                                            //  tooltip={getPlayerInfo(data.runner_on_2b)}
+                                                             // playerProfile={data.runner_on_2b}
+                                                             playerProfile='606115'
                                                              id='2b'>&nbsp;</BaseRunnerTooltip>) :
                                            (<div className='base'>&nbsp;</div>) }
                                       </div>
@@ -798,7 +807,6 @@ export default class GameModalMLB extends React.Component {
                                           <BaseRunnerTooltip className={'base onBase'}
                                                              placement='top'
                                                              playerProfile={data.runner_on_3b}
-                                                            //  tooltip={getPlayerInfo(data.runner_on_3b)}
                                                              id='3b'>&nbsp;</BaseRunnerTooltip>) :
                                            (<div className='base'>&nbsp;</div>) }
 
@@ -806,7 +814,6 @@ export default class GameModalMLB extends React.Component {
                                           <BaseRunnerTooltip className={'base onBase'}
                                                              placement='top'
                                                              playerProfile={data.runner_on_1b}
-                                                            //  tooltip={getPlayerInfo(data.runner_on_1b)}
                                                              id='1b'>&nbsp;</BaseRunnerTooltip>) :
                                            (<div className='base'>&nbsp;</div>) }
                                       </div>
