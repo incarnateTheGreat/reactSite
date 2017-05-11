@@ -273,7 +273,7 @@ class FilterSrvc extends React.Component {
             filteredGameData: []
         };
     }
-    
+
     updateSearch(e) {
         let filtered = _.filter(this.gameData, function(game) {
             let gameObj = game.props.children.props.gameData;
@@ -303,7 +303,7 @@ class FilterSrvc extends React.Component {
     shouldComponentUpdate(nextProps, nextState) {
         return shallowCompare(this, nextProps, nextState);
     }
-    
+
     render() {
         this.gameData = this.props.data;
 
