@@ -38,33 +38,36 @@ let tweenStyle = {
 
 //Tooltip
 export class BaseRunnerTooltip extends React.Component {
-// const BaseRunnerTooltip = React.createClass({
   constructor(props) {
     super(props);
+    console.log("constructor");
+
+    this.state = {
+      playerObj: null
+    }
   }
 
-  getInfo(playerProfile, callback) {
-      console.log(playerProfile);
-    axios.get('http://www.mlb.com/gdcross/components/game/mlb/year_2017/batters/' + playerProfile + '.xml')
+  componentDidMount() {
+    console.log("mount.");
+    let self = this;
+
+    axios.get('http://www.mlb.com/gdcross/components/game/mlb/year_2017/batters/' + this.props.playerProfile + '.xml')
          .then(function (response) {
+           console.log("response");
            let parseString = require('xml2js').parseString,
                batter_XML = response.data,
                batter_JSON = null;
            parseString(batter_XML, function (err, result) {
                let gameID = result.batting.$.game_id.split('/');
+               gameID[3] = gameID[3].replace(/-/gi, '_');
 
-               axios.get('http://mlb.mlb.com/gdcross/components/game/mlb/year_' + gameID[0] + '/month_' + gameID[1] + '/day_' + gameID[2] + '/gid_' + gameID[0] + '_' + gameID[1] + '_' + gameID[2] + '_' + gameID[3] + '/batters/' + playerProfile +'.xml')
-
-
+               axios.get('http://mlb.mlb.com/gdcross/components/game/mlb/year_' + gameID[0] + '/month_' + gameID[1] + '/day_' + gameID[2] + '/gid_' + gameID[0] + '_' + gameID[1] + '_' + gameID[2] + '_' + gameID[3] + '/batters/' + this.props.playerProfile +'.xml')
                    .then(function (batter) {
-                       console.log(batter);
-                       // console.log(result);
-                       // batter_JSON = result.batting.$;
-                       // callback(batter_JSON);
+                     console.log(batter)
+                     parseString(batter.data, function (err, result) {
+                      self.setState({playerObj: result});
+                     });
                    });
-
-
-
            });
          }).catch(function (error) {
            console.log("fail.");
@@ -72,25 +75,35 @@ export class BaseRunnerTooltip extends React.Component {
          });
   }
 
-  componentDidMount() {
-      let self = this;
-
-      this.getInfo(this.props.playerProfile, function(json) {
-          console.log(json);
-      })
+  componentWillReceiveProps(nextProps) {
+    //PLAY AROUND WITH THIS. MAYBE IT WILL RENDER WHEN THE ASYNCS ARE DONE.
+    
+      // if(!_.isNull(nextProps.data)) {
+      //     this.gameData = nextProps.data;
+      //
+      //     let filtered = _.filter(this.gameData, function(game) {
+      //         return game.props.children.props.gameData;
+      //     });
+      //
+      //     this.setState({
+      //         filteredGameData: filtered
+      //     });
+      // }
   }
 
   render() {
-        let popover = (<Popover id="popover-positioned-left" title="Popover left">
-                        <strong>test</strong>
-                        </Popover>);
+    // if(!this.state.playerObj) return;
 
+    let popover = (<Popover id="popover-positioned-left" title="Popover left">
+                      {this.state.playerObj.Player.$.first_name} {this.state.playerObj.Player.$.last_name}
+                   </Popover>);
         return (
             <OverlayTrigger trigger={['hover', 'focus']} delayShow={0} delayHide={0} overlay={popover}>
                             <div className={this.props.className}>{this.props.children}</div>
             </OverlayTrigger>
         );
   }
+
 }
 
 export default class GameModalMLB extends React.Component {
@@ -797,8 +810,8 @@ export default class GameModalMLB extends React.Component {
                                         { (!_.includes(currentRunnersOnBase, '2b')) ? (
                                           <BaseRunnerTooltip className={'base onBase'}
                                                              placement='top'
-                                                             // playerProfile={data.runner_on_2b}
-                                                             playerProfile='606115'
+                                                            //  playerProfile={data.runner_on_2b}
+                                                            playerProfile='444857'
                                                              id='2b'>&nbsp;</BaseRunnerTooltip>) :
                                            (<div className='base'>&nbsp;</div>) }
                                       </div>
