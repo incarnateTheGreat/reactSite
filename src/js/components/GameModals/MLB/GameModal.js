@@ -40,7 +40,6 @@ let tweenStyle = {
 export class BaseRunnerTooltip extends React.Component {
   constructor(props) {
     super(props);
-    console.log("constructor");
 
     this.state = {
       playerObj: null
@@ -48,24 +47,38 @@ export class BaseRunnerTooltip extends React.Component {
   }
 
   componentDidMount() {
-    console.log("mount.");
     let self = this;
 
     axios.get('http://www.mlb.com/gdcross/components/game/mlb/year_2017/batters/' + this.props.playerProfile + '.xml')
          .then(function (response) {
-           console.log("response");
            let parseString = require('xml2js').parseString,
                batter_XML = response.data,
                batter_JSON = null;
            parseString(batter_XML, function (err, result) {
-               let gameID = result.batting.$.game_id.split('/');
-               gameID[3] = gameID[3].replace(/-/gi, '_');
+               let gameID = result.batting.$.game_id.split('/'),
+                   url = '';
+                   gameID[3] = gameID[3].replace(/-/gi, '_');
 
-               axios.get('http://mlb.mlb.com/gdcross/components/game/mlb/year_' + gameID[0] + '/month_' + gameID[1] + '/day_' + gameID[2] + '/gid_' + gameID[0] + '_' + gameID[1] + '_' + gameID[2] + '_' + gameID[3] + '/batters/' + this.props.playerProfile +'.xml')
+               url = 'http://mlb.mlb.com/gdcross/components/game/mlb/year_' + gameID[0] + '/month_' + gameID[1] + '/day_' + gameID[2] + '/gid_' + gameID[0] + '_' + gameID[1] + '_' + gameID[2] + '_' + gameID[3] + '/batters/' + self.props.playerProfile + '.xml';
+
+               axios.get(url)
                    .then(function (batter) {
-                     console.log(batter)
                      parseString(batter.data, function (err, result) {
-                      self.setState({playerObj: result});
+
+                       console.log(result);
+                       let title = '#' + result.Player.$.jersey_number + ' ' + result.Player.$.first_name + ' ' + result.Player.$.last_name;
+
+                       let popover = (<Popover id="popover-positioned-left" title={title}>
+                                         <div><strong>Position:</strong> {result.Player.$.pos}</div>
+                                         <div><strong>Bats:</strong> {result.Player.$.bats}</div>
+                                       <div><strong>Average:</strong> {result.Player.season[0].$.avg}</div>
+                                      </Popover>);
+
+                       let resultTwo = <OverlayTrigger trigger={['hover', 'focus']} delayShow={0} delayHide={0} overlay={popover}>
+                                         <div className={self.props.className}>{self.props.children}</div>
+                                       </OverlayTrigger>
+
+                       self.setState({playerObj: resultTwo});
                      });
                    });
            });
@@ -75,32 +88,11 @@ export class BaseRunnerTooltip extends React.Component {
          });
   }
 
-  componentWillReceiveProps(nextProps) {
-    //PLAY AROUND WITH THIS. MAYBE IT WILL RENDER WHEN THE ASYNCS ARE DONE.
-    
-      // if(!_.isNull(nextProps.data)) {
-      //     this.gameData = nextProps.data;
-      //
-      //     let filtered = _.filter(this.gameData, function(game) {
-      //         return game.props.children.props.gameData;
-      //     });
-      //
-      //     this.setState({
-      //         filteredGameData: filtered
-      //     });
-      // }
-  }
-
   render() {
-    // if(!this.state.playerObj) return;
-
-    let popover = (<Popover id="popover-positioned-left" title="Popover left">
-                      {this.state.playerObj.Player.$.first_name} {this.state.playerObj.Player.$.last_name}
-                   </Popover>);
         return (
-            <OverlayTrigger trigger={['hover', 'focus']} delayShow={0} delayHide={0} overlay={popover}>
-                            <div className={this.props.className}>{this.props.children}</div>
-            </OverlayTrigger>
+          <div>
+            {this.state.playerObj}
+          </div>
         );
   }
 
@@ -128,7 +120,6 @@ export default class GameModalMLB extends React.Component {
         this.openModal = this.openModal.bind(this);
         this.afterOpenModal = this.afterOpenModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
-        // this.loadPlayerProfile = this.loadPlayerProfile.bind(this);
 
         this.loader = document.getElementsByClassName("loader")[0];
     }
@@ -807,11 +798,11 @@ export default class GameModalMLB extends React.Component {
                               <div className='bases'>
                                   <div className={'baseContainer ' + (data.status === 'Warmup' || data.status === 'Pre-Game' ? 'disable' : '')}>
                                       <div className='secondBase baseRow'>
-                                        { (!_.includes(currentRunnersOnBase, '2b')) ? (
+                                        { (_.includes(currentRunnersOnBase, '2b')) ? (
                                           <BaseRunnerTooltip className={'base onBase'}
                                                              placement='top'
-                                                            //  playerProfile={data.runner_on_2b}
-                                                            playerProfile='444857'
+                                                             playerProfile={data.runner_on_2b}
+                                                            // playerProfile='444857'
                                                              id='2b'>&nbsp;</BaseRunnerTooltip>) :
                                            (<div className='base'>&nbsp;</div>) }
                                       </div>

@@ -275,15 +275,20 @@ class FilterSrvc extends React.Component {
     }
 
     updateSearch(e) {
+      if(e.target.value.length == 0 || e.target.value.length == 2) {
         let filtered = _.filter(this.gameData, function(game) {
             let gameObj = game.props.children.props.gameData;
-            return (gameObj.league === e.target.value.toUpperCase() && e.target.value.length == 2) || (e.target.value.length == 0);
+            return (gameObj.league === e.target.value.toUpperCase() || e.target.value.length == 0);
         });
 
         this.setState({
-            filterText: e.target.value,
             filteredGameData: filtered
         });
+      }
+
+      this.setState({
+          filterText: e.target.value
+      });
     }
 
     componentWillReceiveProps(nextProps) {
