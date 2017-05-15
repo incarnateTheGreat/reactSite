@@ -589,13 +589,36 @@ export default class GameModalMLB extends React.Component {
 
                               // Draw Pitcher Table.
                               _.forEach(pitcherObj, function(pitcher) {
+                                console.log(pitcher);
+
+                                //TODO: For each Pitcher, run a loop through all possible events and assign them
+                                //to a local variable. When completed, use this to post the events.
+                                //E.G. (W, 1-0, B, 1)
+                                //May 14 Houston and the Yanks
+
+
                                   _.forEach(pitcherDataHeaders, function(header) {
                                       pitcherClasses = classNames({
                                           'notNumeric': header === 'name_display_first_last'
                                       });
 
                                       if(header === 'name_display_first_last') {
-                                          pitcherDisplayName = pitcher.$.name;
+                                        let pitcherResult = '';
+
+                                        //Post registered events (Win, Los, Blown Save, Hold);
+                                        if(pitcher.$.win === 'true') {
+                                          pitcherResult = pitcher.$.name + ' (W, ' + pitcher.$.bam_w + '-' + pitcher.$.bam_l + ')';
+                                        } else if (pitcher.$.loss === 'true') {
+                                          pitcherResult = pitcher.$.name + ' (L, ' + pitcher.$.bam_w + '-' + pitcher.$.bam_l + ')';
+                                        } else if (pitcher.$.blown_save === 'true') {
+                                          pitcherResult = pitcher.$.name + ' (B, ' + pitcher.$.bam_bs + ')';
+                                        } else if (pitcher.$.hold === 'true') {
+                                          pitcherResult = pitcher.$.name + ' (H, ' + pitcher.$.bam_hld + ')';
+                                        } else {
+                                          pitcherResult = pitcher.$.name;
+                                        }
+
+                                        pitcherDisplayName = pitcherResult;
                                       } else if(header === 'ip') {
                                           //Get Innings Pitched
                                           pitcherDisplayName = getInningsPitched(pitcher.$.out);
