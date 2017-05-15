@@ -1,8 +1,8 @@
 import React from "react";
 import axios from 'axios';
-import shallowCompare from 'react-addons-shallow-compare';
 
 import GameModalMLB from "../components/GameModals/MLB/GameModal";
+import LeagueFilter from "../components/GameModals/MLB/LeagueFilter";
 
 export default class Scores_MLB extends React.Component {
     constructor(props) {
@@ -219,7 +219,7 @@ export default class Scores_MLB extends React.Component {
                     <h2>Filters</h2>
                     <h2>Live</h2>
                     <div className="gameGroupContainer">
-                        <FilterSrvc data={this.state.liveGameSection}></FilterSrvc>
+                        <LeagueFilter data={this.state.liveGameSection}></LeagueFilter>
                       {
                           // !this.state.liveGameSection ? (
                       //   <h4>There are currently no Live Games.</h4>
@@ -231,7 +231,7 @@ export default class Scores_MLB extends React.Component {
                     <hr />
                     <h2>Today's Games: {moment().format("dddd M/DD")}</h2>
                     <div className="gameGroupContainer">
-                        <FilterSrvc data={this.state.todayGamesSection}></FilterSrvc>
+                        <LeagueFilter data={this.state.todayGamesSection}></LeagueFilter>
                         {
                         //     !this.state.todayGamesSection ? (
                         //   <h4>There are no Games today.</h4>
@@ -260,71 +260,6 @@ export default class Scores_MLB extends React.Component {
                     </div>
                 </div>
             </div>
-        );
-    }
-}
-
-class FilterSrvc extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            filterText: '',
-            filteredGameData: []
-        };
-    }
-
-    updateSearch(e) {
-      if(e.target.value.length == 0 || e.target.value.length == 2) {
-        let filtered = _.filter(this.gameData, function(game) {
-            let gameObj = game.props.children.props.gameData;
-            return (gameObj.league === e.target.value.toUpperCase() || e.target.value.length == 0);
-        });
-
-        this.setState({
-            filteredGameData: filtered
-        });
-      }
-
-      this.setState({
-          filterText: e.target.value
-      });
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if(!_.isNull(nextProps.data)) {
-            this.gameData = nextProps.data;
-
-            let filtered = _.filter(this.gameData, function(game) {
-                return game.props.children.props.gameData;
-            });
-
-            this.setState({
-                filteredGameData: filtered
-            });
-        }
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-        return shallowCompare(this, nextProps, nextState);
-    }
-
-    render() {
-        this.gameData = this.props.data;
-
-        return (
-            <form>
-                <input type='text'
-                       placeholder='Filter the League'
-                       onChange={this.updateSearch.bind(this)}
-                       value={this.state.filterText} />
-
-                <div className="gameGroupContainer">
-                    {!this.state.filteredGameData ? (
-                        <h4>There are no games to display.</h4>
-                    ) : ( this.state.filteredGameData )}
-                </div>
-            </form>
         );
     }
 }

@@ -276,6 +276,8 @@ export default class GameModalMLB extends React.Component {
               });
             }
 
+            //If Postponed or Pregame, run either of the first two conditions.
+            //Otherwise, show In Progress or Completed game data.
             if(selectedGameData.status.ind === 'DR' || selectedGameData.status.ind === 'DI') {
               displayPPDGameData();
             } else if(selectedGameData.status.ind === 'S' || selectedGameData.status.ind === 'P') {
@@ -356,7 +358,7 @@ export default class GameModalMLB extends React.Component {
                               }
                           }
 
-                          //If 'linescore' is not an array, it is only the 1st inning.
+                          //If 'linescore' is not an array, it is only the 1st inning. Thanks MLB Data...
                           if(_.isArray(data.linescore)) {
                               awayInningScore = (inning.away_inning_runs == '' ? '0' : inning.away_inning_runs);
                               homeInningScore = getHomeInningScore();
@@ -390,7 +392,7 @@ export default class GameModalMLB extends React.Component {
                           //   console.log("Nermal.");
                           // }
 
-                      //If 'linescore' is not an array, it is only the 1st inning.
+                      //If 'linescore' is not an array, it is only the 1st inning. Again, thanks MLB Dara.
                       if(_.isArray(data.linescore)) {
                           _.forEach(data.linescore, function (inning, id) {
                               currentInning = id + 1;
@@ -419,7 +421,7 @@ export default class GameModalMLB extends React.Component {
                           inningData = [];
                       }
 
-                      //Apply Totals.
+                      //Display the RHE Totals.
                       gameDataObj.push(<div className='boxScore totals' key={Math.random()}>
                           <div className='inningContainer'>
                               <div className='inning'>R</div>
@@ -452,12 +454,9 @@ export default class GameModalMLB extends React.Component {
                       if(!_.isUndefined(data.runner_on_3b)) currentRunnersOnBase.push('3b');
 
                       // BSO: Calculate the tabulated Balls, Strikes, and Outs, then push the active elements.
-                      for (var i = 0; i < parseInt(data.balls); i++) balls.push(<div key={Math.random()}
-                                                                                        className='countIt'>&nbsp;</div>);
-                      for (var i = 0; i < parseInt(data.strikes); i++) strikes.push(<div key={Math.random()}
-                                                                                          className='countIt'>&nbsp;</div>);
-                      for (var i = 0; i < parseInt(data.outs); i++) outs.push(<div key={Math.random()}
-                                                                                       className='countIt'>&nbsp;</div>);
+                      for (var i = 0; i < parseInt(data.balls); i++) balls.push(<div key={Math.random()} className='countIt'>&nbsp;</div>);
+                      for (var i = 0; i < parseInt(data.strikes); i++) strikes.push(<div key={Math.random()} className='countIt'>&nbsp;</div>);
+                      for (var i = 0; i < parseInt(data.outs); i++) outs.push(<div key={Math.random()} className='countIt'>&nbsp;</div>);
 
                       //Append the non-active elements to complete the BSO layout.
                       totalBalls = 4 - balls.length,
@@ -467,25 +466,6 @@ export default class GameModalMLB extends React.Component {
                       for (var i = 0; i < totalBalls; i++) balls.push(<div key={Math.random()} className=''>&nbsp;</div>);
                       for (var i = 0; i < totalStrikes; i++) strikes.push(<div key={Math.random()} className=''>&nbsp;</div>);
                       for (var i = 0; i < totalOuts; i++) outs.push(<div key={Math.random()} className=''>&nbsp;</div>);
-
-                      //Find Runners on Base with their Player Numbers. Return their name for Tooltip.
-                      function getPlayerInfo(playerNumber) {
-                          let playerOnBase = [];
-
-                          //Loop through all Player IDs with passed in Player ID. Break the loop when it's found.
-                          _.forEach(players, function(playerObj) {
-                              playerOnBase = _.filter(playerObj, function(player) {
-                                  return player.$.id == playerNumber;
-                              });
-                              if(playerOnBase.length > 0) return false;
-                          });
-
-                          if(playerOnBase.length > 0) {
-                              return playerOnBase[0].$.first + ' ' + playerOnBase[0].$.last;
-                          } else {
-                              return '';
-                          }
-                      }
 
                       function getBatterBoxScoreData() {
                           //Print out Box Scores of Batter Data.
@@ -521,11 +501,11 @@ export default class GameModalMLB extends React.Component {
                                   batterDisplayName = '',
                                   batterPosition = '',
                                   batterNote = '',
-                                  //Setting the correct Batting Order.
+                                  //Set the correct Batting Order using SortBy.
                                   batterObj = _.sortBy(batterInfo.batting[0].batter, function(o) {
                                       return parseInt(o.$.bat_order);
                                   }),
-                                  //Setting the correct Pitching Order.
+                                  //Set the correct Pitching Order using SortBy.
                                   pitcherObj = _.sortBy(batterInfo.pitching[0].pitcher, function(o) {
                                       return parseInt(o.$.pitch_order);
                                   });
