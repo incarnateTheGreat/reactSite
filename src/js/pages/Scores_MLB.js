@@ -216,47 +216,24 @@ export default class Scores_MLB extends React.Component {
                 <hr/>
                 <h2>MLB Scores</h2>
                 <div className="scoreTableContainer">
-                    <h2>Filters</h2>
                     <h2>Live</h2>
                     <div className="gameGroupContainer">
                         <LeagueFilter data={this.state.liveGameSection}></LeagueFilter>
-                      {
-                          // !this.state.liveGameSection ? (
-                      //   <h4>There are currently no Live Games.</h4>
-                      // ) : (
-                      //   this.state.liveGameSection
-                      // )
-                      }
                     </div>
                     <hr />
                     <h2>Today's Games: {moment().format("dddd M/DD")}</h2>
                     <div className="gameGroupContainer">
                         <LeagueFilter data={this.state.todayGamesSection}></LeagueFilter>
-                        {
-                        //     !this.state.todayGamesSection ? (
-                        //   <h4>There are no Games today.</h4>
-                        // ) : (
-                        //   this.state.todayGamesSection
-                        // )
-                        }
                     </div>
                     <hr />
                     <h2>Yesterday's Games: {moment().subtract(1, 'day').format("dddd M/DD")}</h2>
                     <div className="gameGroupContainer">
-                        {!this.state.yesterdayGamesSection ? (
-                          <h4>There were no Games yesterday..</h4>
-                        ) : (
-                          this.state.yesterdayGamesSection
-                        )}
+                        <LeagueFilter data={this.state.yesterdayGamesSection}></LeagueFilter>
                     </div>
                     <hr />
                     <h2>Tomorrow's Games: {moment().add(1, 'day').format("dddd M/DD")}</h2>
                     <div className="gameGroupContainer">
-                        {!this.state.tomorrowGamesSection ? (
-                          <h4>There will be no Games tomorrow.</h4>
-                        ) : (
-                          this.state.tomorrowGamesSection
-                        )}
+                        <LeagueFilter data={this.state.tomorrowGamesSection}></LeagueFilter>
                     </div>
                 </div>
             </div>
