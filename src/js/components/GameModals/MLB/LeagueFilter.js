@@ -6,38 +6,34 @@ export default class LeagueFilter extends React.Component {
         super(props);
 
         this.state = {
-            filterText: '',
-            filteredGameData: []
+            filteredGameData: [],
+            gameData: null
         };
     }
 
     updateSearch(e) {
-      if(e.target.value.length == 0 || e.target.value.length == 2) {
-        let filtered = _.filter(this.gameData, function(game) {
+        let filtered = _.filter(this.state.gameData, function(game) {
             let gameObj = game.props.children.props.gameData;
-            return (gameObj.league === e.target.value.toUpperCase() || e.target.value.length == 0);
+            return (gameObj.league === e.target.value || e.target.value == '');
         });
 
         this.setState({
             filteredGameData: filtered
         });
-      }
-
-      this.setState({
-          filterText: e.target.value
-      });
     }
 
     componentWillReceiveProps(nextProps) {
         if(!_.isNull(nextProps.data)) {
             this.gameData = nextProps.data;
 
-            let filtered = _.filter(this.gameData, function(game) {
-                return game.props.children.props.gameData;
-            });
+            this.setState({gameData: nextProps.data}, function() {
+              let filtered = _.filter(this.state.gameData, function(game) {
+                  return game.props.children.props.gameData;
+              });
 
-            this.setState({
-                filteredGameData: filtered
+              this.setState({
+                  filteredGameData: filtered
+              });
             });
         }
     }
@@ -47,21 +43,32 @@ export default class LeagueFilter extends React.Component {
     }
 
     render() {
-        this.gameData = this.props.data;
+      return (
+        <div>
+          <form className='leagueFilter'>
+              <div className='leagueSelector'>
+                <input type='radio' name='leagueFilter' onClick={this.updateSearch.bind(this)} value='AA' /> AL
+              </div>
+              <div className='leagueSelector'>
+                <input type='radio' name='leagueFilter' onClick={this.updateSearch.bind(this)} value='NN' /> NL
+              </div>
+              <div className='leagueSelector'>
+                <input type='radio' name='leagueFilter' onClick={this.updateSearch.bind(this)} value='NA' /> Interleague (AL)
+              </div>
+              <div className='leagueSelector'>
+                <input type='radio' name='leagueFilter' onClick={this.updateSearch.bind(this)} value='AN' /> Interleague (NL)
+              </div>
+              <div className='leagueSelector'>
+                <input type='radio' name='leagueFilter' onClick={this.updateSearch.bind(this)} value='' /> ALL
+              </div>
+          </form>
 
-        return (
-            <form>
-                <input type='text'
-                       placeholder='Filter the League'
-                       onChange={this.updateSearch.bind(this)}
-                       value={this.state.filterText} />
-
-                <div className="gameGroupContainer">
-                    {!this.state.filteredGameData ? (
-                        <h4>There are no games to display.</h4>
-                    ) : ( this.state.filteredGameData )}
-                </div>
-            </form>
+          <div className="gameGroupContainer">
+              {this.state.filteredGameData.length === 0 ? (
+                  <h4>There are no games to display.</h4>
+              ) : ( this.state.filteredGameData )}
+          </div>
+        </div>
         );
     }
 }

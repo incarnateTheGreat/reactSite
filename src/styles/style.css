@@ -453,6 +453,23 @@ h3 {
   border-top: 1px solid #999;
 }
 
+/*League Filter*/
+.leagueFilter {
+  background: rgba(39, 128, 227, 0.45);
+  padding: 5px;
+  margin: 0 0 5px;
+  overflow: auto;
+}
+.leagueFilter input[type='radio'] {
+  float: left;
+}
+.leagueFilter .leagueSelector {
+  float: left;
+  padding: 0 5px;
+}
+.leagueFilter .leagueSelector span {
+  padding: 0 0 0 6px;
+}
 
 /*Loading Spinner*/
 @-webkit-keyframes spin {
