@@ -2,10 +2,9 @@ import React from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
 import classNames from 'classnames';
-import {Popover, OverlayTrigger, Tooltip, Tab, Tabs} from "react-bootstrap";
-//http://codepen.io/lemanse/pen/ZbwJxe
+import {Tab, Tabs} from "react-bootstrap";
 
-// import BaseRunnerTooltip from '../../../components/Tooltip';
+import BaseRunnerOverlay from './BaseRunnerOverlay';
 
 let customStyles = {
     overlay : {
@@ -35,68 +34,6 @@ let tweenStyle = {
         opacity               : '0'
     }
 };
-
-//Tooltip
-export class BaseRunnerTooltip extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      playerObj: null
-    }
-  }
-
-  componentDidMount() {
-    let self = this;
-
-    axios.get('http://www.mlb.com/gdcross/components/game/mlb/year_2017/batters/' + this.props.playerProfile + '.xml')
-         .then(function (response) {
-           let parseString = require('xml2js').parseString,
-               batter_XML = response.data,
-               batter_JSON = null;
-           parseString(batter_XML, function (err, result) {
-               let gameID = result.batting.$.game_id.split('/'),
-                   url = '';
-                   gameID[3] = gameID[3].replace(/-/gi, '_');
-
-               url = 'http://mlb.mlb.com/gdcross/components/game/mlb/year_' + gameID[0] + '/month_' + gameID[1] + '/day_' + gameID[2] + '/gid_' + gameID[0] + '_' + gameID[1] + '_' + gameID[2] + '_' + gameID[3] + '/batters/' + self.props.playerProfile + '.xml';
-
-               axios.get(url)
-                   .then(function (batter) {
-                     parseString(batter.data, function (err, result) {
-
-                       console.log(result);
-                       let title = '#' + result.Player.$.jersey_number + ' ' + result.Player.$.first_name + ' ' + result.Player.$.last_name;
-
-                       let popover = (<Popover id="popover-positioned-left" title={title}>
-                                         <div><strong>Position:</strong> {result.Player.$.pos}</div>
-                                         <div><strong>Bats:</strong> {result.Player.$.bats}</div>
-                                       <div><strong>Average:</strong> {result.Player.season[0].$.avg}</div>
-                                      </Popover>);
-
-                       let resultTwo = <OverlayTrigger trigger={['hover', 'focus']} delayShow={0} delayHide={0} overlay={popover}>
-                                         <div className={self.props.className}>{self.props.children}</div>
-                                       </OverlayTrigger>
-
-                       self.setState({playerObj: resultTwo});
-                     });
-                   });
-           });
-         }).catch(function (error) {
-           console.log("fail.");
-           console.log(error);
-         });
-  }
-
-  render() {
-        return (
-          <div>
-            {this.state.playerObj}
-          </div>
-        );
-  }
-
-}
 
 export default class GameModalMLB extends React.Component {
     constructor() {
@@ -799,26 +736,25 @@ export default class GameModalMLB extends React.Component {
                                   <div className={'baseContainer ' + (data.status === 'Warmup' || data.status === 'Pre-Game' ? 'disable' : '')}>
                                       <div className='secondBase baseRow'>
                                         { (_.includes(currentRunnersOnBase, '2b')) ? (
-                                          <BaseRunnerTooltip className={'base onBase'}
+                                          <BaseRunnerOverlay className={'base onBase'}
                                                              placement='top'
                                                              playerProfile={data.runner_on_2b}
-                                                            // playerProfile='444857'
-                                                             id='2b'>&nbsp;</BaseRunnerTooltip>) :
+                                                             id='2b'>&nbsp;</BaseRunnerOverlay>) :
                                            (<div className='base'>&nbsp;</div>) }
                                       </div>
                                       <div className='thirdFirstBase baseRow'>
                                         { (_.includes(currentRunnersOnBase, '3b')) ? (
-                                          <BaseRunnerTooltip className={'base onBase'}
+                                          <BaseRunnerOverlay className={'base onBase'}
                                                              placement='top'
                                                              playerProfile={data.runner_on_3b}
-                                                             id='3b'>&nbsp;</BaseRunnerTooltip>) :
+                                                             id='3b'>&nbsp;</BaseRunnerOverlay>) :
                                            (<div className='base'>&nbsp;</div>) }
 
                                         { (_.includes(currentRunnersOnBase, '1b')) ? (
-                                          <BaseRunnerTooltip className={'base onBase'}
+                                          <BaseRunnerOverlay className={'base onBase'}
                                                              placement='top'
                                                              playerProfile={data.runner_on_1b}
-                                                             id='1b'>&nbsp;</BaseRunnerTooltip>) :
+                                                             id='1b'>&nbsp;</BaseRunnerOverlay>) :
                                            (<div className='base'>&nbsp;</div>) }
                                       </div>
                                   </div>

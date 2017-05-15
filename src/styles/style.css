@@ -375,6 +375,9 @@ h3 {
   background: rgba(189, 30, 19, 1);
   cursor: pointer;
 }
+.activePlayerData .bases .onBasePlayer {
+  display: inline;
+}
 .activePlayerData .BSO {
   overflow: hidden;
   margin: 5px 0 0;
