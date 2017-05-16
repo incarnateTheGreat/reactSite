@@ -747,14 +747,14 @@ export default class GameModalMLB extends React.Component {
                                       </div>
                                       <div className='thirdFirstBase baseRow'>
                                         { (_.includes(currentRunnersOnBase, '3b')) ? (
-                                          <BaseRunnerOverlay className={'base onBase'}
+                                          <BaseRunnerOverlay className={'base thirdBase onBase'}
                                                              placement='top'
                                                              playerProfile={data.runner_on_3b}
                                                              id='3b'>&nbsp;</BaseRunnerOverlay>) :
                                            (<div className='base'>&nbsp;</div>) }
 
                                         { (_.includes(currentRunnersOnBase, '1b')) ? (
-                                          <BaseRunnerOverlay className={'base onBase'}
+                                          <BaseRunnerOverlay className={'base firstBase onBase'}
                                                              placement='top'
                                                              playerProfile={data.runner_on_1b}
                                                              id='1b'>&nbsp;</BaseRunnerOverlay>) :

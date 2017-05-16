@@ -342,7 +342,10 @@ h3 {
 .activePlayerData .bases .baseRow.secondBase .base {
   margin: 5px 10px 2px 13px;
 }
-.activePlayerData .bases .baseRow.thirdFirstBase div.base:last-child {
+.activePlayerData .bases .baseRow.thirdFirstBase .firstBase {
+  margin: 0 0 0 6px;
+}
+.activePlayerData .bases .baseRow.thirdFirstBase .thirdBase {
   margin: 0 0 0 6px;
 }
 .activePlayerData .bases .base {
