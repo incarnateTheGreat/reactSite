@@ -148,7 +148,7 @@ export default class GameModalMLB extends React.Component {
         this.setState({
             activeTab: selectedTab
         }, function() {
-          window.onresize();
+            window.onresize();
         });
     }
 
@@ -290,18 +290,18 @@ export default class GameModalMLB extends React.Component {
 
               //Test call JSON Linescore from match when clicking on specific Game
               axios.all(urls).then((gameData) => {
+                  let parseString = require('xml2js').parseString;
+
                   //Linescore
                   data = gameData[0].data.data.game;
 
                   //Raw Box Score
-                  let parseString = require('xml2js').parseString,
-                      boxScore_XML = gameData[1].data;
+                  let boxScore_XML = gameData[1].data;
                   parseString(boxScore_XML, function (err, result) {
                       rawBoxScore = result.boxscore;
                   });
 
-                  //Players
-                  parseString = require('xml2js').parseString;
+                  //Players;
                   let players_XML = gameData[2].data;
                   parseString(players_XML, function (err, result) {
                       players = [result.game.team[0].player, result.game.team[1].player];
