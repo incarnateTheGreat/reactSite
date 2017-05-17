@@ -327,7 +327,6 @@ h3 {
   padding: 0 0 15px;
 }
 .activePlayerData .bases {
-  /*margin: 6px 0 0;*/
   padding: 0 20px 0px 0;
   overflow: hidden;
   float: left;
@@ -342,18 +341,12 @@ h3 {
 .activePlayerData .bases .baseRow.secondBase .base {
   margin: 5px 10px 2px 13px;
 }
-.activePlayerData .bases .baseRow.thirdFirstBase .firstBase {
-  margin: 0 0 0 6px;
-}
-.activePlayerData .bases .baseRow.thirdFirstBase .thirdBase {
-  margin: 0 0 0 6px;
-}
 .activePlayerData .bases .base {
   border: 1px solid rgba(189, 30, 19, 1);
   width: 15px;
   height: 15px;
   float: left;
-  margin: 0 5px 0 0;
+  margin: 0 10px 0 0;
   -ms-transform: rotate(45deg);
   -webkit-transform: rotate(45deg);
   transform: rotate(45deg);

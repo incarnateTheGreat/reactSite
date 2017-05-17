@@ -6,6 +6,7 @@ export default class LeagueFilter extends React.Component {
         super(props);
 
         this.state = {
+            currentSelection: null,
             filteredGameData: [],
             gameData: null
         };
@@ -18,17 +19,26 @@ export default class LeagueFilter extends React.Component {
         });
 
         this.setState({
+            currentSelection: e.target.value,
             filteredGameData: filtered
         });
     }
 
     componentWillReceiveProps(nextProps) {
+        let self = this;
+
         if(!_.isNull(nextProps.data)) {
             this.gameData = nextProps.data;
 
             this.setState({gameData: nextProps.data}, function() {
               let filtered = _.filter(this.state.gameData, function(game) {
-                  return game.props.children.props.gameData;
+                  let gameObj = game.props.children.props.gameData;
+
+                  if(!_.isNull(self.state.currentSelection)) {
+                      return gameObj.league === self.state.currentSelection;
+                  } else {
+                      return gameObj;
+                  }
               });
 
               this.setState({
