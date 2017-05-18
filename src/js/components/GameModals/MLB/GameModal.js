@@ -322,6 +322,21 @@ export default class GameModalMLB extends React.Component {
                   dispayGameData();
 
                   function dispayGameData() {
+                      let gameStatus = '';
+
+                      if(parseInt(data.inning) > 9) {
+                          gameStatus = 'Final' + '/' + data.inning;
+                      } else {
+                          gameStatus = 'Final';
+                      }
+
+                      gameDataObj.push(<div className='topBar' key={Math.random()}>
+                          <div className='inningState'>{data.status === 'Final' || data.status === 'Game Over' ? (
+                              gameStatus ) : ( data.inning_state + ' ' + data.inning)}</div>
+                          <div className='scoreBar'><span>{data.away_team_name}</span> <span>{data.away_team_runs}</span></div>
+                          <div className='scoreBar'><span>{data.home_team_name}</span> <span>{data.home_team_runs}</span></div>
+                      </div>);
+
                       //Apply Team Names.
                       gameDataObj.push(<div className='boxScore' key={Math.random()}>
                           <div className='inningContainer'>
@@ -590,11 +605,6 @@ export default class GameModalMLB extends React.Component {
 
                               // Draw Pitcher Table.
                               _.forEach(pitcherObj, function(pitcher) {
-                                // console.log(pitcher);
-
-                                //TODO: For each Pitcher, run a loop through all possible events and assign them
-                                //to a local variable. When completed, use this to post the events.
-
                                   _.forEach(pitcherDataHeaders, function(header) {
                                       pitcherClasses = classNames({
                                           'notNumeric': header === 'name_display_first_last'

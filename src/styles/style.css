@@ -239,9 +239,31 @@ h3 {
 }
 
 /*Game Modal MLB*/
-.boxScoreContainer {
-  /*float: left;*/
-  /*width: 55%;*/
+.boxScoreContainer .topBar {
+  font-size: 24px;
+  overflow: auto;
+}
+.boxScoreContainer .topBar .inningState {
+  border-bottom: 1px solid black;
+  font-weight: bold;
+}
+.boxScoreContainer .topBar .scoreBar {
+  clear: both;
+  padding: 5px 10px;
+  overflow: auto;
+  background: rgba(189, 30, 19, 0.1);
+}
+.boxScoreContainer .topBar .scoreBar:last-child {
+  background: rgba(218, 218, 218, 0.2);
+}
+.boxScoreContainer .topBar .scoreBar span {
+  float: left;
+}
+.boxScoreContainer .topBar .scoreBar span:first-child {
+  width: 200px;
+}
+.boxScoreContainer .topBar .scoreBar span:last-child {
+  font-weight: bold;
 }
 .headline {
   font-weight: bold;
