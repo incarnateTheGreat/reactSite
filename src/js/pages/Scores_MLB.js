@@ -20,7 +20,7 @@ export default class Scores_MLB extends React.Component {
         this.timeoutOpenLoader = null;
         this.timeoutCloseLoader = null;
 
-        this.getStandingsData();
+        // this.getStandingsData();
     }
 
     componentDidMount() {

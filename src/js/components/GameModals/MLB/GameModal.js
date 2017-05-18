@@ -501,6 +501,7 @@ export default class GameModalMLB extends React.Component {
                                   batterDisplayName = '',
                                   batterPosition = '',
                                   batterNote = '',
+                                  pitcherStatsArr = ['win','loss','blown_save','hold'],
                                   //Set the correct Batting Order using SortBy.
                                   batterObj = _.sortBy(batterInfo.batting[0].batter, function(o) {
                                       return parseInt(o.$.bat_order);
@@ -589,13 +590,10 @@ export default class GameModalMLB extends React.Component {
 
                               // Draw Pitcher Table.
                               _.forEach(pitcherObj, function(pitcher) {
-                                console.log(pitcher);
+                                // console.log(pitcher);
 
                                 //TODO: For each Pitcher, run a loop through all possible events and assign them
                                 //to a local variable. When completed, use this to post the events.
-                                //E.G. (W, 1-0, B, 1)
-                                //May 14 Houston and the Yanks
-
 
                                   _.forEach(pitcherDataHeaders, function(header) {
                                       pitcherClasses = classNames({
@@ -606,14 +604,26 @@ export default class GameModalMLB extends React.Component {
                                         let pitcherResult = '';
 
                                         //Post registered events (Win, Los, Blown Save, Hold);
-                                        if(pitcher.$.win === 'true') {
-                                          pitcherResult = pitcher.$.name + ' (W, ' + pitcher.$.bam_w + '-' + pitcher.$.bam_l + ')';
-                                        } else if (pitcher.$.loss === 'true') {
-                                          pitcherResult = pitcher.$.name + ' (L, ' + pitcher.$.bam_w + '-' + pitcher.$.bam_l + ')';
-                                        } else if (pitcher.$.blown_save === 'true') {
-                                          pitcherResult = pitcher.$.name + ' (B, ' + pitcher.$.bam_bs + ')';
-                                        } else if (pitcher.$.hold === 'true') {
-                                          pitcherResult = pitcher.$.name + ' (H, ' + pitcher.$.bam_hld + ')';
+                                        let pitcherStatistics = _.pick(pitcher.$, pitcherStatsArr);
+
+                                        //If there are Pitcher Stats to record, open the string with a parenthesis.
+                                        if(_.size(pitcherStatistics) > 0) {
+                                          pitcherResult += pitcher.$.name + ' (';
+
+                                          _.forEach(pitcherStatistics, function (o, stat) {
+                                              if(stat == 'win') {
+                                                  pitcherResult += 'W, ' + pitcher.$.bam_w + '-' + pitcher.$.bam_l + ',';
+                                              } else if(stat == 'loss') {
+                                                  pitcherResult += 'L, ' + pitcher.$.bam_w + '-' + pitcher.$.bam_l + ',';
+                                              } else if(stat == 'hold') {
+                                                  pitcherResult += 'H, ' + pitcher.$.bam_hld + ',';
+                                              } else if(stat == 'blown_save') {
+                                                  pitcherResult += 'B, ' + pitcher.$.bam_bs + ',';
+                                              }
+                                          });
+
+                                          //Replace the ',' at the end with a closing parenthesis.
+                                          pitcherResult = pitcherResult.replace(/.$/, ')');
                                         } else {
                                           pitcherResult = pitcher.$.name;
                                         }
