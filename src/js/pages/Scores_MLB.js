@@ -19,6 +19,8 @@ export default class Scores_MLB extends React.Component {
 
         this.timeoutOpenLoader = null;
         this.timeoutCloseLoader = null;
+
+        this.getStandingsData();
     }
 
     componentDidMount() {
@@ -26,6 +28,53 @@ export default class Scores_MLB extends React.Component {
 
         this.setGameDataOutput(function(dateObj, p) {
             self.fetchData(dateObj, p);
+        });
+    }
+
+    getStandingsData() {
+        axios.get('https://erikberg.com/mlb/standings.xml').then(function (standings) {
+            let parseString = require('xml2js').parseString;
+            parseString(standings.data, function (err, result) {
+                let standingsParsed = result['sports-content'].standing,
+                    league = '',
+                    teamName = '',
+                    teamStats = null,
+                    divisions = [];
+
+                var findObjectByLabel = function(obj, label) {
+                    if(obj.label === label) { return obj; }
+                    for(var i in obj) {
+                        if(obj.hasOwnProperty(i)){
+                            var foundLabel = findObjectByLabel(obj[i], label);
+                            if(foundLabel) { return foundLabel; }
+                        }
+                    }
+                    return null;
+                };
+
+                _.forEach(standingsParsed, function (division) {
+                    _.forEach(division.team, function (team) {
+                        teamName = team['team-metadata'][0].name[0].$.first + ' ' + team['team-metadata'][0].name[0].$.last;
+                        // console.log(team['team-stats']);
+                        console.log(team['team-stats'][0]['outcome-totals']);
+                        teamStats = {
+                            wins: team['team-stats'][0]['outcome-totals'][0].$.wins,
+                            losses: team['team-stats'][0]['outcome-totals'][0].$.losses,
+                            pct: team['team-stats'][0]['outcome-totals'][0].$['winning-percentage'],
+                            rs: team['team-stats'][0]['outcome-totals'][0].$['points-scored-for'],
+                            ra: team['team-stats'][0]['outcome-totals'][0].$['points-scored-against'],
+                            rd: team['team-stats'][0]['outcome-totals'][0].$['points-difference'],
+                            streak: team['team-stats'][0]['outcome-totals'][0].$['streak-type'].toUpperCase() + ' ' + team['team-stats'][0]['outcome-totals'][0].$['streak-total'],
+                            gb: team['team-stats'][0].$['games-back']
+                        };
+                        console.log('---------------------');
+                        console.log(teamName);
+                        console.log(teamStats);
+                        console.log('---------------------');
+                    });
+                });
+            });
+            
         });
     }
 
