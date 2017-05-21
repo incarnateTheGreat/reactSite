@@ -489,6 +489,11 @@ h3 {
   padding: 0 0 0 6px;
 }
 
+/*Standings*/
+.standings tr td {
+  width: 5%;
+}
+
 /*Loading Spinner*/
 @-webkit-keyframes spin {
   0% { -webkit-transform: rotate(0deg); }

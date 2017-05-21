@@ -1,8 +1,10 @@
 import React from "react";
 import axios from 'axios';
+import {Tab, Tabs} from "react-bootstrap";
 
 import GameModalMLB from "../components/GameModals/MLB/GameModal";
 import LeagueFilter from "../components/GameModals/MLB/LeagueFilter";
+import Standings from "../components/GameModals/MLB/Standings";
 
 export default class Scores_MLB extends React.Component {
     constructor(props) {
@@ -14,8 +16,13 @@ export default class Scores_MLB extends React.Component {
             todayGamesSection: null,
             returnTodayGames: null,
             tomorrowGamesSection: null,
-            gameDataObjects: null
+            gameDataObjects: null,
+            standings: null,
+            activeTab: 0 // Takes active tab from props if it is defined there
         };
+
+        // Bind the handleSelect function already here (not in the render function)
+        this.handleSelect = this.handleSelect.bind(this);
 
         this.timeoutOpenLoader = null;
         this.timeoutCloseLoader = null;
@@ -31,7 +38,19 @@ export default class Scores_MLB extends React.Component {
         });
     }
 
+    handleSelect(selectedTab) {
+        // The active tab must be set into the state so that
+        // the Tabs component knows about the change and re-renders.
+        this.setState({
+            activeTab: selectedTab
+        }, function() {
+            window.onresize();
+        });
+    }
+
     getStandingsData() {
+      let self = this;
+
         axios.get('https://erikberg.com/mlb/standings.xml').then(function (standings) {
             let parseString = require('xml2js').parseString;
             parseString(standings.data, function (err, result) {
@@ -39,7 +58,9 @@ export default class Scores_MLB extends React.Component {
                     league = '',
                     teamName = '',
                     teamStats = null,
-                    divisions = [];
+                    divisions = [],
+                    teamTable = null,
+                    TeamRow = null;
 
                 var findObjectByLabel = function(obj, label) {
                     if(obj.label === label) { return obj; }
@@ -56,7 +77,7 @@ export default class Scores_MLB extends React.Component {
                     _.forEach(division.team, function (team) {
                         teamName = team['team-metadata'][0].name[0].$.first + ' ' + team['team-metadata'][0].name[0].$.last;
                         // console.log(team['team-stats']);
-                        console.log(team['team-stats'][0]['outcome-totals']);
+                        // console.log(team['team-stats'][0]['outcome-totals']);
                         teamStats = {
                             wins: team['team-stats'][0]['outcome-totals'][0].$.wins,
                             losses: team['team-stats'][0]['outcome-totals'][0].$.losses,
@@ -67,14 +88,55 @@ export default class Scores_MLB extends React.Component {
                             streak: team['team-stats'][0]['outcome-totals'][0].$['streak-type'].toUpperCase() + ' ' + team['team-stats'][0]['outcome-totals'][0].$['streak-total'],
                             gb: team['team-stats'][0].$['games-back']
                         };
-                        console.log('---------------------');
-                        console.log(teamName);
-                        console.log(teamStats);
-                        console.log('---------------------');
+                        // console.log('---------------------');
+                        // console.log(teamName);
+                        // console.log(teamStats);
+                        // console.log('---------------------');
+
+                        TeamRow = React.createClass({
+                            render: function() {
+                                return (
+                                    <tr>
+                                        <td>(Team)</td>
+                                        <td>{teamStats.wins}</td>
+                                        <td>{teamStats.losses}</td>
+                                        <td>{teamStats.pct}</td>
+                                        <td>{teamStats.gb}</td>
+                                        <td>{teamStats.rs}</td>
+                                        <td>{teamStats.ra}</td>
+                                        <td>{teamStats.rd}</td>
+                                        <td>{teamStats.streak}</td>
+                                    </tr>
+                                );
+                            }
+                        });
                     });
                 });
+
+                teamTable = React.createClass({
+                    render: function() {
+                        return (
+                            <table>
+                                <tr>
+                                  <td>(Division)</td>
+                                  <td>W</td>
+                                  <td>L</td>
+                                  <td>PCT</td>
+                                  <td>GB</td>
+                                  <td>RS</td>
+                                  <td>RA</td>
+                                  <td>RD</td>
+                                  <td>STREAK</td>
+                                </tr>
+                                <TeamRow />
+                            </table>
+                        );
+                    }
+                });
+
+                self.setState({standings: teamTable});
             });
-            
+
         });
     }
 
@@ -259,32 +321,42 @@ export default class Scores_MLB extends React.Component {
     render() {
         return (
             <div>
-                <div class="loader"></div>
-                <h1>Scores</h1>
-                <h5>All games in EST</h5>
-                <hr/>
-                <h2>MLB Scores</h2>
-                <div className="scoreTableContainer">
-                    <h2>Live</h2>
-                    <div className="gameGroupContainer">
-                        <LeagueFilter data={this.state.liveGameSection}></LeagueFilter>
+              <Tabs id='MLBScores' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
+                  <Tab eventKey={0} title='MLB Scores'>
+                    <div class="loader"></div>
+                    <h1>Scores</h1>
+                    <h5>All games in EST</h5>
+                    <hr/>
+                    <h2>MLB Scores</h2>
+                    <div className="scoreTableContainer">
+                        <h2>Live</h2>
+                        <div className="gameGroupContainer">
+                            <LeagueFilter data={this.state.liveGameSection}></LeagueFilter>
+                        </div>
+                        <hr />
+                        <h2>Today's Games: {moment().format("dddd M/DD")}</h2>
+                        <div className="gameGroupContainer">
+                            <LeagueFilter data={this.state.todayGamesSection}></LeagueFilter>
+                        </div>
+                        <hr />
+                        <h2>Yesterday's Games: {moment().subtract(1, 'day').format("dddd M/DD")}</h2>
+                        <div className="gameGroupContainer">
+                            <LeagueFilter data={this.state.yesterdayGamesSection}></LeagueFilter>
+                        </div>
+                        <hr />
+                        <h2>Tomorrow's Games: {moment().add(1, 'day').format("dddd M/DD")}</h2>
+                        <div className="gameGroupContainer">
+                            <LeagueFilter data={this.state.tomorrowGamesSection}></LeagueFilter>
+                        </div>
                     </div>
-                    <hr />
-                    <h2>Today's Games: {moment().format("dddd M/DD")}</h2>
-                    <div className="gameGroupContainer">
-                        <LeagueFilter data={this.state.todayGamesSection}></LeagueFilter>
-                    </div>
-                    <hr />
-                    <h2>Yesterday's Games: {moment().subtract(1, 'day').format("dddd M/DD")}</h2>
-                    <div className="gameGroupContainer">
-                        <LeagueFilter data={this.state.yesterdayGamesSection}></LeagueFilter>
-                    </div>
-                    <hr />
-                    <h2>Tomorrow's Games: {moment().add(1, 'day').format("dddd M/DD")}</h2>
-                    <div className="gameGroupContainer">
-                        <LeagueFilter data={this.state.tomorrowGamesSection}></LeagueFilter>
-                    </div>
-                </div>
+                  </Tab>
+                  <Tab eventKey={1} title='MLB Standings'>
+                    <h1>Standings</h1>
+                    <hr/>
+                    <h2>MLB Standings</h2>
+                    <Standings />
+                  </Tab>
+              </Tabs>
             </div>
         );
     }
