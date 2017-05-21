@@ -490,8 +490,21 @@ h3 {
 }
 
 /*Standings*/
+.standings {
+  margin: 10px 0;
+}
+.standings thead {
+  background: rgba(50,50,50,0.124);
+}
+.standings thead th {
+  padding: 5px;
+}
+.standings tr {
+  border-bottom: 1px solid rgba(50,50,50,0.124);
+}
 .standings tr td {
   width: 5%;
+  padding: 0 0 0 5px;
 }
 
 /*Loading Spinner*/

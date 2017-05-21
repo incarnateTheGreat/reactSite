@@ -26,8 +26,6 @@ export default class Scores_MLB extends React.Component {
 
         this.timeoutOpenLoader = null;
         this.timeoutCloseLoader = null;
-
-        // this.getStandingsData();
     }
 
     componentDidMount() {
@@ -45,98 +43,6 @@ export default class Scores_MLB extends React.Component {
             activeTab: selectedTab
         }, function() {
             window.onresize();
-        });
-    }
-
-    getStandingsData() {
-      let self = this;
-
-        axios.get('https://erikberg.com/mlb/standings.xml').then(function (standings) {
-            let parseString = require('xml2js').parseString;
-            parseString(standings.data, function (err, result) {
-                let standingsParsed = result['sports-content'].standing,
-                    league = '',
-                    teamName = '',
-                    teamStats = null,
-                    divisions = [],
-                    teamTable = null,
-                    TeamRow = null;
-
-                var findObjectByLabel = function(obj, label) {
-                    if(obj.label === label) { return obj; }
-                    for(var i in obj) {
-                        if(obj.hasOwnProperty(i)){
-                            var foundLabel = findObjectByLabel(obj[i], label);
-                            if(foundLabel) { return foundLabel; }
-                        }
-                    }
-                    return null;
-                };
-
-                _.forEach(standingsParsed, function (division) {
-                    _.forEach(division.team, function (team) {
-                        teamName = team['team-metadata'][0].name[0].$.first + ' ' + team['team-metadata'][0].name[0].$.last;
-                        // console.log(team['team-stats']);
-                        // console.log(team['team-stats'][0]['outcome-totals']);
-                        teamStats = {
-                            wins: team['team-stats'][0]['outcome-totals'][0].$.wins,
-                            losses: team['team-stats'][0]['outcome-totals'][0].$.losses,
-                            pct: team['team-stats'][0]['outcome-totals'][0].$['winning-percentage'],
-                            rs: team['team-stats'][0]['outcome-totals'][0].$['points-scored-for'],
-                            ra: team['team-stats'][0]['outcome-totals'][0].$['points-scored-against'],
-                            rd: team['team-stats'][0]['outcome-totals'][0].$['points-difference'],
-                            streak: team['team-stats'][0]['outcome-totals'][0].$['streak-type'].toUpperCase() + ' ' + team['team-stats'][0]['outcome-totals'][0].$['streak-total'],
-                            gb: team['team-stats'][0].$['games-back']
-                        };
-                        // console.log('---------------------');
-                        // console.log(teamName);
-                        // console.log(teamStats);
-                        // console.log('---------------------');
-
-                        TeamRow = React.createClass({
-                            render: function() {
-                                return (
-                                    <tr>
-                                        <td>(Team)</td>
-                                        <td>{teamStats.wins}</td>
-                                        <td>{teamStats.losses}</td>
-                                        <td>{teamStats.pct}</td>
-                                        <td>{teamStats.gb}</td>
-                                        <td>{teamStats.rs}</td>
-                                        <td>{teamStats.ra}</td>
-                                        <td>{teamStats.rd}</td>
-                                        <td>{teamStats.streak}</td>
-                                    </tr>
-                                );
-                            }
-                        });
-                    });
-                });
-
-                teamTable = React.createClass({
-                    render: function() {
-                        return (
-                            <table>
-                                <tr>
-                                  <td>(Division)</td>
-                                  <td>W</td>
-                                  <td>L</td>
-                                  <td>PCT</td>
-                                  <td>GB</td>
-                                  <td>RS</td>
-                                  <td>RA</td>
-                                  <td>RD</td>
-                                  <td>STREAK</td>
-                                </tr>
-                                <TeamRow />
-                            </table>
-                        );
-                    }
-                });
-
-                self.setState({standings: teamTable});
-            });
-
         });
     }
 
