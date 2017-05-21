@@ -27,12 +27,12 @@ export default class Standings extends React.Component {
                   teamHeader = [],
                   teamRow = [];
 
-              _.forEach(standingsParsed, function (division) {
+              _.forEach(standingsParsed, function (division, i) {
+                league = division['standing-metadata'][0]['sports-content-codes'][0]['sports-content-code'][0].$['code-key'];
+
                   _.forEach(division.team, function (team) {
-                    // team['team-metadata'][0].name[0].$.first + ' ' +
                       teamName =  team['team-metadata'][0].name[0].$.last;
-                      // console.log(team['team-stats']);
-                      // console.log(team['team-stats'][0]['outcome-totals']);
+
                       teamStats = {
                           wins: team['team-stats'][0]['outcome-totals'][0].$.wins,
                           losses: team['team-stats'][0]['outcome-totals'][0].$.losses,
@@ -43,19 +43,13 @@ export default class Standings extends React.Component {
                           streak: team['team-stats'][0]['outcome-totals'][0].$['streak-type'].toUpperCase() + ' ' + team['team-stats'][0]['outcome-totals'][0].$['streak-total'],
                           gb: team['team-stats'][0].$['games-back']
                       };
-                      // console.log('---------------------');
-                      // console.log(teamName);
-                      // console.log(teamStats);
-                      // console.log('---------------------');
-
-                      // self.setState({data: teamStats});
 
                       teamRow.push(<tr key={Math.random()}>
                               <td>{teamName}</td>
                               <td>{teamStats.wins}</td>
                               <td>{teamStats.losses}</td>
                               <td>{teamStats.pct}</td>
-                              <td>{teamStats.gb}</td>
+                              <td>{teamStats.gb == '0.0' ? '--' : teamStats.gb}</td>
                               <td>{teamStats.rs}</td>
                               <td>{teamStats.ra}</td>
                               <td>{teamStats.rd}</td>
@@ -82,9 +76,20 @@ export default class Standings extends React.Component {
 
                   teamRow = [];
 
-                  tableObj.push(<table className='standings' key={Math.random()}>
-                      {divisionRow}
-                  </table>);
+                  let leagueName = function() {
+                    if(league === 'MLB.AL' && i === 0) {
+                      return 'American';
+                    } else if (league === 'MLB.NL' && i === 3) {
+                      return 'National';
+                    }
+                  }
+
+                  tableObj.push(<div key={Math.random()}>
+                      <h3 className='league'>{leagueName()}</h3>
+                      <table className='standings'>
+                        {divisionRow}
+                      </table>
+                    </div>);
 
                   divisionRow = [];
               });

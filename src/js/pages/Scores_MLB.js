@@ -230,10 +230,9 @@ export default class Scores_MLB extends React.Component {
               <Tabs id='MLBScores' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
                   <Tab eventKey={0} title='MLB Scores'>
                     <div class="loader"></div>
-                    <h1>Scores</h1>
+                    <h2>MLB Scores</h2>
                     <h5>All games in EST</h5>
                     <hr/>
-                    <h2>MLB Scores</h2>
                     <div className="scoreTableContainer">
                         <h2>Live</h2>
                         <div className="gameGroupContainer">
@@ -257,9 +256,8 @@ export default class Scores_MLB extends React.Component {
                     </div>
                   </Tab>
                   <Tab eventKey={1} title='MLB Standings'>
-                    <h1>Standings</h1>
-                    <hr/>
                     <h2>MLB Standings</h2>
+                    <hr/>
                     <Standings />
                   </Tab>
               </Tabs>
