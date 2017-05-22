@@ -97,7 +97,7 @@ export default class GameModalMLB extends React.Component {
       this.loader.style.zIndex = "-1";
     }
 
-    getBrowserSize() {
+    getBrowserSize(gameStatus) {
       let self = this;
 
         window.onresize = function() {
@@ -123,8 +123,16 @@ export default class GameModalMLB extends React.Component {
                 headlineContainer_height = 0,
                 activePlayerDataContainer_height = 0;
 
+                console.log(gameStatus);
+
+                // if(selectedGameData.status.ind === 'DR' || selectedGameData.status.ind === 'DI') {
+                //   displayPPDGameData();
+                // } else if(selectedGameData.status.ind === 'S' || selectedGameData.status.ind === 'P') {
+                //   displayPregameData();
+                // }
+
             //If Pre-game or PPD, reduce the height of the Modal. Otherwise, fit the proper height.
-            if(document.getElementsByClassName('tab-pane').length <= 0) {
+            if(gameStatus === 'DR' || gameStatus === 'DI' || gameStatus === 'S' || gameStatus === 'P') {
               activePlayerDataContainer_height = document.getElementsByClassName('headlineContainer')[0].offsetHeight;
             } else {
               headlineContainer_height = document.getElementsByClassName('headlineContainer')[0].offsetHeight;
@@ -872,7 +880,7 @@ export default class GameModalMLB extends React.Component {
         const game = this.props.gameData;
         this.state.game = game;
 
-        this.getBrowserSize();
+        this.getBrowserSize(game.status.ind);
 
         let gameStatus = '',
             outs = '',
