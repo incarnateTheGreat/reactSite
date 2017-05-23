@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import {Tab, Tabs} from "react-bootstrap";
 
 import BaseRunnerOverlay from './BaseRunnerOverlay';
+import ScoreBox from './ScoreBox';
 
 let customStyles = {
     overlay : {
@@ -122,14 +123,6 @@ export default class GameModalMLB extends React.Component {
             let modalHeight = (browserHeight - 25),
                 headlineContainer_height = 0,
                 activePlayerDataContainer_height = 0;
-
-                console.log(gameStatus);
-
-                // if(selectedGameData.status.ind === 'DR' || selectedGameData.status.ind === 'DI') {
-                //   displayPPDGameData();
-                // } else if(selectedGameData.status.ind === 'S' || selectedGameData.status.ind === 'P') {
-                //   displayPregameData();
-                // }
 
             //If Pre-game or PPD, reduce the height of the Modal. Otherwise, fit the proper height.
             if(gameStatus === 'DR' || gameStatus === 'DI' || gameStatus === 'S' || gameStatus === 'P') {
@@ -882,82 +875,30 @@ export default class GameModalMLB extends React.Component {
 
         this.getBrowserSize(game.status.ind);
 
-        let gameStatus = '',
-            outs = '',
-            homeScore = '',
-            awayScore = '';
-
-        if(game.status.ind === 'P' || game.status.ind === 'PW' || game.status.ind === 'F' || game.status.ind === 'O') {
-            //Pre-Game, Final, or 'Game Over'
-            gameStatus = (game.status.ind === 'O' ? 'F' : game.status.ind);
-
-            if(game.status.ind === 'O') {
-                gameStatus = 'F';
-            } else if(game.status.ind === 'P' || game.status.ind === 'PW') {
-                gameStatus = game.status.status;
-            }
-
-            //Extra Innings
-            if(parseInt(game.status.inning) > 9) {
-                gameStatus = gameStatus + '/' + game.status.inning;
-            }
-        } else if(game.status.ind === 'DR' || game.status.ind === 'DI') {
-            //Postponed
-            gameStatus = "PPD";
-        } else if(game.status.ind === 'IR') {
-            //Temporary Delay
-            gameStatus = game.status.inning_state + ' ' + game.status.inning + ' -- ' + game.status.status + ' (' + game.status.reason +')';
-        } else if(game.status.ind === 'I' || game.status.ind === 'MC') {
-            //In Progress
-            gameStatus = game.status.inning_state.substring(0, 3) + ' ' + game.status.inning;
-            outs = game.status.o + ' OUT';
-        }
-
-        //Check if Linescore is available.
-        if(_.isUndefined(game.linescore)) {
-            awayScore = '-';
-            homeScore = '-';
-            gameStatus = game.status.ind === 'DR' || game.status.ind === 'DI' ? 'PPD' : game.time + ' ' + game.ampm;
-        } else {
-            awayScore = game.linescore.r.away;
-            homeScore = game.linescore.r.home;
-        }
-
         return (
-            <div className="scoreTable" onClick={this.openModal}>
-                <div className="scores">
-                    <div className="team">{game.away_name_abbrev}</div>
-                    <div className="score">{awayScore}</div>
-                    <br />
-                    <div className="team">{game.home_name_abbrev}</div>
-                    <div className="score">{homeScore}</div>
-                </div>
-                <div className="gameStatusContainer">
-                    <div className="timeRemaining">{gameStatus}</div>
-                    <div>{outs}</div>
-                </div>
+          <div onClick={this.openModal}>
+            <ScoreBox gameData={game} />
+            <Modal
+                isOpen={this.state.modalIsOpen}
+                onAfterOpen={this.afterOpenModal}
+                onRequestClose={this.closeModal}
+                style={this.state.modalStyle}
+                contentLabel="Game Modal MLB">
 
-                <Modal
-                    isOpen={this.state.modalIsOpen}
-                    onAfterOpen={this.afterOpenModal}
-                    onRequestClose={this.closeModal}
-                    style={this.state.modalStyle}
-                    contentLabel="Game Modal MLB">
+                {this.state.modalIsOpen ? (
+                    <div key={game.id}>
+                        {this.state.gameContentBody}
 
-                    {this.state.modalIsOpen ? (
-                        <div key={game.id}>
-                            {this.state.gameContentBody}
-
-                            {(game.status.ind === 'I' || game.status.ind === 'MC' || game.status.ind === 'PW' || game.status.ind === 'F' || game.status.ind === 'O') ? (
-                                <Tabs id='boxScoreTabs' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
-                                    <Tab eventKey={0} title={game.away_name_abbrev}>{this.state.boxScoreBody_awayTeam}</Tab>
-                                    <Tab eventKey={1} title={game.home_name_abbrev}>{this.state.boxScoreBody_homeTeam}</Tab>
-                                </Tabs>
-                            ) : ('')}
-                        </div>
-                    ) : ''}
-                </Modal>
-            </div>
+                        {(game.status.ind === 'I' || game.status.ind === 'MC' || game.status.ind === 'PW' || game.status.ind === 'F' || game.status.ind === 'O') ? (
+                            <Tabs id='boxScoreTabs' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
+                                <Tab eventKey={0} title={game.away_name_abbrev}>{this.state.boxScoreBody_awayTeam}</Tab>
+                                <Tab eventKey={1} title={game.home_name_abbrev}>{this.state.boxScoreBody_homeTeam}</Tab>
+                            </Tabs>
+                        ) : ('')}
+                    </div>
+                ) : ''}
+            </Modal>
+          </div>
         );
     }
 }

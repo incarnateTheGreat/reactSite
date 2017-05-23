@@ -220,7 +220,7 @@ export default class Scores_MLB extends React.Component {
     //Build out HTML object of Scores.
     renderGameOutput(game, id) {
         return (
-            <GameModalMLB key={id} gameData={game} />
+            <GameModalMLB key={Math.random()} gameData={game} />
         )
     }
 
