@@ -98,8 +98,7 @@ export default class Scores_MLB extends React.Component {
         });
     }
 
-    shouldComponentUpdate(a,b) {
-        // console.log(a, b);
+    shouldComponentUpdate() {
         return true;
     }
 

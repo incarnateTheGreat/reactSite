@@ -3,6 +3,7 @@ import axios from 'axios';
 import Modal from 'react-modal';
 import classNames from 'classnames';
 import {Tab, Tabs} from "react-bootstrap";
+import shallowCompare from 'react-addons-shallow-compare';
 
 import BaseRunnerOverlay from './BaseRunnerOverlay';
 import ScoreBox from './ScoreBox';
