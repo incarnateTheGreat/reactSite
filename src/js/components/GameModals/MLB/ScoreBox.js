@@ -18,6 +18,7 @@ export default class ScoreBox extends React.Component {
         // // console.log(_.isUndefined(this.state.game.status));
         if(!_.isUndefined(this.state.game.status)) {
             if(this.state.game.status.ind === 'I' || this.state.game.status.ind === 'MC') {
+              // console.log(this.props.gameData.status, ' | ', nextProps.gameData.status);
                 // console.log(this.props.gameData.status, this.state.game.status);
                 //         this.setState({game: nextProps}, function() {
                 //             // console.log("updated. still conduct tests on whether data actually updates on refresh or not.");

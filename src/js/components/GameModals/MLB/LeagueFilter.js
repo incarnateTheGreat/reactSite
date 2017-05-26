@@ -19,7 +19,7 @@ export default class LeagueFilter extends React.Component {
         });
 
         this.setState({
-            currentSelection: e.target.value,
+            currentSelection: e.target.value === '' ? null : e.target.value,
             filteredGameData: filtered
         });
     }
