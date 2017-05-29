@@ -1,6 +1,7 @@
 import React from "react";
 import axios from 'axios';
 import {Tab, Tabs} from "react-bootstrap";
+import shallowCompare from 'react-addons-shallow-compare';
 
 import GameModalMLB from "../components/GameModals/MLB/GameModal";
 import LeagueFilter from "../components/GameModals/MLB/LeagueFilter";
@@ -98,10 +99,6 @@ export default class Scores_MLB extends React.Component {
         });
     }
 
-    shouldComponentUpdate() {
-        return true;
-    }
-
     setGameDataOutput(callback) {
         const dateObj = {
             yesterday: {
@@ -137,79 +134,80 @@ export default class Scores_MLB extends React.Component {
     }
 
     isGameLive(game) {
-      return game.status.ind === 'I' || game.status.ind === 'IR';
+        return game.status.ind === 'I' || game.status.ind === 'IR';
     }
 
     buildScoreboard(gameData) {
-      // Filter different dates.
-      let yesterdayGamesSection = [],
-          todayGamesSection = [],
-          liveGameSection = [],
-          tomorrowGamesSection = [],
-          self = this;
+        // Filter different dates.
+        let yesterdayGamesSection = [],
+            todayGamesSection = [],
+            liveGameSection = [],
+            tomorrowGamesSection = [],
+            self = this;
 
-          _.forEach(gameData, function(game, gameID) {
+        _.forEach(gameData, function(game, gameID) {
             _.forEach(game, function(o, i) {
-              if(gameID === 'today') {
-                //Today's Games
-                todayGamesSection.push(<div key={i}>
-                    {self.renderGameOutput(o, gameID)}
-                </div>);
-              } else if(gameID === 'yesterday'){
-                //Yesterday's Games
-                yesterdayGamesSection.push(<div key={i}>
-                    {self.renderGameOutput(o, gameID)}
-                </div>);
-              } else if(gameID === 'tomorrow'){
-                //Tomorrow's Games
-                tomorrowGamesSection.push(<div key={i}>
-                    {self.renderGameOutput(o, gameID)}
-                </div>);
-              } else if(gameID === 'live') {
-                //Live Games
-                liveGameSection.push(<div key={i}>
-                  {self.renderGameOutput(o, gameID)}
-                </div>);
-              }
+                if(gameID === 'today') {
+                    //Today's Games
+                    todayGamesSection.push(<div key={i}>
+                        {self.renderGameOutput(o, gameID)}
+                    </div>);
+                } else if(gameID === 'yesterday'){
+                    //Yesterday's Games
+                    yesterdayGamesSection.push(<div key={i}>
+                        {self.renderGameOutput(o, gameID)}
+                    </div>);
+                } else if(gameID === 'tomorrow'){
+                    //Tomorrow's Games
+                    tomorrowGamesSection.push(<div key={i}>
+                        {self.renderGameOutput(o, gameID)}
+                    </div>);
+                } else if(gameID === 'live') {
+                    //Live Games
+                    liveGameSection.push(<div key={i}>
+                        {self.renderGameOutput(o, gameID)}
+                    </div>);
+                }
             });
-          });
+        });
 
-          self.setState({
+        self.setState({
             liveGameSection: liveGameSection,
             yesterdayGamesSection: yesterdayGamesSection,
             todayGamesSection: todayGamesSection,
             tomorrowGamesSection: tomorrowGamesSection
-          });
+        });
 
-      this.refreshScoreboard();
+        this.refreshScoreboard();
     }
 
     refreshScoreboard() {
-      let self = this;
+        let self = this;
 
-      const loaderTimeoutIntervals = {
-        'liveGames': [27000, 30000],
-        'noLiveGames': [117000, 120000]
-      };
+        const loaderTimeoutIntervals = {
+            'liveGames': [10000, 12000],
+            'noLiveGames': [117000, 120000]
+        };
 
-      //Control the frequency of refresh intervals depending on whether there are Live Games in progress or not.
-      function getTimeoutIntervals() {
-        return self.state.liveGameSection.length > 0 ? 'liveGames' : 'noLiveGames';
-      }
+        //Control the frequency of refresh intervals depending on whether there are Live Games in progress or not.
+        function getTimeoutIntervals() {
+            return self.state.liveGameSection.length > 0 ? 'liveGames' : 'noLiveGames';
+        }
 
-      //Display Loader.
-      let loader = document.getElementsByClassName("loader")[0];
-      this.timeoutOpenLoader = setTimeout(() => {
-          loader.style.opacity = "1";
-          loader.style.zIndex = "1";
-      }, loaderTimeoutIntervals[getTimeoutIntervals()][0]);
+        //Display Loader.
+        let loader = document.getElementsByClassName("loader")[0];
+        this.timeoutOpenLoader = setTimeout(() => {
+            loader.style.opacity = "1";
+            loader.style.zIndex = "1";
+        }, loaderTimeoutIntervals[getTimeoutIntervals()][0]);
 
-      //Refresh the Scoreboard Data at every interval, then hide Loader.
-      this.timeoutCloseLoader = setTimeout(() => {
-          loader.style.opacity = "0";
-          loader.style.zIndex = "-1";
-          this.setGameDataOutput();
-      }, loaderTimeoutIntervals[getTimeoutIntervals()][1]);
+        //Refresh the Scoreboard Data at every interval, then hide Loader.
+        this.timeoutCloseLoader = setTimeout(() => {
+            loader.style.opacity = "0";
+            loader.style.zIndex = "-1";
+            this.setGameDataOutput();
+            console.log("Ref.");
+        }, loaderTimeoutIntervals[getTimeoutIntervals()][1]);
     }
 
     getNumberOfColumns(games) {
@@ -223,43 +221,68 @@ export default class Scores_MLB extends React.Component {
         )
     }
 
+    shouldComponentUpdate(nextProps, nextState){
+        if(!_.isNull(this.state.liveGameSection)) {
+            _.forEach(this.state.gameDataObjects.live, function (game, i) {
+                // console.log(game.status.o, nextState.gameDataObjects.live[i].status.o);
+                if(game.status.o != nextState.gameDataObjects.live[i].status.o) {
+                    console.log(game);
+                    console.log("Changed.");
+                }
+                // console.log(shallowCompare(this, game, nextState.gameDataObjects.live[i]));
+            });
+
+            //TODO
+            //this.state.gameDataObjects.live = old data
+            //nextState.gameDataObjects.live[0] = new data
+
+            // console.log(this.state.gameDataObjects.live[0].status.o, nextState.gameDataObjects.live[0].status.o);
+            //
+            // console.log(shallowCompare(this, this.state.gameDataObjects.live[0].status.o, nextState.gameDataObjects.live[0].status.o));
+
+            return true;
+        } else {
+            return true;
+        }
+    }
+
     render() {
         return (
             <div>
-              <Tabs id='MLBScores' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
-                  <Tab eventKey={0} title='MLB Scores'>
-                    <div class="loader"></div>
-                    <h2>MLB Scores</h2>
-                    <h5>All games in EST</h5>
-                    <hr/>
-                    <div className="scoreTableContainer">
-                        <h2>Live</h2>
-                        <div className="gameGroupContainer">
-                            <LeagueFilter data={this.state.liveGameSection}></LeagueFilter>
+                <Tabs id='MLBScores' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
+                    <Tab eventKey={0} title='MLB Scores'>
+                        <div class="loader"></div>
+                        <h2>MLB Scores</h2>
+                        <h5>All games in EST</h5>
+                        <hr/>
+                        <div className="scoreTableContainer">
+                            <h2>Live</h2>
+                            <div className="gameGroupContainer">
+                                <LeagueFilter data={this.state.liveGameSection}></LeagueFilter>
+                            </div>
+                            <hr />
+                            <h2>Today's Games: {moment().format("dddd M/DD")}</h2>
+                            <div className="gameGroupContainer">
+                                <LeagueFilter data={this.state.todayGamesSection}></LeagueFilter>
+                            </div>
+                            <hr />
+                            <h2>Yesterday's Games: {moment().subtract(1, 'day').format("dddd M/DD")}</h2>
+                            <div className="gameGroupContainer">
+                                <LeagueFilter data={this.state.yesterdayGamesSection}></LeagueFilter>
+                            </div>
+                            <hr />
+                            <h2>Tomorrow's Games: {moment().add(1, 'day').format("dddd M/DD")}</h2>
+                            <div className="gameGroupContainer">
+                                <LeagueFilter data={this.state.tomorrowGamesSection}></LeagueFilter>
+                            </div>
                         </div>
-                        <hr />
-                        <h2>Today's Games: {moment().format("dddd M/DD")}</h2>
-                        <div className="gameGroupContainer">
-                            <LeagueFilter data={this.state.todayGamesSection}></LeagueFilter>
-                        </div>
-                        <hr />
-                        <h2>Yesterday's Games: {moment().subtract(1, 'day').format("dddd M/DD")}</h2>
-                        <div className="gameGroupContainer">
-                            <LeagueFilter data={this.state.yesterdayGamesSection}></LeagueFilter>
-                        </div>
-                        <hr />
-                        <h2>Tomorrow's Games: {moment().add(1, 'day').format("dddd M/DD")}</h2>
-                        <div className="gameGroupContainer">
-                            <LeagueFilter data={this.state.tomorrowGamesSection}></LeagueFilter>
-                        </div>
-                    </div>
-                  </Tab>
-                  <Tab eventKey={1} title='MLB Standings'>
-                    <h2>MLB Standings</h2>
-                    <hr/>
-                    <Standings />
-                  </Tab>
-              </Tabs>
+                    </Tab>
+                    <Tab eventKey={1} title='MLB Standings'>
+                        <h2>MLB Standings</h2>
+                        <hr/>
+                        <Standings />
+                    </Tab>
+                </Tabs>
             </div>
         );
     }

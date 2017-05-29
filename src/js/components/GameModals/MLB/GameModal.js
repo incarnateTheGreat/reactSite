@@ -3,7 +3,6 @@ import axios from 'axios';
 import Modal from 'react-modal';
 import classNames from 'classnames';
 import {Tab, Tabs} from "react-bootstrap";
-import shallowCompare from 'react-addons-shallow-compare';
 
 import BaseRunnerOverlay from './BaseRunnerOverlay';
 import ScoreBox from './ScoreBox';
@@ -38,8 +37,8 @@ let tweenStyle = {
 };
 
 export default class GameModalMLB extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.state = {
             modalIsOpen: false,
@@ -48,7 +47,7 @@ export default class GameModalMLB extends React.Component {
             boxScoreBody_awayTeamName: null,
             boxScoreBody_homeTeamName: null,
             boxScoreBody_homeTeam: null,
-            game: null,
+            game: props.gameData,
             modalStyle: _.merge(customStyles, tweenStyle),
             activeTab: 0 // Takes active tab from props if it is defined there,
         };
@@ -64,15 +63,15 @@ export default class GameModalMLB extends React.Component {
     }
 
     openModal() {
-      let self = this;
+        let self = this;
 
-      this.showLoadingSpinner();
-      this.getBoxscoreData(this.state.game, this.state.game.game_data_directory, function() {
-        setTimeout(() => {
-            self.setState({modalIsOpen: true});
-            window.onresize();
-        }, 350);
-      });
+        this.showLoadingSpinner();
+        this.getBoxscoreData(this.state.game, this.state.game.game_data_directory, function() {
+            setTimeout(() => {
+                self.setState({modalIsOpen: true});
+                window.onresize();
+            }, 350);
+        });
     }
 
     afterOpenModal() {
@@ -90,58 +89,58 @@ export default class GameModalMLB extends React.Component {
     }
 
     showLoadingSpinner() {
-      this.loader.style.opacity = "1";
-      this.loader.style.zIndex = "201";
+        this.loader.style.opacity = "1";
+        this.loader.style.zIndex = "201";
     }
 
     hideLoadingSpinner() {
-      this.loader.style.opacity = "0";
-      this.loader.style.zIndex = "-1";
+        this.loader.style.opacity = "0";
+        this.loader.style.zIndex = "-1";
     }
 
     getBrowserSize(gameStatus) {
-      let self = this;
+        let self = this;
 
         window.onresize = function() {
-          if(self.state.modalIsOpen) {
-            let browserWidth = 0,
-                browserHeight = 0;
+            if(self.state.modalIsOpen) {
+                let browserWidth = 0,
+                    browserHeight = 0;
 
-            if( typeof( window.innerWidth ) == 'number' ) {
-                //Non-IE
-                browserWidth = window.innerWidth;
-                browserHeight = window.innerHeight;
-            } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
-                //IE 6+ in 'standards compliant mode'
-                browserWidth = document.documentElement.clientWidth;
-                browserHeight = document.documentElement.clientHeight;
-            } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
-                //IE 4 compatible
-                browserWidth = document.body.clientWidth;
-                browserHeight = document.body.clientHeight;
-            }
+                if( typeof( window.innerWidth ) == 'number' ) {
+                    //Non-IE
+                    browserWidth = window.innerWidth;
+                    browserHeight = window.innerHeight;
+                } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+                    //IE 6+ in 'standards compliant mode'
+                    browserWidth = document.documentElement.clientWidth;
+                    browserHeight = document.documentElement.clientHeight;
+                } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+                    //IE 4 compatible
+                    browserWidth = document.body.clientWidth;
+                    browserHeight = document.body.clientHeight;
+                }
 
-            let modalHeight = (browserHeight - 25),
-                headlineContainer_height = 0,
-                activePlayerDataContainer_height = 0;
+                let modalHeight = (browserHeight - 25),
+                    headlineContainer_height = 0,
+                    activePlayerDataContainer_height = 0;
 
-            //If Pre-game or PPD, reduce the height of the Modal. Otherwise, fit the proper height.
-            if(gameStatus === 'DR' || gameStatus === 'DI' || gameStatus === 'S' || gameStatus === 'P') {
-              activePlayerDataContainer_height = document.getElementsByClassName('headlineContainer')[0].offsetHeight;
-            } else {
-              headlineContainer_height = document.getElementsByClassName('headlineContainer')[0].offsetHeight;
-              activePlayerDataContainer_height = (modalHeight - headlineContainer_height) - 100 + 'px';
-              document.getElementsByClassName('ReactModal__Content ReactModal__Content--after-open')[0].style.height = modalHeight + 'px';
-            }
+                //If Pre-game or PPD, reduce the height of the Modal. Otherwise, fit the proper height.
+                if(gameStatus === 'DR' || gameStatus === 'DI' || gameStatus === 'S' || gameStatus === 'P') {
+                    activePlayerDataContainer_height = document.getElementsByClassName('headlineContainer')[0].offsetHeight;
+                } else {
+                    headlineContainer_height = document.getElementsByClassName('headlineContainer')[0].offsetHeight;
+                    activePlayerDataContainer_height = (modalHeight - headlineContainer_height) - 100 + 'px';
+                    document.getElementsByClassName('ReactModal__Content ReactModal__Content--after-open')[0].style.height = modalHeight + 'px';
+                }
 
-            //Force-assign heights to Active Player Data Container.
-            if(self.state.activeTab == 0 || _.isUndefined(self.state.activeTab)) {
-              document.getElementsByClassName('activePlayerDataContainer')[0].style.height = activePlayerDataContainer_height;
-            } else {
-              document.getElementsByClassName('activePlayerDataContainer')[1].style.height = activePlayerDataContainer_height;
+                //Force-assign heights to Active Player Data Container.
+                if(self.state.activeTab == 0 || _.isUndefined(self.state.activeTab)) {
+                    document.getElementsByClassName('activePlayerDataContainer')[0].style.height = activePlayerDataContainer_height;
+                } else {
+                    document.getElementsByClassName('activePlayerDataContainer')[1].style.height = activePlayerDataContainer_height;
+                }
             }
         }
-      }
     }
 
     handleSelect(selectedTab) {
@@ -155,29 +154,29 @@ export default class GameModalMLB extends React.Component {
     }
 
     loadingSpinner() {
-      const loaderTimeoutIntervals = {
-        'liveGames': [27000, 30000],
-        'noLiveGames': [117000, 120000]
-      };
+        const loaderTimeoutIntervals = {
+            'liveGames': [27000, 30000],
+            'noLiveGames': [117000, 120000]
+        };
 
-      //Control the frequency of refresh intervals depending on whether there are Live Games in progress or not.
-      function getTimeoutIntervals() {
-        return liveGames.length > 0 ? 'liveGames' : 'noLiveGames';
-      }
+        //Control the frequency of refresh intervals depending on whether there are Live Games in progress or not.
+        function getTimeoutIntervals() {
+            return liveGames.length > 0 ? 'liveGames' : 'noLiveGames';
+        }
 
-      //Display Loader.
-      let loader = document.getElementsByClassName("loader")[0];
-      this.timeoutOpenLoader = setTimeout(() => {
-          loader.style.opacity = "1";
-          loader.style.zIndex = "1";
-      }, loaderTimeoutIntervals[getTimeoutIntervals()][0]);
+        //Display Loader.
+        let loader = document.getElementsByClassName("loader")[0];
+        this.timeoutOpenLoader = setTimeout(() => {
+            loader.style.opacity = "1";
+            loader.style.zIndex = "1";
+        }, loaderTimeoutIntervals[getTimeoutIntervals()][0]);
 
-      //Refresh the Scoreboard Data at every interval, then hide Loader.
-      this.timeoutCloseLoader = setTimeout(() => {
-          loader.style.opacity = "0";
-          loader.style.zIndex = "-1";
-        this.buildScoreboard();
-      }, loaderTimeoutIntervals[getTimeoutIntervals()][1]);
+        //Refresh the Scoreboard Data at every interval, then hide Loader.
+        this.timeoutCloseLoader = setTimeout(() => {
+            loader.style.opacity = "0";
+            loader.style.zIndex = "-1";
+            this.buildScoreboard();
+        }, loaderTimeoutIntervals[getTimeoutIntervals()][1]);
     }
 
     getBoxscoreData(selectedGameData, game_data_directory, callback) {
@@ -195,39 +194,39 @@ export default class GameModalMLB extends React.Component {
             pitcherData = [],
             batterData = [];
 
-            //Display Postponed game.
-            function displayPPDGameData() {
-                //Apply Team Names.
-                gameDataObj.push(<div className='headlineContainer boxScore' key={Math.random()}>
-                    <div>
-                        <div className='teamNames'>{selectedGameData.away_team_name} vs. {selectedGameData.home_team_name}</div>
-                        <div>{selectedGameData.venue}, {selectedGameData.location}</div>
+        //Display Postponed game.
+        function displayPPDGameData() {
+            //Apply Team Names.
+            gameDataObj.push(<div className='headlineContainer boxScore' key={Math.random()}>
+                <div>
+                    <div className='teamNames'>{selectedGameData.away_team_name} vs. {selectedGameData.home_team_name}</div>
+                    <div>{selectedGameData.venue}, {selectedGameData.location}</div>
+                </div>
+            </div>);
+
+            activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
+                <div className='bases'>
+                    <div className='winnerLoser'>
+                        <div className='startTime'><strong>{selectedGameData.status.status}</strong>: {selectedGameData.status.reason}</div>
                     </div>
-                </div>);
+                </div>
+            </div>);
 
-                activePlayerData.push(<div className='activePlayerData' key={Math.random()}>
-                    <div className='bases'>
-                        <div className='winnerLoser'>
-                            <div className='startTime'><strong>{selectedGameData.status.status}</strong>: {selectedGameData.status.reason}</div>
-                        </div>
-                    </div>
-                </div>);
+            //Combine all content
+            gameContentBody.push(<div key={Math.random()}>
+                <div className='boxScoreContainer'>{gameDataObj}</div>
+                <div className='activePlayerDataContainer shortHeight'>{activePlayerData}</div>
+            </div>);
 
-                //Combine all content
-                gameContentBody.push(<div key={Math.random()}>
-                    <div className='boxScoreContainer'>{gameDataObj}</div>
-                    <div className='activePlayerDataContainer shortHeight'>{activePlayerData}</div>
-                </div>);
+            self.setState({gameContentBody});
+        }
 
-                self.setState({gameContentBody});
-            }
+        // Display Pregame data
+        function displayPregameData() {
+            // Get Preview data.
+            urls[0] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json');
 
-            // Display Pregame data
-            function displayPregameData() {
-              // Get Preview data.
-              urls[0] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json');
-
-              axios.all(urls).then((gameData) => {
+            axios.all(urls).then((gameData) => {
                 //Linescore
                 data = gameData[0].data.data.game;
 
@@ -250,18 +249,18 @@ export default class GameModalMLB extends React.Component {
                         <div className='winnerLoser'>
                             <div><strong>Probables:</strong></div>
                             <table>
-                              <tbody>
-                                  <tr className='pitcherData'>
-                                      <td><strong>{awayTeam}:</strong> {data.away_probable_pitcher.first} {data.away_probable_pitcher.last} ({data.away_probable_pitcher.wins}-{data.away_probable_pitcher.losses})</td>
-                                      <td><strong>ERA:</strong> {data.away_probable_pitcher.era}</td>
-                                  </tr>
-                                  <tr className='pitcherData'>
-                                      <td><strong>{homeTeam}:</strong> {data.home_probable_pitcher.first} {data.home_probable_pitcher.last} ({data.home_probable_pitcher.wins}-{data.home_probable_pitcher.losses})</td>
-                                      <td><strong>ERA:</strong> {data.home_probable_pitcher.era}</td>
-                                  </tr>
-                                  <tr>
-                                      <td><strong>Venue:</strong> {data.venue}, {data.location}</td>
-                                  </tr>
+                                <tbody>
+                                <tr className='pitcherData'>
+                                    <td><strong>{awayTeam}:</strong> {data.away_probable_pitcher.first} {data.away_probable_pitcher.last} ({data.away_probable_pitcher.wins}-{data.away_probable_pitcher.losses})</td>
+                                    <td><strong>ERA:</strong> {data.away_probable_pitcher.era}</td>
+                                </tr>
+                                <tr className='pitcherData'>
+                                    <td><strong>{homeTeam}:</strong> {data.home_probable_pitcher.first} {data.home_probable_pitcher.last} ({data.home_probable_pitcher.wins}-{data.home_probable_pitcher.losses})</td>
+                                    <td><strong>ERA:</strong> {data.home_probable_pitcher.era}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Venue:</strong> {data.venue}, {data.location}</td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -275,344 +274,344 @@ export default class GameModalMLB extends React.Component {
                 </div>);
 
                 self.setState({gameContentBody});
-              });
-            }
+            });
+        }
 
-            //If Postponed or Pregame, run either of the first two conditions.
-            //Otherwise, show In Progress or Completed game data.
-            if(selectedGameData.status.ind === 'DR' || selectedGameData.status.ind === 'DI') {
-              displayPPDGameData();
-            } else if(selectedGameData.status.ind === 'S' || selectedGameData.status.ind === 'P') {
-              displayPregameData();
-            } else {
-              urls[0] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json'),
-              urls[1] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/rawboxscore.xml'),
-              urls[2] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/players.xml'),
-              urls[3] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/boxscore.json');
+        //If Postponed or Pregame, run either of the first two conditions.
+        //Otherwise, show In Progress or Completed game data.
+        if(selectedGameData.status.ind === 'DR' || selectedGameData.status.ind === 'DI') {
+            displayPPDGameData();
+        } else if(selectedGameData.status.ind === 'S' || selectedGameData.status.ind === 'P') {
+            displayPregameData();
+        } else {
+            urls[0] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/linescore.json'),
+                urls[1] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/rawboxscore.xml'),
+                urls[2] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/players.xml'),
+                urls[3] = axios.get('http://www.mlb.com/gdcross' + game_data_directory + '/boxscore.json');
 
-              //Test call JSON Linescore from match when clicking on specific Game
-              axios.all(urls).then((gameData) => {
-                  let parseString = require('xml2js').parseString;
+            //Test call JSON Linescore from match when clicking on specific Game
+            axios.all(urls).then((gameData) => {
+                let parseString = require('xml2js').parseString;
 
-                  //Linescore
-                  data = gameData[0].data.data.game;
+                //Linescore
+                data = gameData[0].data.data.game;
 
-                  //Raw Box Score
-                  let boxScore_XML = gameData[1].data;
-                  parseString(boxScore_XML, function (err, result) {
-                      rawBoxScore = result.boxscore;
-                  });
+                //Raw Box Score
+                let boxScore_XML = gameData[1].data;
+                parseString(boxScore_XML, function (err, result) {
+                    rawBoxScore = result.boxscore;
+                });
 
-                  //Players;
-                  let players_XML = gameData[2].data;
-                  parseString(players_XML, function (err, result) {
-                      players = [result.game.team[0].player, result.game.team[1].player];
-                  });
+                //Players;
+                let players_XML = gameData[2].data;
+                parseString(players_XML, function (err, result) {
+                    players = [result.game.team[0].player, result.game.team[1].player];
+                });
 
-                  //Boxscore
-                  boxscoreData = gameData[3].data.data;
+                //Boxscore
+                boxscoreData = gameData[3].data.data;
 
-                  let awayTeam = data.away_name_abbrev,
-                      homeTeam = data.home_name_abbrev,
-                      awayRuns = data.away_team_runs,
-                      homeRuns = data.home_team_runs,
-                      awayHits = data.away_team_hits,
-                      homeHits = data.home_team_hits,
-                      awayErrors = data.away_team_errors,
-                      homeErrors = data.home_team_errors;
+                let awayTeam = data.away_name_abbrev,
+                    homeTeam = data.home_name_abbrev,
+                    awayRuns = data.away_team_runs,
+                    homeRuns = data.home_team_runs,
+                    awayHits = data.away_team_hits,
+                    homeHits = data.home_team_hits,
+                    awayErrors = data.away_team_errors,
+                    homeErrors = data.home_team_errors;
 
-                  dispayGameData();
+                dispayGameData();
 
-                  function dispayGameData() {
-                      let gameStatus = '';
+                function dispayGameData() {
+                    let gameStatus = '';
 
-                      if(parseInt(data.inning) > 9) {
-                          gameStatus = 'Final' + '/' + data.inning;
-                      } else {
-                          gameStatus = 'Final';
-                      }
+                    if(parseInt(data.inning) > 9) {
+                        gameStatus = 'Final' + '/' + data.inning;
+                    } else {
+                        gameStatus = 'Final';
+                    }
 
-                      gameDataObj.push(<div className='topBar' key={Math.random()}>
-                          <div className='inningState'>{data.status === 'Final' || data.status === 'Game Over' ? (
-                              gameStatus ) : ( data.inning_state + ' ' + data.inning)}</div>
-                          <div className='scoreBar'><span>{data.away_team_name}</span> <span>{data.away_team_runs}</span></div>
-                          <div className='scoreBar'><span>{data.home_team_name}</span> <span>{data.home_team_runs}</span></div>
-                      </div>);
+                    gameDataObj.push(<div className='topBar' key={Math.random()}>
+                        <div className='inningState'>{data.status === 'Final' || data.status === 'Game Over' ? (
+                            gameStatus ) : ( data.inning_state + ' ' + data.inning)}</div>
+                        <div className='scoreBar'><span>{data.away_team_name}</span> <span>{data.away_team_runs}</span></div>
+                        <div className='scoreBar'><span>{data.home_team_name}</span> <span>{data.home_team_runs}</span></div>
+                    </div>);
 
-                      //Apply Team Names.
-                      gameDataObj.push(<div className='boxScore' key={Math.random()}>
-                          <div className='inningContainer'>
-                              <div>&nbsp;</div>
-                              <div className='teamName'>{awayTeam}</div>
-                              <div className='teamName'>{homeTeam}</div>
-                          </div>
-                      </div>);
+                    //Apply Team Names.
+                    gameDataObj.push(<div className='boxScore' key={Math.random()}>
+                        <div className='inningContainer'>
+                            <div>&nbsp;</div>
+                            <div className='teamName'>{awayTeam}</div>
+                            <div className='teamName'>{homeTeam}</div>
+                        </div>
+                    </div>);
 
-                      let currentInning = 0,
-                          topInning = '',
-                          bottomInning = '',
-                          homeInningScore = 0,
-                          awayInningScore = 0,
-                          inningData = [];
+                    let currentInning = 0,
+                        topInning = '',
+                        bottomInning = '',
+                        homeInningScore = 0,
+                        awayInningScore = 0,
+                        inningData = [];
 
-                      //Check what inning the game is in, and if it is live or not.
-                      function getInningScore(dataObj, inning) {
-                          if (currentInning === parseInt(dataObj.inning) && (dataObj.ind === 'I')) {
-                              if (dataObj.top_inning === 'Y') {
-                                  topInning = ' currentInning';
-                              } else {
-                                  bottomInning = ' currentInning';
-                              }
-                          }
+                    //Check what inning the game is in, and if it is live or not.
+                    function getInningScore(dataObj, inning) {
+                        if (currentInning === parseInt(dataObj.inning) && (dataObj.ind === 'I')) {
+                            if (dataObj.top_inning === 'Y') {
+                                topInning = ' currentInning';
+                            } else {
+                                bottomInning = ' currentInning';
+                            }
+                        }
 
-                          function getHomeInningScore() {
-                              if (!inning.home_inning_runs && data.status === 'Final') {
-                                  return 'X';
-                              } else if (inning.home_inning_runs == '') {
-                                  return '';
-                              } else {
-                                  return inning.home_inning_runs;
-                              }
-                          }
+                        function getHomeInningScore() {
+                            if (!inning.home_inning_runs && data.status === 'Final') {
+                                return 'X';
+                            } else if (inning.home_inning_runs == '') {
+                                return '';
+                            } else {
+                                return inning.home_inning_runs;
+                            }
+                        }
 
-                          //If 'linescore' is not an array, it is only the 1st inning. Thanks MLB Data...
-                          if(_.isArray(data.linescore)) {
-                              awayInningScore = (inning.away_inning_runs == '' ? '0' : inning.away_inning_runs);
-                              homeInningScore = getHomeInningScore();
-                          } else {
-                              awayInningScore = (dataObj.away_inning_runs == '' ? '0' : dataObj.away_inning_runs);
-                              homeInningScore = getHomeInningScore();
-                          }
+                        //If 'linescore' is not an array, it is only the 1st inning. Thanks MLB Data...
+                        if(_.isArray(data.linescore)) {
+                            awayInningScore = (inning.away_inning_runs == '' ? '0' : inning.away_inning_runs);
+                            homeInningScore = getHomeInningScore();
+                        } else {
+                            awayInningScore = (dataObj.away_inning_runs == '' ? '0' : dataObj.away_inning_runs);
+                            homeInningScore = getHomeInningScore();
+                        }
 
-                          inningData.push(<div key={Math.random()}>
-                              <div className={'scoreBox' + topInning}>{awayInningScore}</div>
-                              <div className={'scoreBox' + bottomInning}>{homeInningScore}</div>
-                          </div>);
-                      }
+                        inningData.push(<div key={Math.random()}>
+                            <div className={'scoreBox' + topInning}>{awayInningScore}</div>
+                            <div className={'scoreBox' + bottomInning}>{homeInningScore}</div>
+                        </div>);
+                    }
 
-                      //Apply Inning Linescores if there's any data.
-                      // if (_.isUndefined(data.linescore.inning.length)) {
-                      //     gameDataObj.push(<div className='boxScore' key={Math.random()}>
-                      //         <div className='inningContainer'>
-                      //             <div className='inning'>{currentInning}</div>
-                      //             {inningData}
-                      //         </div>
-                      //     </div>);
-                      //
-                      //     inningData = [];
-                      // } else {
+                    //Apply Inning Linescores if there's any data.
+                    // if (_.isUndefined(data.linescore.inning.length)) {
+                    //     gameDataObj.push(<div className='boxScore' key={Math.random()}>
+                    //         <div className='inningContainer'>
+                    //             <div className='inning'>{currentInning}</div>
+                    //             {inningData}
+                    //         </div>
+                    //     </div>);
+                    //
+                    //     inningData = [];
+                    // } else {
 
-                          // if(data.inning > (parseInt(data.scheduled_innings) + 3)) {
-                          //   console.log('Current Total Innings:', data.inning);
-                          //   //Create offset variable to show latest 9 innings.
-                          // } else {
-                          //   console.log("Nermal.");
-                          // }
+                    // if(data.inning > (parseInt(data.scheduled_innings) + 3)) {
+                    //   console.log('Current Total Innings:', data.inning);
+                    //   //Create offset variable to show latest 9 innings.
+                    // } else {
+                    //   console.log("Nermal.");
+                    // }
 
-                      //If 'linescore' is not an array, it is only the 1st inning. Again, thanks MLB Dara.
-                      if(_.isArray(data.linescore)) {
-                          _.forEach(data.linescore, function (inning, id) {
-                              currentInning = id + 1;
-                              getInningScore(data, inning);
+                    //If 'linescore' is not an array, it is only the 1st inning. Again, thanks MLB Dara.
+                    if(_.isArray(data.linescore)) {
+                        _.forEach(data.linescore, function (inning, id) {
+                            currentInning = id + 1;
+                            getInningScore(data, inning);
 
-                              gameDataObj.push(<div className='boxScore' key={Math.random()}>
-                                  <div className='inningContainer'>
-                                      <div className='inning'>{currentInning}</div>
-                                      {inningData}
-                                  </div>
-                              </div>);
+                            gameDataObj.push(<div className='boxScore' key={Math.random()}>
+                                <div className='inningContainer'>
+                                    <div className='inning'>{currentInning}</div>
+                                    {inningData}
+                                </div>
+                            </div>);
 
-                              inningData = [];
-                          });
-                      } else {
-                          currentInning = 1;
-                          getInningScore(data.linescore, 1);
+                            inningData = [];
+                        });
+                    } else {
+                        currentInning = 1;
+                        getInningScore(data.linescore, 1);
 
-                          gameDataObj.push(<div className='boxScore' key={Math.random()}>
-                              <div className='inningContainer'>
-                                  <div className='inning'>{currentInning}</div>
-                                  {inningData}
-                              </div>
-                          </div>);
+                        gameDataObj.push(<div className='boxScore' key={Math.random()}>
+                            <div className='inningContainer'>
+                                <div className='inning'>{currentInning}</div>
+                                {inningData}
+                            </div>
+                        </div>);
 
-                          inningData = [];
-                      }
+                        inningData = [];
+                    }
 
-                      //Display the RHE Totals.
-                      gameDataObj.push(<div className='boxScore totals' key={Math.random()}>
-                          <div className='inningContainer'>
-                              <div className='inning'>R</div>
-                              <div className='scoreBox'>{awayRuns}</div>
-                              <div className='scoreBox'>{homeRuns}</div>
-                          </div>
-                          <div className='inningContainer'>
-                              <div className='inning'>H</div>
-                              <div className='scoreBox'>{awayHits}</div>
-                              <div className='scoreBox'>{homeHits}</div>
-                          </div>
-                          <div className='inningContainer'>
-                              <div className='inning'>E</div>
-                              <div className='scoreBox'>{awayErrors}</div>
-                              <div className='scoreBox'>{homeErrors}</div>
-                          </div>
-                      </div>);
+                    //Display the RHE Totals.
+                    gameDataObj.push(<div className='boxScore totals' key={Math.random()}>
+                        <div className='inningContainer'>
+                            <div className='inning'>R</div>
+                            <div className='scoreBox'>{awayRuns}</div>
+                            <div className='scoreBox'>{homeRuns}</div>
+                        </div>
+                        <div className='inningContainer'>
+                            <div className='inning'>H</div>
+                            <div className='scoreBox'>{awayHits}</div>
+                            <div className='scoreBox'>{homeHits}</div>
+                        </div>
+                        <div className='inningContainer'>
+                            <div className='inning'>E</div>
+                            <div className='scoreBox'>{awayErrors}</div>
+                            <div className='scoreBox'>{homeErrors}</div>
+                        </div>
+                    </div>);
 
-                      let currentRunnersOnBase = [],
-                          balls = [],
-                          strikes = [],
-                          outs = [],
-                          totalBalls = 0,
-                          totalStrikes = 0,
-                          totalOuts = 0;
+                    let currentRunnersOnBase = [],
+                        balls = [],
+                        strikes = [],
+                        outs = [],
+                        totalBalls = 0,
+                        totalStrikes = 0,
+                        totalOuts = 0;
 
-                      // Find Runner Data.
-                      if(!_.isUndefined(data.runner_on_1b)) currentRunnersOnBase.push('1b');
-                      if(!_.isUndefined(data.runner_on_2b)) currentRunnersOnBase.push('2b');
-                      if(!_.isUndefined(data.runner_on_3b)) currentRunnersOnBase.push('3b');
+                    // Find Runner Data.
+                    if(!_.isUndefined(data.runner_on_1b)) currentRunnersOnBase.push('1b');
+                    if(!_.isUndefined(data.runner_on_2b)) currentRunnersOnBase.push('2b');
+                    if(!_.isUndefined(data.runner_on_3b)) currentRunnersOnBase.push('3b');
 
-                      // BSO: Calculate the tabulated Balls, Strikes, and Outs, then push the active elements.
-                      for (var i = 0; i < parseInt(data.balls); i++) balls.push(<div key={Math.random()} className='countIt'>&nbsp;</div>);
-                      for (var i = 0; i < parseInt(data.strikes); i++) strikes.push(<div key={Math.random()} className='countIt'>&nbsp;</div>);
-                      for (var i = 0; i < parseInt(data.outs); i++) outs.push(<div key={Math.random()} className='countIt'>&nbsp;</div>);
+                    // BSO: Calculate the tabulated Balls, Strikes, and Outs, then push the active elements.
+                    for (var i = 0; i < parseInt(data.balls); i++) balls.push(<div key={Math.random()} className='countIt'>&nbsp;</div>);
+                    for (var i = 0; i < parseInt(data.strikes); i++) strikes.push(<div key={Math.random()} className='countIt'>&nbsp;</div>);
+                    for (var i = 0; i < parseInt(data.outs); i++) outs.push(<div key={Math.random()} className='countIt'>&nbsp;</div>);
 
-                      //Append the non-active elements to complete the BSO layout.
-                      totalBalls = 4 - balls.length,
-                      totalStrikes = 3 - strikes.length,
-                      totalOuts = 3 - outs.length;
+                    //Append the non-active elements to complete the BSO layout.
+                    totalBalls = 4 - balls.length,
+                        totalStrikes = 3 - strikes.length,
+                        totalOuts = 3 - outs.length;
 
-                      for (var i = 0; i < totalBalls; i++) balls.push(<div key={Math.random()} className=''>&nbsp;</div>);
-                      for (var i = 0; i < totalStrikes; i++) strikes.push(<div key={Math.random()} className=''>&nbsp;</div>);
-                      for (var i = 0; i < totalOuts; i++) outs.push(<div key={Math.random()} className=''>&nbsp;</div>);
+                    for (var i = 0; i < totalBalls; i++) balls.push(<div key={Math.random()} className=''>&nbsp;</div>);
+                    for (var i = 0; i < totalStrikes; i++) strikes.push(<div key={Math.random()} className=''>&nbsp;</div>);
+                    for (var i = 0; i < totalOuts; i++) outs.push(<div key={Math.random()} className=''>&nbsp;</div>);
 
-                      function getBatterBoxScoreData() {
-                          //Print out Box Scores of Batter Data.
-                          let batterDataHeaders = ['name_display_first_last', 'ab', 'r', 'h', 'e', 'rbi', 'bb', 'so', 'bam_avg', 'bam_obp', 'bam_slg'],
-                              pitcherDataHeaders = ['name_display_first_last', 'ip', 'h', 'r', 'er', 'bb', 'so', 'hr', 'np', 'bam_era'],
-                              teamName = '',
-                              thBatterData = [],
-                              tdBatterData = [],
-                              thPitcherData = [],
-                              tdPitcherData = [],
-                              tempArr = [],
-                              notes = [];
+                    function getBatterBoxScoreData() {
+                        //Print out Box Scores of Batter Data.
+                        let batterDataHeaders = ['name_display_first_last', 'ab', 'r', 'h', 'e', 'rbi', 'bb', 'so', 'bam_avg', 'bam_obp', 'bam_slg'],
+                            pitcherDataHeaders = ['name_display_first_last', 'ip', 'h', 'r', 'er', 'bb', 'so', 'hr', 'np', 'bam_era'],
+                            teamName = '',
+                            thBatterData = [],
+                            tdBatterData = [],
+                            thPitcherData = [],
+                            tdPitcherData = [],
+                            tempArr = [],
+                            notes = [];
 
-                          //Print out Headers for Batters
-                          _.forEach(batterDataHeaders, function(header) {
-                              if(header === 'name_display_first_last') {
-                                  thBatterData.push(<th key={Math.random()} className='notNumeric'>Batter</th>);
-                              } else {
-                                  thBatterData.push(<th key={Math.random()}>{_.includes(header, 'bam_') ? header.slice(4) : header}</th>);
-                              }
-                          });
+                        //Print out Headers for Batters
+                        _.forEach(batterDataHeaders, function(header) {
+                            if(header === 'name_display_first_last') {
+                                thBatterData.push(<th key={Math.random()} className='notNumeric'>Batter</th>);
+                            } else {
+                                thBatterData.push(<th key={Math.random()}>{_.includes(header, 'bam_') ? header.slice(4) : header}</th>);
+                            }
+                        });
 
-                          //Loop through each Team and draw out Tables.
-                          _.forEach(rawBoxScore.team, function(batterInfo, teamCount) {
-                              teamName = batterInfo.$.full_name;
+                        //Loop through each Team and draw out Tables.
+                        _.forEach(rawBoxScore.team, function(batterInfo, teamCount) {
+                            teamName = batterInfo.$.full_name;
 
-                              // Arrange the Batting Order in sequence.
-                              let batterClasses = '',
-                                  pitcherClasses = '',
-                                  pitcherDisplayName = '',
-                                  pitcherPosition = '',
-                                  pitcherNote = '',
-                                  batterDisplayName = '',
-                                  batterPosition = '',
-                                  batterNote = '',
-                                  pitcherStatsArr = ['win','loss','blown_save','hold'],
-                                  //Set the correct Batting Order using SortBy.
-                                  batterObj = _.sortBy(batterInfo.batting[0].batter, function(o) {
-                                      return parseInt(o.$.bat_order);
-                                  }),
-                                  //Set the correct Pitching Order using SortBy.
-                                  pitcherObj = _.sortBy(batterInfo.pitching[0].pitcher, function(o) {
-                                      return parseInt(o.$.pitch_order);
-                                  });
+                            // Arrange the Batting Order in sequence.
+                            let batterClasses = '',
+                                pitcherClasses = '',
+                                pitcherDisplayName = '',
+                                pitcherPosition = '',
+                                pitcherNote = '',
+                                batterDisplayName = '',
+                                batterPosition = '',
+                                batterNote = '',
+                                pitcherStatsArr = ['win','loss','blown_save','hold'],
+                            //Set the correct Batting Order using SortBy.
+                                batterObj = _.sortBy(batterInfo.batting[0].batter, function(o) {
+                                    return parseInt(o.$.bat_order);
+                                }),
+                            //Set the correct Pitching Order using SortBy.
+                                pitcherObj = _.sortBy(batterInfo.pitching[0].pitcher, function(o) {
+                                    return parseInt(o.$.pitch_order);
+                                });
 
-                                  //Filtering out Pitchers if the selected game is from the American League.
-                                  batterObj = _.filter(batterObj, function(o) {
-                                    if(selectedGameData.league === 'AA') {
-                                      if(o.$.pos !== 'P') return o.$;
-                                    } else {
-                                      return o.$;
-                                    }
-                                  });
+                            //Filtering out Pitchers if the selected game is from the American League.
+                            batterObj = _.filter(batterObj, function(o) {
+                                if(selectedGameData.league === 'AA') {
+                                    if(o.$.pos !== 'P') return o.$;
+                                } else {
+                                    return o.$;
+                                }
+                            });
 
-                              // Draw Batter Table.
-                              _.forEach(batterObj, function(batter) {
-                                  _.forEach(batterDataHeaders, function(header) {
-                                      //Assign classes based on if Batter is a Pinch Hitter.
-                                      //Also assigns class for Batter column.
-                                      batterClasses = classNames({
+                            // Draw Batter Table.
+                            _.forEach(batterObj, function(batter) {
+                                _.forEach(batterDataHeaders, function(header) {
+                                    //Assign classes based on if Batter is a Pinch Hitter.
+                                    //Also assigns class for Batter column.
+                                    batterClasses = classNames({
                                         'pinchHitter': _.has(batter, 'pinch_hit') || !_.includes(batter.$.bat_order, '00'),
                                         'notNumeric': header === 'name_display_first_last'
-                                      });
+                                    });
 
-                                      if(header === 'name_display_first_last') {
+                                    if(header === 'name_display_first_last') {
                                         batterNote = _.has(batter.$, 'note') ? batter.$.note : '';
                                         batterDisplayName = batterNote + batter.$.name;
                                         batterPosition = batter.$.pos;
-                                      } else {
+                                    } else {
                                         batterDisplayName = _.result(_.find(batter, header), header);
                                         batterPosition = '';
-                                      }
+                                    }
 
-                                      tdBatterData.push(<td key={Math.random()} className={batterClasses}>
+                                    tdBatterData.push(<td key={Math.random()} className={batterClasses}>
                                         {batterDisplayName}
                                         <span className='playerPosition'>{batterPosition}</span>
-                                      </td>);
-                                  });
+                                    </td>);
+                                });
 
-                                  batterData.push(<tr key={Math.random()}>
-                                      {tdBatterData}
-                                  </tr>);
+                                batterData.push(<tr key={Math.random()}>
+                                    {tdBatterData}
+                                </tr>);
 
-                                  tdBatterData = [];
-                              });
+                                tdBatterData = [];
+                            });
 
-                              //Print out Headers for Pitchers
-                              _.forEach(pitcherDataHeaders, function(header) {
-                                  if(header === 'name_display_first_last') {
-                                      thPitcherData.push(<th key={Math.random()} className='notNumeric'>Pitcher</th>);
-                                  } else if (header === 'np') {
-                                      thPitcherData.push(<th key={Math.random()}>pc-st</th>);
-                                  } else {
-                                      thPitcherData.push(<th key={Math.random()}>{_.includes(header, 'bam_') ? header.slice(4) : header}</th>);
-                                  }
-                              });
+                            //Print out Headers for Pitchers
+                            _.forEach(pitcherDataHeaders, function(header) {
+                                if(header === 'name_display_first_last') {
+                                    thPitcherData.push(<th key={Math.random()} className='notNumeric'>Pitcher</th>);
+                                } else if (header === 'np') {
+                                    thPitcherData.push(<th key={Math.random()}>pc-st</th>);
+                                } else {
+                                    thPitcherData.push(<th key={Math.random()}>{_.includes(header, 'bam_') ? header.slice(4) : header}</th>);
+                                }
+                            });
 
-                              function getInningsPitched(outs) {
-                                  let calcIP = null;
+                            function getInningsPitched(outs) {
+                                let calcIP = null;
 
-                                  function isInt(n) {
-                                      return n % 3 === 0;
-                                  }
+                                function isInt(n) {
+                                    return n % 3 === 0;
+                                }
 
-                                  //If the Number of Outs returns a Modulous of 0,
-                                  //then treat the result as a whole number and append a decimal place.
-                                  if(isInt(outs)) {
-                                      calcIP = parseFloat((outs) / 3).toFixed(1);
-                                  } else {
-                                      //Add base number of Innings Pitched and then calculate the fraction
-                                      //of the decimal places down to the lowest common denominator.
-                                      let f = _.round(outs / 3, 2),
-                                          baseInningCount = parseInt(f),
-                                          dividedFig = (f - baseInningCount) / 3,
-                                          roundFig = Math.round(dividedFig * 10) / 10;
+                                //If the Number of Outs returns a Modulous of 0,
+                                //then treat the result as a whole number and append a decimal place.
+                                if(isInt(outs)) {
+                                    calcIP = parseFloat((outs) / 3).toFixed(1);
+                                } else {
+                                    //Add base number of Innings Pitched and then calculate the fraction
+                                    //of the decimal places down to the lowest common denominator.
+                                    let f = _.round(outs / 3, 2),
+                                        baseInningCount = parseInt(f),
+                                        dividedFig = (f - baseInningCount) / 3,
+                                        roundFig = Math.round(dividedFig * 10) / 10;
 
-                                      calcIP = baseInningCount + roundFig;
-                                  }
+                                    calcIP = baseInningCount + roundFig;
+                                }
 
-                                  return calcIP;
-                              }
+                                return calcIP;
+                            }
 
-                              // Draw Pitcher Table.
-                              _.forEach(pitcherObj, function(pitcher) {
-                                  _.forEach(pitcherDataHeaders, function(header) {
-                                      pitcherClasses = classNames({
-                                          'notNumeric': header === 'name_display_first_last'
-                                      });
+                            // Draw Pitcher Table.
+                            _.forEach(pitcherObj, function(pitcher) {
+                                _.forEach(pitcherDataHeaders, function(header) {
+                                    pitcherClasses = classNames({
+                                        'notNumeric': header === 'name_display_first_last'
+                                    });
 
-                                      if(header === 'name_display_first_last') {
+                                    if(header === 'name_display_first_last') {
                                         let pitcherResult = '';
 
                                         //Post registered events (Win, Los, Blown Save, Hold);
@@ -620,211 +619,211 @@ export default class GameModalMLB extends React.Component {
 
                                         //If there are Pitcher Stats to record, open the string with a parenthesis.
                                         if(_.size(pitcherStatistics) > 0) {
-                                          pitcherResult += pitcher.$.name + ' (';
+                                            pitcherResult += pitcher.$.name + ' (';
 
-                                          _.forEach(pitcherStatistics, function (o, stat) {
-                                              if(stat == 'win') {
-                                                  pitcherResult += 'W, ' + pitcher.$.bam_w + '-' + pitcher.$.bam_l + ',';
-                                              } else if(stat == 'loss') {
-                                                  pitcherResult += 'L, ' + pitcher.$.bam_w + '-' + pitcher.$.bam_l + ',';
-                                              } else if(stat == 'hold') {
-                                                  pitcherResult += 'H, ' + pitcher.$.bam_hld + ',';
-                                              } else if(stat == 'blown_save') {
-                                                  pitcherResult += 'B, ' + pitcher.$.bam_bs + ',';
-                                              }
-                                          });
+                                            _.forEach(pitcherStatistics, function (o, stat) {
+                                                if(stat == 'win') {
+                                                    pitcherResult += 'W, ' + pitcher.$.bam_w + '-' + pitcher.$.bam_l + ',';
+                                                } else if(stat == 'loss') {
+                                                    pitcherResult += 'L, ' + pitcher.$.bam_w + '-' + pitcher.$.bam_l + ',';
+                                                } else if(stat == 'hold') {
+                                                    pitcherResult += 'H, ' + pitcher.$.bam_hld + ',';
+                                                } else if(stat == 'blown_save') {
+                                                    pitcherResult += 'B, ' + pitcher.$.bam_bs + ',';
+                                                }
+                                            });
 
-                                          //Replace the ',' at the end with a closing parenthesis.
-                                          pitcherResult = pitcherResult.replace(/.$/, ')');
+                                            //Replace the ',' at the end with a closing parenthesis.
+                                            pitcherResult = pitcherResult.replace(/.$/, ')');
                                         } else {
-                                          pitcherResult = pitcher.$.name;
+                                            pitcherResult = pitcher.$.name;
                                         }
 
                                         pitcherDisplayName = pitcherResult;
-                                      } else if(header === 'ip') {
-                                          //Get Innings Pitched
-                                          pitcherDisplayName = getInningsPitched(pitcher.$.out);
-                                      } else if(header === 'np') {
-                                          pitcherDisplayName = pitcher.$.np + '-' + pitcher.$.s;
-                                      } else {
-                                          pitcherDisplayName = _.result(_.find(pitcher, header), header);
-                                      }
+                                    } else if(header === 'ip') {
+                                        //Get Innings Pitched
+                                        pitcherDisplayName = getInningsPitched(pitcher.$.out);
+                                    } else if(header === 'np') {
+                                        pitcherDisplayName = pitcher.$.np + '-' + pitcher.$.s;
+                                    } else {
+                                        pitcherDisplayName = _.result(_.find(pitcher, header), header);
+                                    }
 
-                                      tdPitcherData.push(<td key={Math.random()} className={pitcherClasses}>
-                                          {pitcherDisplayName}
-                                      </td>);
-                                  });
+                                    tdPitcherData.push(<td key={Math.random()} className={pitcherClasses}>
+                                        {pitcherDisplayName}
+                                    </td>);
+                                });
 
-                                  pitcherData.push(<tr key={Math.random()}>
-                                      {tdPitcherData}
-                                  </tr>);
+                                pitcherData.push(<tr key={Math.random()}>
+                                    {tdPitcherData}
+                                </tr>);
 
-                                  tdPitcherData = [];
-                              });
+                                tdPitcherData = [];
+                            });
 
-                              // Find Notes for Boxscores.
-                              _.forEach(boxscoreData.boxscore.batting, function(battingTeam, id) {
+                            // Find Notes for Boxscores.
+                            _.forEach(boxscoreData.boxscore.batting, function(battingTeam, id) {
                                 if(_.has(battingTeam, 'note')) {
-                                  //Put Batting data in temp object for sorting.
-                                  tempArr.push(battingTeam);
+                                    //Put Batting data in temp object for sorting.
+                                    tempArr.push(battingTeam);
                                 }
-                              });
+                            });
 
-                              // If there are Notes, then sort them by 'Away' team first to match the order of the Boxscores.
-                              if(tempArr.length > 0) {
+                            // If there are Notes, then sort them by 'Away' team first to match the order of the Boxscores.
+                            if(tempArr.length > 0) {
                                 tempArr = _.sortBy(tempArr, function(o) {
-                                  return o.team_flag;
+                                    return o.team_flag;
                                 }, ['asc']);
 
                                 // Parse the XML Notes into JSON.
                                 _.forEach(tempArr, function(arr) {
-                                  parseString(arr.note, function (err, result) {
-                                    _.forEach(result, function(o) {
-                                      notes.push(o);
+                                    parseString(arr.note, function (err, result) {
+                                        _.forEach(result, function(o) {
+                                            notes.push(o);
+                                        });
                                     });
-                                  });
                                 });
-                              }
+                            }
 
-                              //Assemble Pitcher Totals
-                              let pitcherTotalsData = [],
-                                  pitchers = [],
-                                  pc = 0,
-                                  s = 0;
+                            //Assemble Pitcher Totals
+                            let pitcherTotalsData = [],
+                                pitchers = [],
+                                pc = 0,
+                                s = 0;
 
-                              //Sort out all pitchers properly to get total pitch count.
-                              pitchers = _.filter(boxscoreData.boxscore.pitching[teamCount], function(j, i) {
+                            //Sort out all pitchers properly to get total pitch count.
+                            pitchers = _.filter(boxscoreData.boxscore.pitching[teamCount], function(j, i) {
                                 return i === 'pitcher';
-                              });
+                            });
 
-                              pc = _.sumBy(pitchers[0], function(pitcher, i) {
+                            pc = _.sumBy(pitchers[0], function(pitcher, i) {
                                 return parseInt(pitcher.np);
-                              });
+                            });
 
-                              s = _.sumBy(pitchers[0], function(pitcher, i) {
+                            s = _.sumBy(pitchers[0], function(pitcher, i) {
                                 return parseInt(pitcher.s);
-                              });
+                            });
 
-                              pitcherTotalsData.push(<tr className='pitcherTotalsRow' key={Math.random()}>
-                                   <td className='notNumeric'><strong>TOTALS</strong></td>
-                                   <td>{getInningsPitched(boxscoreData.boxscore.pitching[teamCount].out)}</td>
-                                   <td>{boxscoreData.boxscore.pitching[teamCount].h}</td>
-                                   <td>{boxscoreData.boxscore.pitching[teamCount].r}</td>
-                                   <td>{boxscoreData.boxscore.pitching[teamCount].er}</td>
-                                   <td>{boxscoreData.boxscore.pitching[teamCount].bb}</td>
-                                   <td>{boxscoreData.boxscore.pitching[teamCount].so}</td>
-                                   <td>{boxscoreData.boxscore.pitching[teamCount].hr}</td>
-                                   <td>{pc}-{s}</td>
-                                   <td>{boxscoreData.boxscore.pitching[teamCount].era}</td>
-                              </tr>);
+                            pitcherTotalsData.push(<tr className='pitcherTotalsRow' key={Math.random()}>
+                                <td className='notNumeric'><strong>TOTALS</strong></td>
+                                <td>{getInningsPitched(boxscoreData.boxscore.pitching[teamCount].out)}</td>
+                                <td>{boxscoreData.boxscore.pitching[teamCount].h}</td>
+                                <td>{boxscoreData.boxscore.pitching[teamCount].r}</td>
+                                <td>{boxscoreData.boxscore.pitching[teamCount].er}</td>
+                                <td>{boxscoreData.boxscore.pitching[teamCount].bb}</td>
+                                <td>{boxscoreData.boxscore.pitching[teamCount].so}</td>
+                                <td>{boxscoreData.boxscore.pitching[teamCount].hr}</td>
+                                <td>{pc}-{s}</td>
+                                <td>{boxscoreData.boxscore.pitching[teamCount].era}</td>
+                            </tr>);
 
-                              //Push Pitcher & Batter Data.
-                              activePlayerData.push(<div className='batterData' key={Math.random()}>
-                                  <table className='batterDataTable'>
+                            //Push Pitcher & Batter Data.
+                            activePlayerData.push(<div className='batterData' key={Math.random()}>
+                                <table className='batterDataTable'>
                                     <tbody>
-                                      <tr className='teamNameRow'>
-                                          <td colSpan='11'>{teamName}</td>
-                                      </tr>
-                                      <tr className='batterHeaderRow'>
-                                          {thBatterData}
-                                      </tr>
-                                          {batterData}
-                                      <tr>
+                                    <tr className='teamNameRow'>
+                                        <td colSpan='11'>{teamName}</td>
+                                    </tr>
+                                    <tr className='batterHeaderRow'>
+                                        {thBatterData}
+                                    </tr>
+                                    {batterData}
+                                    <tr>
                                         <td colSpan='11' className='notNumeric'>{notes[teamCount]}</td>
-                                      </tr>
+                                    </tr>
                                     </tbody>
-                                  </table>
-                                  <br />
-                                  <table className='batterDataTable'>
+                                </table>
+                                <br />
+                                <table className='batterDataTable'>
                                     <tbody>
-                                      <tr className='pitcherHeaderRow'>
-                                          {thPitcherData}
-                                      </tr>
-                                          {pitcherData}
-                                          {pitcherTotalsData}
+                                    <tr className='pitcherHeaderRow'>
+                                        {thPitcherData}
+                                    </tr>
+                                    {pitcherData}
+                                    {pitcherTotalsData}
                                     </tbody>
-                                  </table>
-                              </div>);
+                                </table>
+                            </div>);
 
-                              thPitcherData = [];
-                              batterData = [];
-                              pitcherData = [];
-                              tempArr = [];
-                              notes = [];
-                          });
-                      }
+                            thPitcherData = [];
+                            batterData = [];
+                            pitcherData = [];
+                            tempArr = [];
+                            notes = [];
+                        });
+                    }
 
-                      if (data.status !== 'Game Over' && data.status !== 'Final') {
-                          //Show Runner/Batter/Pitcher Data
-                          gameDataObj.push(<div className='activePlayerData' key={Math.random()}>
-                              <div className='bases'>
-                                  <div className={'baseContainer ' + (data.status === 'Warmup' || data.status === 'Pre-Game' ? 'disable' : '')}>
-                                      <div className='secondBase baseRow'>
+                    if (data.status !== 'Game Over' && data.status !== 'Final') {
+                        //Show Runner/Batter/Pitcher Data
+                        gameDataObj.push(<div className='activePlayerData' key={Math.random()}>
+                            <div className='bases'>
+                                <div className={'baseContainer ' + (data.status === 'Warmup' || data.status === 'Pre-Game' ? 'disable' : '')}>
+                                    <div className='secondBase baseRow'>
                                         { (_.includes(currentRunnersOnBase, '2b')) ? (
-                                          <BaseRunnerOverlay className={'base onBase'}
-                                                             placement='top'
-                                                             playerProfile={data.runner_on_2b}
-                                                             id='2b'>&nbsp;</BaseRunnerOverlay>) :
-                                           (<div className='base'>&nbsp;</div>) }
-                                      </div>
-                                      <div className='thirdFirstBase baseRow'>
+                                            <BaseRunnerOverlay className={'base onBase'}
+                                                               placement='top'
+                                                               playerProfile={data.runner_on_2b}
+                                                               id='2b'>&nbsp;</BaseRunnerOverlay>) :
+                                            (<div className='base'>&nbsp;</div>) }
+                                    </div>
+                                    <div className='thirdFirstBase baseRow'>
                                         { (_.includes(currentRunnersOnBase, '3b')) ? (
-                                          <BaseRunnerOverlay className={'base thirdBase onBase'}
-                                                             placement='top'
-                                                             playerProfile={data.runner_on_3b}
-                                                             id='3b'>&nbsp;</BaseRunnerOverlay>) :
-                                           (<div className='base'>&nbsp;</div>) }
+                                            <BaseRunnerOverlay className={'base thirdBase onBase'}
+                                                               placement='top'
+                                                               playerProfile={data.runner_on_3b}
+                                                               id='3b'>&nbsp;</BaseRunnerOverlay>) :
+                                            (<div className='base'>&nbsp;</div>) }
 
                                         { (_.includes(currentRunnersOnBase, '1b')) ? (
-                                          <BaseRunnerOverlay className={'base firstBase onBase'}
-                                                             placement='top'
-                                                             playerProfile={data.runner_on_1b}
-                                                             id='1b'>&nbsp;</BaseRunnerOverlay>) :
-                                           (<div className='base'>&nbsp;</div>) }
-                                      </div>
-                                  </div>
+                                            <BaseRunnerOverlay className={'base firstBase onBase'}
+                                                               placement='top'
+                                                               playerProfile={data.runner_on_1b}
+                                                               id='1b'>&nbsp;</BaseRunnerOverlay>) :
+                                            (<div className='base'>&nbsp;</div>) }
+                                    </div>
+                                </div>
 
-                                  { (data.status === 'Warmup' || data.status === 'Pre-Game') ? (
-                                      <div className='currentPitcherBatter'>
-                                          <h3>Starting Pitchers</h3>
-                                          <div><strong>{data.away_name_abbrev}:</strong> {data.away_probable_pitcher.first} {data.away_probable_pitcher.last}</div>
-                                          <div><strong>{data.home_name_abbrev}:</strong> {data.home_probable_pitcher.first} {data.home_probable_pitcher.last}</div>
-                                      </div>
-                                  ) : (
-                                      <div className='currentPitcherBatter'>
-                                          <div><strong>Pitcher:</strong> {data.current_pitcher.first} {data.current_pitcher.last}</div>
-                                          <div><strong>Batter:</strong> {data.current_batter.first_name} {data.current_batter.last_name} -- {data.current_batter.avg}</div>
-                                      </div>
-                                  ) }
+                                { (data.status === 'Warmup' || data.status === 'Pre-Game') ? (
+                                    <div className='currentPitcherBatter'>
+                                        <h3>Starting Pitchers</h3>
+                                        <div><strong>{data.away_name_abbrev}:</strong> {data.away_probable_pitcher.first} {data.away_probable_pitcher.last}</div>
+                                        <div><strong>{data.home_name_abbrev}:</strong> {data.home_probable_pitcher.first} {data.home_probable_pitcher.last}</div>
+                                    </div>
+                                ) : (
+                                    <div className='currentPitcherBatter'>
+                                        <div><strong>Pitcher:</strong> {data.current_pitcher.first} {data.current_pitcher.last}</div>
+                                        <div><strong>Batter:</strong> {data.current_batter.first_name} {data.current_batter.last_name} -- {data.current_batter.avg}</div>
+                                    </div>
+                                ) }
 
-                                  <div className='venueData'>
+                                <div className='venueData'>
                                     <div><strong>Weather:</strong> {rawBoxScore.$.weather}</div>
                                     <div><strong>Wind:</strong> {rawBoxScore.$.wind}</div>
                                     <div><strong>Venue:</strong> {data.venue}, {data.location}</div>
-                                  </div>
-                              </div>
-                              <div className={'BSO ' + (data.status === 'Warmup' || data.status === 'Pre-Game' ? 'disable' : '')}>
-                                  <div className='BSOContainer'>
-                                      <div className='bsoName'>B:</div>
-                                      {balls}
-                                  </div>
-                                  <div className='BSOContainer'>
-                                      <div className='bsoName'>S:</div>
-                                      {strikes}
-                                  </div>
-                                  <div className='BSOContainer'>
-                                      <div className='bsoName'>O:</div>
-                                      {outs}
-                                  </div>
-                                  <br />
+                                </div>
+                            </div>
+                            <div className={'BSO ' + (data.status === 'Warmup' || data.status === 'Pre-Game' ? 'disable' : '')}>
+                                <div className='BSOContainer'>
+                                    <div className='bsoName'>B:</div>
+                                    {balls}
+                                </div>
+                                <div className='BSOContainer'>
+                                    <div className='bsoName'>S:</div>
+                                    {strikes}
+                                </div>
+                                <div className='BSOContainer'>
+                                    <div className='bsoName'>O:</div>
+                                    {outs}
+                                </div>
+                                <br />
                                 <div className={(data.status === 'Warmup' || data.status === 'Pre-Game' ? 'disable' : 'lastPlayDesc')}><strong>Last Play:</strong> {data.pbp_last}</div>
-                              </div>
-                          </div>);
+                            </div>
+                        </div>);
 
-                          getBatterBoxScoreData();
+                        getBatterBoxScoreData();
 
-                      } else if (data.status === 'Final' || data.status === 'Game Over') {
-                          gameDataObj.push(<div className='activePlayerData' key={Math.random()}>
+                    } else if (data.status === 'Final' || data.status === 'Game Over') {
+                        gameDataObj.push(<div className='activePlayerData' key={Math.random()}>
                             <div className='bases'>
                                 <div className='winnerLoser'>
                                     <div><strong>WP:</strong> {data.winning_pitcher.first} {data.winning_pitcher.last} ({data.winning_pitcher.wins}-{data.winning_pitcher.losses})</div>
@@ -833,79 +832,76 @@ export default class GameModalMLB extends React.Component {
                                 </div>
                             </div>
                             <div className='venueData'>
-                              <div><strong>Weather:</strong> {rawBoxScore.$.weather}</div>
-                              <div><strong>Wind:</strong> {rawBoxScore.$.wind}</div>
-                              <div><strong>Venue:</strong> {data.venue}, {data.location}</div>
-                              <div><strong>Attendance:</strong> {rawBoxScore.$.attendance}</div>
+                                <div><strong>Weather:</strong> {rawBoxScore.$.weather}</div>
+                                <div><strong>Wind:</strong> {rawBoxScore.$.wind}</div>
+                                <div><strong>Venue:</strong> {data.venue}, {data.location}</div>
+                                <div><strong>Attendance:</strong> {rawBoxScore.$.attendance}</div>
                             </div>
-                          </div>);
+                        </div>);
 
-                          getBatterBoxScoreData();
-                      }
+                        getBatterBoxScoreData();
+                    }
 
-                      //Combine Score and Location Data
-                      gameContentBody.push(<div className='headlineContainer' key={Math.random()}>
-                          {data.status === 'Final' ? (
-                          <div className='headline'>{rawBoxScore.team[0].$.short_name} ({rawBoxScore.team[0].$.wins}-{rawBoxScore.team[0].$.losses}) vs.&nbsp;
-                               {rawBoxScore.team[1].$.short_name} ({rawBoxScore.team[1].$.wins}-{rawBoxScore.team[1].$.losses})</div>) : ('')}
-                          <div className='boxScoreContainer'>{gameDataObj}</div>
-                      </div>);
+                    //Combine Score and Location Data
+                    gameContentBody.push(<div className='headlineContainer' key={Math.random()}>
+                        {data.status === 'Final' ? (
+                            <div className='headline'>{rawBoxScore.team[0].$.short_name} ({rawBoxScore.team[0].$.wins}-{rawBoxScore.team[0].$.losses}) vs.&nbsp;
+                                {rawBoxScore.team[1].$.short_name} ({rawBoxScore.team[1].$.wins}-{rawBoxScore.team[1].$.losses})</div>) : ('')}
+                        <div className='boxScoreContainer'>{gameDataObj}</div>
+                    </div>);
 
-                      //Combine Boxscore Data
-                      _.forEach(activePlayerData, function(team, i) {
-                          if(i === 0) {
-                              boxScoreBody_awayTeam.push(<div key={Math.random()} className='activePlayerDataContainer'>{activePlayerData[i]}</div>);
-                          } else {
-                              boxScoreBody_homeTeam.push(<div key={Math.random()} className='activePlayerDataContainer'>{activePlayerData[i]}</div>);
-                          }
-                      });
+                    //Combine Boxscore Data
+                    _.forEach(activePlayerData, function(team, i) {
+                        if(i === 0) {
+                            boxScoreBody_awayTeam.push(<div key={Math.random()} className='activePlayerDataContainer'>{activePlayerData[i]}</div>);
+                        } else {
+                            boxScoreBody_homeTeam.push(<div key={Math.random()} className='activePlayerDataContainer'>{activePlayerData[i]}</div>);
+                        }
+                    });
 
-                      self.setState({gameContentBody});
-                      self.setState({boxScoreBody_awayTeam});
-                      self.setState({boxScoreBody_homeTeam});
-                  }
-              });
-            }
+                    self.setState({gameContentBody});
+                    self.setState({boxScoreBody_awayTeam});
+                    self.setState({boxScoreBody_homeTeam});
+                }
+            });
+        }
 
-            callback();
+        callback();
     }
 
     shouldComponentUpdate(nextProps, nextState){
-      // console.log(this.props.gameData.status, ' | ', nextProps.gameData.status);
+        // console.log(this.props.gameData.status, ' | ', nextProps.gameData.status);
 
-      return true;
+        return true;
     }
 
     render() {
-        const game = this.props.gameData;
-        this.state.game = game;
-
-        this.getBrowserSize(game.status.ind);
+        this.getBrowserSize(this.state.game.status.ind);
 
         return (
-          <div onClick={this.openModal}>
-            <ScoreBox gameData={game} />
-            <Modal
-                isOpen={this.state.modalIsOpen}
-                onAfterOpen={this.afterOpenModal}
-                onRequestClose={this.closeModal}
-                style={this.state.modalStyle}
-                contentLabel="Game Modal MLB">
+            <div onClick={this.openModal}>
+                <ScoreBox gameData={this.state.game} />
+                <Modal
+                    isOpen={this.state.modalIsOpen}
+                    onAfterOpen={this.afterOpenModal}
+                    onRequestClose={this.closeModal}
+                    style={this.state.modalStyle}
+                    contentLabel="Game Modal MLB">
 
-                {this.state.modalIsOpen ? (
-                    <div key={game.id}>
-                        {this.state.gameContentBody}
+                    {this.state.modalIsOpen ? (
+                        <div key={this.state.game.id}>
+                            {this.state.gameContentBody}
 
-                        {(game.status.ind === 'I' || game.status.ind === 'MC' || game.status.ind === 'PW' || game.status.ind === 'F' || game.status.ind === 'O') ? (
-                            <Tabs id='boxScoreTabs' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
-                                <Tab eventKey={0} title={game.away_name_abbrev}>{this.state.boxScoreBody_awayTeam}</Tab>
-                                <Tab eventKey={1} title={game.home_name_abbrev}>{this.state.boxScoreBody_homeTeam}</Tab>
-                            </Tabs>
-                        ) : ('')}
-                    </div>
-                ) : ''}
-            </Modal>
-          </div>
+                            {(this.state.game.status.ind === 'I' || this.state.game.status.ind === 'MC' || this.state.game.status.ind === 'PW' || this.state.game.status.ind === 'F' || this.state.game.status.ind === 'O') ? (
+                                <Tabs id='boxScoreTabs' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
+                                    <Tab eventKey={0} title={this.state.game.away_name_abbrev}>{this.state.boxScoreBody_awayTeam}</Tab>
+                                    <Tab eventKey={1} title={this.state.game.home_name_abbrev}>{this.state.boxScoreBody_homeTeam}</Tab>
+                                </Tabs>
+                            ) : ('')}
+                        </div>
+                    ) : ''}
+                </Modal>
+            </div>
         );
     }
 }
