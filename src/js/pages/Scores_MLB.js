@@ -221,33 +221,33 @@ export default class Scores_MLB extends React.Component {
         )
     }
 
-    shouldComponentUpdate(nextProps, nextState){
-        if(!_.isNull(this.state.liveGameSection) && this.state.gameDataObjects.live.length > 0) {
-            _.forEach(this.state.gameDataObjects.live, function (game, i) {
-                // console.log(game.status.o, nextState.gameDataObjects.live[i].status.o);
-                if(game.status.o != nextState.gameDataObjects.live[i].status.o) {
-                    console.log(game);
-                    console.log("Changed.");
-                    return true;
-                }
-                // console.log(shallowCompare(this, game, nextState.gameDataObjects.live[i]));
-            });
-
-            //TODO
-            //this.state.gameDataObjects.live = old data
-            //nextState.gameDataObjects.live[0] = new data
-
-            // console.log(this.state.gameDataObjects.live[0].status.o, nextState.gameDataObjects.live[0].status.o);
-            //
-            // console.log(shallowCompare(this, this.state.gameDataObjects.live[0].status.o, nextState.gameDataObjects.live[0].status.o));
-        } else if(_.isNull(this.state.liveGameSection)) {
-            console.log("init update.");
-            return true;
-        } else {
-            console.log("false.");
-            return false;
-        }
-    }
+    // shouldComponentUpdate(nextProps, nextState){
+    //     if(!_.isNull(this.state.liveGameSection) && this.state.gameDataObjects.live.length > 0) {
+    //         _.forEach(this.state.gameDataObjects.live, function (game, i) {
+    //             // console.log(game.status.o, nextState.gameDataObjects.live[i].status.o);
+    //             if(game.status.o != nextState.gameDataObjects.live[i].status.o) {
+    //                 console.log(game);
+    //                 console.log("Changed.");
+    //                 return true;
+    //             }
+    //             // console.log(shallowCompare(this, game, nextState.gameDataObjects.live[i]));
+    //         });
+    //
+    //         //TODO
+    //         //this.state.gameDataObjects.live = old data
+    //         //nextState.gameDataObjects.live[0] = new data
+    //
+    //         // console.log(this.state.gameDataObjects.live[0].status.o, nextState.gameDataObjects.live[0].status.o);
+    //         //
+    //         // console.log(shallowCompare(this, this.state.gameDataObjects.live[0].status.o, nextState.gameDataObjects.live[0].status.o));
+    //     } else if(_.isNull(this.state.liveGameSection)) {
+    //         console.log("init update.");
+    //         return true;
+    //     } else {
+    //         console.log("false.");
+    //         return false;
+    //     }
+    // }
 
     render() {
         return (

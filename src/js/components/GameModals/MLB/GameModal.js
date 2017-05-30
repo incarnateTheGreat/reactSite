@@ -870,7 +870,11 @@ export default class GameModalMLB extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState){
-        // console.log(this.props.gameData.status, ' | ', nextProps.gameData.status);
+      //this.state.gameDataObjects.live = old data
+      //nextState.gameDataObjects.live[0] = new data
+
+      // console.log(this.state.game.status);
+      // console.log(nextState.game.status);
 
         return true;
     }
