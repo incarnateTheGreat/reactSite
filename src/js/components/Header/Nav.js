@@ -11,14 +11,11 @@ export default class Nav extends React.Component {
   toggleCollapse() {
     const collapsed = !this.state.collapsed;
     this.setState({collapsed});
-    console.log(collapsed);
   }
   navigate() {
     this.props.history.replaceState(null, "/");
   }
   render() {
-    // const { history } = this.props;
-    // console.log(history.isActive("What"));
     //Example of applying inline CSS.
     const logoStyle = {
       color: "white",
@@ -27,11 +24,8 @@ export default class Nav extends React.Component {
       fontSize: "1.3em",
       fontWeight: "bold"
     };
-    // const { location } = this.props;
     const { collapsed } = this.state;
-    const navClass = collapsed ? "collapsed" : "";
-
-    // console.log(location.pathname.match(/^\/Who/));
+    const navClass = collapsed ? "collapse" : "";
 
     return (
       <nav class="navbar navbar-inverse" role="navigation">
@@ -46,6 +40,7 @@ export default class Nav extends React.Component {
           </div>
         </div>
         <div class={"navbar-collapse " + navClass} id="bs-example-navbar-collapse-1">
+          <span className="logo">tsaconas.com</span>
           <ul class="nav navbar-nav">
             <li><Link to="">
               <span className="navAnimBtn">Home</span>
@@ -81,8 +76,6 @@ export default class Nav extends React.Component {
             </Link></li>
           </ul>
         </div>
-        {/*<span style={logoStyle}>tsaconas.com</span> */}
-        <span className="logo">tsaconas.com</span>
       </nav>
     );
   }

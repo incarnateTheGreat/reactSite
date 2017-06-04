@@ -31,9 +31,15 @@ footer .container .text-muted {
 .container-fluid > div {
   margin: 70px 0 0;
 }
+.navbar-collapse {
+  width: 100%;
+}
+.navbar-nav {
+  float: right;
+}
 .logo {
   color: white;
-  float: right;
+  float: left;
   padding: 14px 10px 14px;
   font: normal normal 700 1.25em/1.25em Arial,sans-serif;
 }
