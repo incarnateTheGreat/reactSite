@@ -46,6 +46,7 @@ export default class GameModalMLB extends React.Component {
             boxScoreBody_awayTeamName: null,
             boxScoreBody_homeTeamName: null,
             boxScoreBody_homeTeam: null,
+            hasChanged: false,
             game: null,
             modalStyle: _.merge(customStyles, tweenStyle),
             activeTab: 0 // Takes active tab from props if it is defined there,
@@ -879,27 +880,31 @@ export default class GameModalMLB extends React.Component {
     shouldComponentUpdate(nextProps, nextState) {
       //TODO: Use GameModal.js as Scorebox.
       if(this.state.game.status.ind == 'I') {
-          console.log(this.state.game.away_name_abbrev, 'vs.', this.state.game.home_name_abbrev);
-          console.log('======================================');
-        // if(this.state.game.status.b != nextProps.gameData.status.b) {
-        //   console.log("BALLS");
-        //   console.log('this.state:', this.state.game.status.b);
-        //   console.log('nextProps:', nextProps.gameData.status.b);
-        // }
-        //
-        // if(this.state.game.status.s != nextProps.gameData.status.s) {
-        //   console.log("STRIKES");
-        //   console.log('this.state:', this.state.game.status.s);
-        //   console.log('nextProps:', nextProps.gameData.status.s);
-        // }
+        console.log(this.state.game.away_name_abbrev, 'vs', this.state.game.home_name_abbrev);
+        console.log('======================================');
+
+        if(this.state.game.status.b != nextProps.gameData.status.b) {
+          console.log("BALLS");
+          console.log('this.state:', this.state.game.status.b);
+          console.log('nextProps:', nextProps.gameData.status.b);
+          this.setState({hasChanged: true});
+        }
+
+        if(this.state.game.status.s != nextProps.gameData.status.s) {
+          console.log("STRIKES");
+          console.log('this.state:', this.state.game.status.s);
+          console.log('nextProps:', nextProps.gameData.status.s);
+          this.setState({hasChanged: true});
+        }
 
         if(this.state.game.status.o != nextProps.gameData.status.o) {
           console.log("OUTS");
           console.log('this.state:', this.state.game.status.o);
           console.log('nextProps:', nextProps.gameData.status.o);
+          this.setState({hasChanged: true});
         }
 
-          console.log('======================================');
+        console.log('======================================');
       }
       // if(!_.isNull(this.state.liveGameSection)) {
       //     _.forEach(this.state.gameDataObjects.live, function (game, i) {
@@ -926,6 +931,7 @@ export default class GameModalMLB extends React.Component {
       return true;
 
     }
+
 
     render() {
         const game = this.props.gameData;
@@ -974,8 +980,14 @@ export default class GameModalMLB extends React.Component {
             homeScore = game.linescore.r.home;
         }
 
+        //Set class names for the Score Table. If an Out or a Run is recorded, the indicator class will fire off a CSS Animation.
+        const scoreTableClasses = classNames({
+          'scoreTable': true,
+          'blink_me': this.state.hasChanged
+        });
+
         return (
-            <div className="scoreTable" onClick={this.openModal}>
+            <div className={scoreTableClasses} onClick={this.openModal}>
                 <div className="scores">
                     <div className="team">{game.away_name_abbrev}</div>
                     <div className="score">{awayScore}</div>

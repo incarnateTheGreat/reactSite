@@ -95,6 +95,13 @@ h3 {
   float: left;
   font-weight: bold;
 }
+.scoreTable.blink_me {
+  animation: blinker 1s linear infinite;
+  animation-iteration-count: 2;
+}
+@keyframes blinker {
+  50% { opacity: 0; }
+}
 .navbar-nav li a {
   transition:all 0.3s ease;
   height: 50px;
