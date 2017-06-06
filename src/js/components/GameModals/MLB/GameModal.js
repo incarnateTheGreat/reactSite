@@ -879,29 +879,27 @@ export default class GameModalMLB extends React.Component {
     shouldComponentUpdate(nextProps, nextState) {
       //TODO: Use GameModal.js as Scorebox.
       if(this.state.game.status.ind == 'I') {
-        if(this.state.game.status.b != nextProps.gameData.status.b) {
-          console.log(this.state.game.away_name_abbrev);
+          console.log(this.state.game.away_name_abbrev, 'vs.', this.state.game.home_name_abbrev);
           console.log('======================================');
-          console.log("BALLS");
-          console.log('this.state:', this.state.game.status.b);
-          console.log('nextProps:', nextProps.gameData.status.b);
-        }
-
-        if(this.state.game.status.s != nextProps.gameData.status.s) {
-          console.log(this.state.game.away_name_abbrev);
-          console.log('======================================');
-          console.log("STRIKES");
-          console.log('this.state:', this.state.game.status.s);
-          console.log('nextProps:', nextProps.gameData.status.s);
-        }
+        // if(this.state.game.status.b != nextProps.gameData.status.b) {
+        //   console.log("BALLS");
+        //   console.log('this.state:', this.state.game.status.b);
+        //   console.log('nextProps:', nextProps.gameData.status.b);
+        // }
+        //
+        // if(this.state.game.status.s != nextProps.gameData.status.s) {
+        //   console.log("STRIKES");
+        //   console.log('this.state:', this.state.game.status.s);
+        //   console.log('nextProps:', nextProps.gameData.status.s);
+        // }
 
         if(this.state.game.status.o != nextProps.gameData.status.o) {
-          console.log(this.state.game.away_name_abbrev);
-          console.log('======================================');
           console.log("OUTS");
           console.log('this.state:', this.state.game.status.o);
           console.log('nextProps:', nextProps.gameData.status.o);
         }
+
+          console.log('======================================');
       }
       // if(!_.isNull(this.state.liveGameSection)) {
       //     _.forEach(this.state.gameDataObjects.live, function (game, i) {
