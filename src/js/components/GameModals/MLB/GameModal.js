@@ -124,8 +124,6 @@ export default class GameModalMLB extends React.Component {
                 headlineContainer_height = 0,
                 activePlayerDataContainer_height = 0;
 
-                console.log(gameStatus);
-
                 // if(selectedGameData.status.ind === 'DR' || selectedGameData.status.ind === 'DI') {
                 //   displayPPDGameData();
                 // } else if(selectedGameData.status.ind === 'S' || selectedGameData.status.ind === 'P') {
@@ -877,9 +875,26 @@ export default class GameModalMLB extends React.Component {
             callback();
     }
 
+    componentWillReceiveProps(nextProps) {
+        if(this.state.game.status.o != nextProps.gameData.status.o) {
+            console.log('componentWillReceiveProps');
+            console.log(this.state.game.away_name_abbrev, 'vs', this.state.game.home_name_abbrev);
+            console.log('======================================');
+            console.log("OUTS");
+            console.log('this.state:', this.state.game.status.o);
+            console.log('nextProps:', nextProps.gameData.status.o);
+            this.setState({hasChanged: true});
+            console.log('======================================');
+        } else {
+            if(this.state.hasChanged) {
+                console.log(this.state.hasChanged, "Change back to false.");
+                this.setState({hasChanged: false});
+            }
+        }
+    }
+
     shouldComponentUpdate(nextProps, nextState) {
         if(this.state.game.status.ind == 'I') {
-
 
           // if(this.state.game.status.b != nextProps.gameData.status.b) {
           //   console.log("BALLS");
@@ -894,42 +909,17 @@ export default class GameModalMLB extends React.Component {
           // }
 
           if(this.state.game.status.o != nextProps.gameData.status.o) {
+            console.log('shouldComponentUpdate');
             console.log(this.state.game.away_name_abbrev, 'vs', this.state.game.home_name_abbrev);
             console.log('======================================');
             console.log("OUTS");
             console.log('this.state:', this.state.game.status.o);
             console.log('nextProps:', nextProps.gameData.status.o);
-            this.setState({hasChanged: true});
+            console.log('======================================');
           }
-
-          console.log('======================================');
         }
-      // if(!_.isNull(this.state.liveGameSection)) {
-      //     _.forEach(this.state.gameDataObjects.live, function (game, i) {
-      //         // console.log(game.status.o, nextState.gameDataObjects.live[i].status.o);
-      //         if(game.status.o != nextState.gameDataObjects.live[i].status.o) {
-      //             console.log(game);
-      //             console.log("Changed.");
-      //         }
-      //         // console.log(shallowCompare(this, game, nextState.gameDataObjects.live[i]));
-      //     });
-      //
-      //     //this.state.gameDataObjects.live = old data
-      //     //nextState.gameDataObjects.live[0] = new data
-      //
-      //     // console.log(this.state.gameDataObjects.live[0].status.o, nextState.gameDataObjects.live[0].status.o);
-      //     //
-      //     // console.log(shallowCompare(this, this.state.gameDataObjects.live[0].status.o, nextState.gameDataObjects.live[0].status.o));
-      //
-      //     return true;
-      // } else {
-      //     return true;
-      // }
-
       return true;
-
     }
-
 
     render() {
         const game = this.props.gameData;
@@ -983,8 +973,6 @@ export default class GameModalMLB extends React.Component {
           'scoreTable': true,
           'blink_me': this.state.hasChanged
         });
-
-        console.log('hasChanged:', this.state.hasChanged);
 
         return (
             <div className={scoreTableClasses} onClick={this.openModal}>
