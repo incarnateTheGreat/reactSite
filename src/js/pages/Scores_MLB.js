@@ -189,7 +189,7 @@ export default class Scores_MLB extends React.Component {
       let self = this;
 
       const loaderTimeoutIntervals = {
-        'liveGames': [30000, 32000],
+        'liveGames': [10000, 12000],
         'noLiveGames': [117000, 120000]
       };
 
