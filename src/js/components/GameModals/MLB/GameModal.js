@@ -124,12 +124,6 @@ export default class GameModalMLB extends React.Component {
                 headlineContainer_height = 0,
                 activePlayerDataContainer_height = 0;
 
-                // if(selectedGameData.status.ind === 'DR' || selectedGameData.status.ind === 'DI') {
-                //   displayPPDGameData();
-                // } else if(selectedGameData.status.ind === 'S' || selectedGameData.status.ind === 'P') {
-                //   displayPregameData();
-                // }
-
             //If Pre-game or PPD, reduce the height of the Modal. Otherwise, fit the proper height.
             if(gameStatus === 'DR' || gameStatus === 'DI' || gameStatus === 'S' || gameStatus === 'P') {
               activePlayerDataContainer_height = document.getElementsByClassName('headlineContainer')[0].offsetHeight;
@@ -150,8 +144,7 @@ export default class GameModalMLB extends React.Component {
     }
 
     handleSelect(selectedTab) {
-        // The active tab must be set into the state so that
-        // the Tabs component knows about the change and re-renders.
+        // The active tab must be set into the state so that the Tabs component knows about the change and re-renders.
         this.setState({
             activeTab: selectedTab
         }, function() {
@@ -414,7 +407,7 @@ export default class GameModalMLB extends React.Component {
                           //   console.log("Nermal.");
                           // }
 
-                      //If 'linescore' is not an array, it is only the 1st inning. Again, thanks MLB Dara.
+                      //If 'linescore' is not an array, it is only the 1st inning. Again, thanks MLB Data.
                       if(_.isArray(data.linescore)) {
                           _.forEach(data.linescore, function (inning, id) {
                               currentInning = id + 1;
@@ -877,47 +870,26 @@ export default class GameModalMLB extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if(this.state.game.status.o != nextProps.gameData.status.o) {
-            console.log('componentWillReceiveProps');
-            console.log(this.state.game.away_name_abbrev, 'vs', this.state.game.home_name_abbrev);
-            console.log('======================================');
-            console.log("OUTS");
-            console.log('this.state:', this.state.game.status.o);
-            console.log('nextProps:', nextProps.gameData.status.o);
             this.setState({hasChanged: true});
-            console.log('======================================');
         } else {
             if(this.state.hasChanged) {
-                console.log(this.state.hasChanged, "Change back to false.");
                 this.setState({hasChanged: false});
             }
         }
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if(this.state.game.status.ind == 'I') {
-
-          // if(this.state.game.status.b != nextProps.gameData.status.b) {
-          //   console.log("BALLS");
-          //   console.log('this.state:', this.state.game.status.b);
-          //   console.log('nextProps:', nextProps.gameData.status.b);
-          // }
-          //
-          // if(this.state.game.status.s != nextProps.gameData.status.s) {
-          //   console.log("STRIKES");
-          //   console.log('this.state:', this.state.game.status.s);
-          //   console.log('nextProps:', nextProps.gameData.status.s);
-          // }
-
-          if(this.state.game.status.o != nextProps.gameData.status.o) {
-            console.log('shouldComponentUpdate');
-            console.log(this.state.game.away_name_abbrev, 'vs', this.state.game.home_name_abbrev);
-            console.log('======================================');
-            console.log("OUTS");
-            console.log('this.state:', this.state.game.status.o);
-            console.log('nextProps:', nextProps.gameData.status.o);
-            console.log('======================================');
-          }
-        }
+        // if(this.state.game.status.ind == 'I') {
+        //   if(this.state.game.status.o != nextProps.gameData.status.o) {
+        //     // console.log('shouldComponentUpdate');
+        //     // console.log(this.state.game.away_name_abbrev, 'vs', this.state.game.home_name_abbrev);
+        //     // console.log('======================================');
+        //     // console.log("OUTS");
+        //     // console.log('this.state:', this.state.game.status.o);
+        //     // console.log('nextProps:', nextProps.gameData.status.o);
+        //     // console.log('======================================');
+        //   }
+        // }
       return true;
     }
 
