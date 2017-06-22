@@ -869,6 +869,8 @@ export default class GameModalMLB extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+      if(this.state.game.status.ind == 'I') {
+        //Check if Out has occured.
         if(this.state.game.status.o != nextProps.gameData.status.o) {
             this.setState({hasChanged: true});
         } else {
@@ -876,22 +878,43 @@ export default class GameModalMLB extends React.Component {
                 this.setState({hasChanged: false});
             }
         }
+
+        //Check for Run Scored
+        if(this.state.game.linescore.r.away != nextProps.gameData.linescore.r.away) {
+          console.log(this.state.game.linescore.r.away, nextProps.gameData.linescore.r.away);
+          console.log('away:', nextProps.gameData.pbp.last);
+        }
+        if(this.state.game.linescore.r.home != nextProps.gameData.linescore.r.home) {
+          console.log(this.state.game.linescore.r.home, nextProps.gameData.linescore.r.home);
+          console.log('home:', nextProps.gameData.pbp.last);
+        }
+      }
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        // if(this.state.game.status.ind == 'I') {
-        //   if(this.state.game.status.o != nextProps.gameData.status.o) {
-        //     // console.log('shouldComponentUpdate');
-        //     // console.log(this.state.game.away_name_abbrev, 'vs', this.state.game.home_name_abbrev);
-        //     // console.log('======================================');
-        //     // console.log("OUTS");
-        //     // console.log('this.state:', this.state.game.status.o);
-        //     // console.log('nextProps:', nextProps.gameData.status.o);
-        //     // console.log('======================================');
-        //   }
-        // }
-      return true;
-    }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     if(this.state.game.status.ind == 'I') {
+    //       // console.log('This.state:');
+    //       // console.log('away:', this.state.game.linescore.r.away);
+    //       // console.log('home:', this.state.game.linescore.r.home);
+    //       // console.log('-----------------------------------------');
+    //       // console.log('NextProps');
+    //       // console.log('away:', nextProps.gameData.linescore.r.away);
+    //       // console.log('home:', nextProps.gameData.linescore.r.home);
+    //       // console.log('==========================================');
+    //
+    //
+    //     //   if(this.state.game.status.o != nextProps.gameData.status.o) {
+    //     //     // console.log('shouldComponentUpdate');
+    //     //     // console.log(this.state.game.away_name_abbrev, 'vs', this.state.game.home_name_abbrev);
+    //     //     // console.log('======================================');
+    //     //     // console.log("OUTS");
+    //     //     // console.log('this.state:', this.state.game.status.o);
+    //     //     // console.log('nextProps:', nextProps.gameData.status.o);
+    //     //     // console.log('======================================');
+    //     //   }
+    //     }
+    //   return true;
+    // }
 
     render() {
         const game = this.props.gameData;
