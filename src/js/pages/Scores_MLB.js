@@ -5,6 +5,7 @@ import {Tab, Tabs} from "react-bootstrap";
 import GameModalMLB from "../components/GameModals/MLB/GameModal";
 import LeagueFilter from "../components/GameModals/MLB/LeagueFilter";
 import Standings from "../components/GameModals/MLB/Standings";
+import ScorePopOut from "../components/GameModals/MLB/ScorePopOut";
 
 export default class Scores_MLB extends React.Component {
     constructor(props) {
@@ -189,7 +190,7 @@ export default class Scores_MLB extends React.Component {
 
       const loaderTimeoutIntervals = {
         'liveGames': [30000, 32000],
-        'noLiveGames': [117000, 120000]
+        'noLiveGames': [10000, 12000]
       };
 
       //Control the frequency of refresh intervals depending on whether there are Live Games in progress or not.
@@ -219,13 +220,19 @@ export default class Scores_MLB extends React.Component {
     //Build out HTML object of Scores.
     renderGameOutput(game, id) {
         return (
-            <GameModalMLB key={id} gameData={game} />
+            <GameModalMLB key={id} gameData={game} ref={(foo) => { this.foo = foo; }} />
         )
     }
 
     render() {
+      // if(!_.isUndefined(this.foo)) {
+      //   let x = this.foo.myFunc();
+      //   console.log('Final Value:', x);
+      // }
+
         return (
             <div>
+              {/* <ScorePopOut scoreData="Tester"></ScorePopOut> */}
               <Tabs id='MLBScores' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
                   <Tab eventKey={0} title='MLB Scores'>
                     <div class="loader"></div>

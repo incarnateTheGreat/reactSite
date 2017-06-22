@@ -29,7 +29,7 @@ footer .container .text-muted {
   margin: 20px 0;
 }
 .container-fluid > div {
-  margin: 70px 0 0;
+  margin: 53px 0 0;
 }
 .navbar-collapse {
   width: 100%;
@@ -544,6 +544,16 @@ h3 {
 .standings tr td:first-child {
   width: 11%;
   text-align: left;
+}
+
+/*Score PopOut*/
+.scorePopOut {
+  margin: 0 auto;
+  background: red;
+  width: 300px;
+  position: relative;
+  /*top: -51px;*/
+  padding: 5px 10px;
 }
 
 /*Loading Spinner*/

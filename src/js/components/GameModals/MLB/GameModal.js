@@ -884,11 +884,18 @@ export default class GameModalMLB extends React.Component {
           console.log(this.state.game.linescore.r.away, nextProps.gameData.linescore.r.away);
           console.log('away:', nextProps.gameData.pbp.last);
         }
+
         if(this.state.game.linescore.r.home != nextProps.gameData.linescore.r.home) {
           console.log(this.state.game.linescore.r.home, nextProps.gameData.linescore.r.home);
           console.log('home:', nextProps.gameData.pbp.last);
         }
+      } else {
+        // this.myFunc("Someone ran home and scored.")
       }
+    }
+
+    myFunc(scoreEvent) {
+      return scoreEvent;
     }
 
     // shouldComponentUpdate(nextProps, nextState) {
