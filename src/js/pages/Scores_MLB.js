@@ -19,6 +19,7 @@ export default class Scores_MLB extends React.Component {
             tomorrowGamesSection: null,
             gameDataObjects: null,
             standings: null,
+            currentEvent: null,
             activeTab: 0 // Takes active tab from props if it is defined there
         };
 
@@ -189,8 +190,8 @@ export default class Scores_MLB extends React.Component {
       let self = this;
 
       const loaderTimeoutIntervals = {
-        'liveGames': [30000, 32000],
-        'noLiveGames': [10000, 12000]
+        'liveGames': [10000, 12000],
+        'noLiveGames': [117000, 120000]
       };
 
       //Control the frequency of refresh intervals depending on whether there are Live Games in progress or not.
@@ -220,19 +221,15 @@ export default class Scores_MLB extends React.Component {
     //Build out HTML object of Scores.
     renderGameOutput(game, id) {
         return (
-            <GameModalMLB key={id} gameData={game} ref={(foo) => { this.foo = foo; }} />
+            <GameModalMLB key={id} gameData={game} greet={this.onGreet} />
         )
     }
 
     render() {
-      // if(!_.isUndefined(this.foo)) {
-      //   let x = this.foo.myFunc();
-      //   console.log('Final Value:', x);
-      // }
-
+      console.log(this.props);
         return (
             <div>
-              {/* <ScorePopOut scoreData="Tester"></ScorePopOut> */}
+              {/* <ScorePopOut scoreData={this.currentEvent}></ScorePopOut> */}
               <Tabs id='MLBScores' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
                   <Tab eventKey={0} title='MLB Scores'>
                     <div class="loader"></div>

@@ -1,13 +1,11 @@
-import React from 'react';
+import React, {Component} from 'react';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 
 //Overlay
 export default class ScorePopOut extends React.Component {
   constructor(props) {
     super(props);
-
-    // this.state = {
-    //   onBasePlayer: null
-    // }
   }
 
   componentDidMount() {
@@ -15,10 +13,12 @@ export default class ScorePopOut extends React.Component {
   }
 
   render() {
-    const game = this.props.scoreData;
+    const scoreData = this.props.scoreData;
+
+    console.log("Inside ScorePopOut: ", scoreData);
 
     return (
-      <div className='scorePopOut'>{game}</div>
+      <div className='scorePopOut'>{scoreData}</div>
     );
   }
 }
