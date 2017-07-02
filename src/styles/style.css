@@ -29,7 +29,8 @@ footer .container .text-muted {
   margin: 20px 0;
 }
 .container-fluid > div {
-  margin: 53px 0 0;
+  margin: 73px 0 0;
+  padding: 0 10px;
 }
 .navbar-collapse {
   width: 100%;

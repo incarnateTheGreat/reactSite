@@ -20,12 +20,16 @@ module.exports = {
       }
     ]
   },
+  devServer: {
+    historyApiFallback: true
+  },
   externals: {
       "lodash": "lodash"
   },
   output: {
     path: __dirname + "/src/",
-    filename: "client.min.js"
+    filename: "client.min.js",
+    publicPath: '/'
   },
   plugins: debug ? [] : [
     new webpack.optimize.DedupePlugin(),
