@@ -36,6 +36,9 @@
     "react-router-dom": "^4.1.1",
     "react-router-redux": "^4.0.8",
     "redux": "^3.7.0",
+    "redux-logger": "^3.0.6",
+    "redux-promise-middleware": "^4.3.0",
+    "redux-thunk": "^2.2.0",
     "xml2js": "^0.4.17"
   },
   "scripts": {
