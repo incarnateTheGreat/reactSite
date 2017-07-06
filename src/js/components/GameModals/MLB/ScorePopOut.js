@@ -1,24 +1,36 @@
-import React, {Component} from 'react';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import classNames from 'classnames';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
-//Overlay
 export default class ScorePopOut extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      display: 'scorePopOut'
+    };
   }
 
-  componentDidMount() {
+  componentWillReceiveProps(things) {
+    if(!_.isUndefined(things.scoreEvent)) {
+      let display = classNames({
+        'scorePopOut': true,
+        'show': things.scoreEvent.length > 0
+      });
 
+      this.setState({ display });
+    }
   }
+  // shouldComponentUpdate() {
+  //   console.log("shouldComponentUpdate");
+  // }
 
   render() {
-    const scoreData = this.props.scoreData;
-
-    console.log("Inside ScorePopOut: ", scoreData);
+    let scoreEvent = this.props.scoreEvent;
 
     return (
-      <div className='scorePopOut'>{scoreData}</div>
+      <div className={this.state.display}>{scoreEvent}</div>
     );
   }
 }

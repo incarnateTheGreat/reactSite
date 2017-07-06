@@ -549,12 +549,17 @@ h3 {
 
 /*Score PopOut*/
 .scorePopOut {
+  position: fixed;
   margin: 0 auto;
+  left: 0;
+  right: 0;
+  top: 20px;
   background: red;
-  width: 300px;
-  position: relative;
-  /*top: -51px;*/
   padding: 5px 10px;
+  width: 300px;
+}
+.scorePopOut.show {
+  top: 43px;
 }
 
 /*Loading Spinner*/

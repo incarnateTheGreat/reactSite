@@ -3,6 +3,10 @@ import axios from 'axios';
 import Modal from 'react-modal';
 import classNames from 'classnames';
 import {Tab, Tabs} from "react-bootstrap";
+import { connect } from 'react-redux'
+
+//Redux Store
+import store from '../../../store';
 
 import BaseRunnerOverlay from './BaseRunnerOverlay';
 
@@ -34,6 +38,13 @@ let tweenStyle = {
         opacity               : '0'
     }
 };
+
+//Connect to Redux Store.
+@connect((store) => {
+  return {
+    gameStatus: store.gameStatus
+  }
+})
 
 export default class GameModalMLB extends React.Component {
     constructor() {
@@ -883,17 +894,25 @@ export default class GameModalMLB extends React.Component {
         if(this.state.game.linescore.r.away != nextProps.gameData.linescore.r.away) {
           console.log(this.state.game.linescore.r.away, nextProps.gameData.linescore.r.away);
           console.log('away:', nextProps.gameData.pbp.last);
+
+          //Fire off Dispatch.
+          store.dispatch({
+            type: 'UPDATE_GAME_STATUS',
+            payload: 'away:' + nextProps.gameData.pbp.last
+          });
         }
 
         if(this.state.game.linescore.r.home != nextProps.gameData.linescore.r.home) {
           console.log(this.state.game.linescore.r.home, nextProps.gameData.linescore.r.home);
           console.log('home:', nextProps.gameData.pbp.last);
+
+          //Fire off Dispatch.
+          store.dispatch({
+            type: 'UPDATE_GAME_STATUS',
+            payload: 'home:' + nextProps.gameData.pbp.last
+          });
         }
       }
-    }
-
-    myFunc(scoreEvent) {
-      return scoreEvent;
     }
 
     // shouldComponentUpdate(nextProps, nextState) {
@@ -993,7 +1012,7 @@ export default class GameModalMLB extends React.Component {
                     onAfterOpen={this.afterOpenModal}
                     onRequestClose={this.closeModal}
                     style={this.state.modalStyle}
-                    contentLabel="Game Modal MLB">
+                    contentLabel="Game Modal MLB">``
 
                     {this.state.modalIsOpen ? (
                         <div key={game.id}>

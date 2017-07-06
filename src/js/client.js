@@ -2,14 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, browserHistory } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
-import { createStore, applyMiddleware, compose, bindActionCreators } from 'redux';
-import { createLogger } from 'redux-logger';
-import thunk from 'redux-thunk';
+import { compose, bindActionCreators } from 'redux';
 import { Provider, connect } from 'react-redux';
 import { syncHistoryWithStore } from 'react-router-redux';
 import * as actionCreators from './actions/gameStatus';
+
 import axios from 'axios';
-import promise from 'redux-promise-middleware';
 
 import Layout from "./pages/Layout";
 import Home from "./pages/Home";
@@ -17,30 +15,22 @@ import Featured from "./pages/Featured";
 import Scores_NHL from "./pages/Scores_NHL";
 import Scores_MLB from "./pages/Scores_MLB";
 
-//Redux Reducers
-import rootReducer from './reducers/index';
-import gameStatus from '../testData/gameStatusData';
-
-//Redux Actions
-// import reduxActions from './actions/gameStatus';
+//Redux Store
+import store from './store';
 
 //Create object for default data
-const defaultState = { gameStatus },
-      middleware = applyMiddleware(promise(), thunk, createLogger());
-
-const store = createStore(rootReducer, defaultState, middleware),
-      history = syncHistoryWithStore(browserHistory, store),
+const history = syncHistoryWithStore(browserHistory, store),
       app = document.getElementById('app');
 
-store.subscribe(() => {
-  console.log("Store Changed:", store.getState());
-});
+// store.subscribe(() => {
+//   console.log("Store Changed:", store.getState());
+// });
 
-//Fire off Dispatch.
-store.dispatch({
-  type: 'UPDATE_GAME_STATUS',
-  payload: axios.get('http://rest.learncode.academy/api/wstern/users')
-});
+// //Fire off Dispatch.
+// store.dispatch({
+//   type: 'UPDATE_GAME_STATUS',
+//   payload: axios.get('http://rest.learncode.academy/api/wstern/users')
+// });
 
 function mapStateToProps(state) {
   return {

@@ -1,11 +1,22 @@
 import React from "react";
 import axios from 'axios';
-import {Tab, Tabs} from "react-bootstrap";
+import { Tab, Tabs } from "react-bootstrap";
+import { connect } from 'react-redux'
+
+//Redux Store
+import store from '../store';
 
 import GameModalMLB from "../components/GameModals/MLB/GameModal";
 import LeagueFilter from "../components/GameModals/MLB/LeagueFilter";
 import Standings from "../components/GameModals/MLB/Standings";
 import ScorePopOut from "../components/GameModals/MLB/ScorePopOut";
+
+//Connect to Redux Store.
+@connect((store) => {
+  return {
+    gameStatus: store.gameStatus
+  }
+})
 
 export default class Scores_MLB extends React.Component {
     constructor(props) {
@@ -213,6 +224,11 @@ export default class Scores_MLB extends React.Component {
       }, loaderTimeoutIntervals[getTimeoutIntervals()][1]);
     }
 
+    componentWillUnmount() {
+      clearTimeout(this.timeoutOpenLoader);
+      clearTimeout(this.timeoutCloseLoader);
+    }
+
     getNumberOfColumns(games) {
         return "completedGamesGroupContainer col-md-" + (Object.keys(games).length > 1 ? "6" : "12");
     }
@@ -224,9 +240,18 @@ export default class Scores_MLB extends React.Component {
         )
     }
 
+    testScoreEvent() {
+      //Fire off Dispatch.
+      store.dispatch({
+        type: 'UPDATE_GAME_STATUS',
+        payload: "Smoak singles to Center. Donaldson scores."
+      });
+    }
+
     render() {
         return (
             <div>
+              <ScorePopOut scoreEvent={this.props.gameStatus.name} />
               <Tabs id='MLBScores' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
                   <Tab eventKey={0} title='MLB Scores'>
                     <div class="loader"></div>
@@ -235,6 +260,9 @@ export default class Scores_MLB extends React.Component {
                     <hr/>
                     <div className="scoreTableContainer">
                         <h2>Live</h2>
+
+                        <button onClick={this.testScoreEvent}>Test Score Event</button>
+
                         <div className="gameGroupContainer">
                             <LeagueFilter data={this.state.liveGameSection}></LeagueFilter>
                         </div>
