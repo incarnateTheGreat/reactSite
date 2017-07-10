@@ -5,7 +5,6 @@ import promise from 'redux-promise-middleware'
 
 //Redux Reducers
 import reducer from './reducers/index'
-// import gameStatus from '../testData/gameStatusData';
 
 const middleware = applyMiddleware(promise(), thunk, createLogger())
 

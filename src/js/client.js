@@ -22,16 +22,6 @@ import store from './store';
 const history = syncHistoryWithStore(browserHistory, store),
       app = document.getElementById('app');
 
-// store.subscribe(() => {
-//   console.log("Store Changed:", store.getState());
-// });
-
-// //Fire off Dispatch.
-// store.dispatch({
-//   type: 'UPDATE_GAME_STATUS',
-//   payload: axios.get('http://rest.learncode.academy/api/wstern/users')
-// });
-
 function mapStateToProps(state) {
   return {
     gameStatus: state.gameStatus

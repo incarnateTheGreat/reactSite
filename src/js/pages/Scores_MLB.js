@@ -9,7 +9,10 @@ import store from '../store';
 import GameModalMLB from "../components/GameModals/MLB/GameModal";
 import LeagueFilter from "../components/GameModals/MLB/LeagueFilter";
 import Standings from "../components/GameModals/MLB/Standings";
+import LoadGameData from "../components/GameModals/MLB/LoadGameData";
 import ScorePopOut from "../components/GameModals/MLB/ScorePopOut";
+
+require('./tester.scss')
 
 //Connect to Redux Store.
 @connect((store) => {
@@ -73,6 +76,11 @@ export default class Scores_MLB extends React.Component {
                 let gameData = dayData.data.data.games.game,
                     objectDay = dayData.data.data.games.day;
 
+                //If there's only one game to be displayed, then force it into an array to be read below.
+                if(!_.isUndefined(gameData) && gameData instanceof Array === false) {
+                  gameData = [gameData];
+                }
+
                 if(objectDay == dateObj.today.day.format('DD')) {
                     //Today's Game Data
                     _.forEach(gameData, function(game) {
@@ -82,7 +90,8 @@ export default class Scores_MLB extends React.Component {
                             gameDataObjects.today.push(game);
                         }
                     });
-                } else if(objectDay == dateObj.tomorrow.day.format('DD')) {
+                }
+                 else if(objectDay == dateObj.tomorrow.day.format('DD')) {
                     //Tomorrow's Game Data
                     _.forEach(gameData, function(game) {
                         if(self.isGameLive(game)) {
@@ -91,7 +100,8 @@ export default class Scores_MLB extends React.Component {
                             gameDataObjects.tomorrow.push(game);
                         }
                     });
-                } else if(objectDay == dateObj.yesterday.day.format('DD')) {
+                }
+                else if(objectDay == dateObj.yesterday.day.format('DD')) {
                     //Yesterday's Game Data
                     _.forEach(gameData, function(game) {
                         if(self.isGameLive(game)) {
@@ -251,6 +261,7 @@ export default class Scores_MLB extends React.Component {
     render() {
         return (
             <div>
+              <LoadGameData />
               <ScorePopOut scoreEvent={this.props.gameStatus.name} />
               <Tabs id='MLBScores' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
                   <Tab eventKey={0} title='MLB Scores'>

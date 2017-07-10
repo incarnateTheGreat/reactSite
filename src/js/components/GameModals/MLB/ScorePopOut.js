@@ -22,9 +22,6 @@ export default class ScorePopOut extends React.Component {
       this.setState({ display });
     }
   }
-  // shouldComponentUpdate() {
-  //   console.log("shouldComponentUpdate");
-  // }
 
   render() {
     let scoreEvent = this.props.scoreEvent;

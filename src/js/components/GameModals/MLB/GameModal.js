@@ -59,6 +59,7 @@ export default class GameModalMLB extends React.Component {
             boxScoreBody_homeTeam: null,
             hasChanged: false,
             game: null,
+            slideOutActive: false,
             modalStyle: _.merge(customStyles, tweenStyle),
             activeTab: 0 // Takes active tab from props if it is defined there,
         };
@@ -73,15 +74,12 @@ export default class GameModalMLB extends React.Component {
         this.loader = document.getElementsByClassName("loader")[0];
     }
 
-    openModal() {
+    openModal(callback) {
       let self = this;
 
       this.showLoadingSpinner();
       this.getBoxscoreData(this.state.game, this.state.game.game_data_directory, function() {
-        setTimeout(() => {
-            self.setState({modalIsOpen: true});
-            window.onresize();
-        }, 350);
+        self.hideLoadingSpinner();
       });
     }
 
@@ -869,9 +867,30 @@ export default class GameModalMLB extends React.Component {
                           }
                       });
 
-                      self.setState({gameContentBody});
-                      self.setState({boxScoreBody_awayTeam});
-                      self.setState({boxScoreBody_homeTeam});
+                      self.setState({gameContentBody}, function() {
+                        //Fire off Dispatch.
+                        store.dispatch({
+                          type: 'LOAD_GAME_DATA',
+                          payload: self.state.gameContentBody
+                        });
+                      });
+
+                      self.setState({boxScoreBody_awayTeam}, function() {
+                        //Fire off Dispatch.
+                        store.dispatch({
+                          type: 'LOAD_BOXSCORE_AWAY',
+                          payload: self.state.boxScoreBody_awayTeam
+                        });
+                      });
+
+                      self.setState({boxScoreBody_homeTeam}, function() {
+                        //Fire off Dispatch.
+                        store.dispatch({
+                          type: 'LOAD_BOXSCORE_HOME',
+                          payload: self.state.boxScoreBody_homeTeam
+                        });
+                      });
+
                   }
               });
             }
@@ -915,30 +934,11 @@ export default class GameModalMLB extends React.Component {
       }
     }
 
-    // shouldComponentUpdate(nextProps, nextState) {
-    //     if(this.state.game.status.ind == 'I') {
-    //       // console.log('This.state:');
-    //       // console.log('away:', this.state.game.linescore.r.away);
-    //       // console.log('home:', this.state.game.linescore.r.home);
-    //       // console.log('-----------------------------------------');
-    //       // console.log('NextProps');
-    //       // console.log('away:', nextProps.gameData.linescore.r.away);
-    //       // console.log('home:', nextProps.gameData.linescore.r.home);
-    //       // console.log('==========================================');
-    //
-    //
-    //     //   if(this.state.game.status.o != nextProps.gameData.status.o) {
-    //     //     // console.log('shouldComponentUpdate');
-    //     //     // console.log(this.state.game.away_name_abbrev, 'vs', this.state.game.home_name_abbrev);
-    //     //     // console.log('======================================');
-    //     //     // console.log("OUTS");
-    //     //     // console.log('this.state:', this.state.game.status.o);
-    //     //     // console.log('nextProps:', nextProps.gameData.status.o);
-    //     //     // console.log('======================================');
-    //     //   }
-    //     }
-    //   return true;
-    // }
+    slideOut() {
+      let self = this;
+
+      this.openModal();
+    }
 
     render() {
         const game = this.props.gameData;
@@ -988,13 +988,14 @@ export default class GameModalMLB extends React.Component {
         }
 
         //Set class names for the Score Table. If an Out or a Run is recorded, the indicator class will fire off a CSS Animation.
-        const scoreTableClasses = classNames({
+        let scoreTableClasses = classNames({
           'scoreTable': true,
           'blink_me': this.state.hasChanged
         });
 
         return (
-            <div className={scoreTableClasses} onClick={this.openModal}>
+            // <div className={scoreTableClasses} onClick={this.openModal}>
+            <div className={scoreTableClasses} onClick={this.slideOut.bind(this)}>
                 <div className="scores">
                     <div className="team">{game.away_name_abbrev}</div>
                     <div className="score">{awayScore}</div>
@@ -1007,12 +1008,12 @@ export default class GameModalMLB extends React.Component {
                     <div>{outs}</div>
                 </div>
 
-                <Modal
+                {/* <Modal
                     isOpen={this.state.modalIsOpen}
                     onAfterOpen={this.afterOpenModal}
                     onRequestClose={this.closeModal}
                     style={this.state.modalStyle}
-                    contentLabel="Game Modal MLB">``
+                    contentLabel="Game Modal MLB">
 
                     {this.state.modalIsOpen ? (
                         <div key={game.id}>
@@ -1026,7 +1027,7 @@ export default class GameModalMLB extends React.Component {
                             ) : ('')}
                         </div>
                     ) : ''}
-                </Modal>
+                </Modal> */}
             </div>
         );
     }
