@@ -12,7 +12,8 @@ import Standings from "../components/GameModals/MLB/Standings";
 import LoadGameData from "../components/GameModals/MLB/LoadGameData";
 import ScorePopOut from "../components/GameModals/MLB/ScorePopOut";
 
-require('./tester.scss')
+//SlideOut SCSS
+require('../../styles/slideOut.scss')
 
 //Connect to Redux Store.
 @connect((store) => {
@@ -258,9 +259,29 @@ export default class Scores_MLB extends React.Component {
       });
     }
 
+    slideOutClickListener(e) {
+      let clickEventElem = e.target || e.srcElement,
+          slideOutElem = document.getElementById('slideOut'),
+          openClass = 'open',
+          scoreTableClass = 'scoreTable',
+          isSlideOutElemFound = false;
+
+          //Traverse the DOM upwards until either 'slideOut' ID or 'scoreTable' class are found.
+          //If either are identified, then do not close the SlideOut window.
+          while (clickEventElem.parentNode && !isSlideOutElemFound) {
+            if(clickEventElem.id === 'slideOut' || clickEventElem.classList.contains(scoreTableClass)) {
+              isSlideOutElemFound = true;
+            }
+            clickEventElem = clickEventElem.parentNode
+          }
+
+          //Close SlideOut.
+          if(!isSlideOutElemFound) slideOutElem.classList.remove(openClass);
+    }
+
     render() {
         return (
-            <div>
+            <div onClick={this.slideOutClickListener.bind(this)}>
               <LoadGameData />
               <ScorePopOut scoreEvent={this.props.gameStatus.name} />
               <Tabs id='MLBScores' activeKey={this.state.activeTab} onSelect={this.handleSelect}>

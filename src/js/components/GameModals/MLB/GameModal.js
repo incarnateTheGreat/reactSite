@@ -951,7 +951,7 @@ export default class GameModalMLB extends React.Component {
         const game = this.props.gameData;
         this.state.game = game;
 
-        this.getBrowserSize(game.status.ind);
+        this.getBrowserSize(game.status.ind); //Might be deprecated.
 
         let gameStatus = '',
             outs = '',
