@@ -11,13 +11,14 @@ h1 {
 h2 {
   font-weight: bold;
 }
+h3 {
+  border-bottom: 1px solid #eaeaea;
+  font-weight: bold;
+}
 header {
   position: fixed;
   width: 100%;
   z-index: 100;
-}
-.navbar {
-  margin: 0;
 }
 footer {
   position: absolute;
@@ -27,6 +28,9 @@ footer {
 }
 footer .container .text-muted {
   margin: 20px 0;
+}
+.navbar {
+  margin: 0;
 }
 .container-fluid > div {
   margin: 73px 0 0;
@@ -60,10 +64,6 @@ footer .container .text-muted {
 .gameGroupContainer .completedGamesGroupContainer {
   padding: 0 30px 0 0;
   overflow: hidden;
-}
-h3 {
-  border-bottom: 1px solid #eaeaea;
-  font-weight: bold;
 }
 .scoreTable {
   float: left;
@@ -103,7 +103,6 @@ h3 {
 @keyframes blinker {
   50% { opacity: 0; }
 }
-
 @media (max-width: 768px) {
   .logo {
     clear: both;
@@ -117,7 +116,6 @@ h3 {
     float: left;
   }
 }
-
 .navbar-nav li a {
   transition:all 0.3s ease;
   height: 50px;
@@ -156,349 +154,6 @@ h3 {
   transition: all 0.35s ease;
   opacity: 0;
   z-index: -1;
-}
-
-/*Game Modal NHL*/
-.status {
-  text-align: right;
-  padding: 8px 15px 7px 0;
-  font-weight: bold;
-  background-color: rgba(0, 0, 0, 0.050);
-  text-transform: uppercase;
-}
-.teamBlockContainer {
-  float: left;
-  width: 260px;
-}
-@media screen and (max-width: 1240px) {
-  .teamBlockContainer {
-    clear: both;
-    display: block;
-    width: 100%;
-  }
-  .teamBlock {
-    float: left;
-    width: 50%;
-  }
-  .scoringSummaryContainer {
-    clear: both;
-  }
-}
-.teamBlock {
-  height: 185px;
-  background-position: 20px 50%;
-  background-repeat: no-repeat;
-  background-size: 125px;
-  border-top: 0;
-  border-right: 1px solid #dadada;
-  border-bottom: 1px solid #dadada;
-  border-left: 0;
-}
-.teamBlock > div {
-  float: right;
-  padding: 46px 14px 14px 0;
-}
-.teamBlock > div span {
-  font-size: 60px;
-  font-weight: bold;
-}
-.scoringSummaryContainer {
-  overflow-y: auto;
-  height: 406px;
-}
-.scoringSummaryContainer .desc {
-  font-weight: bold;
-  font-size: 18px;
-  text-align: right;
-  padding: 10px 11px 10px 0;
-  border-left: 5px solid darkred;
-  background-color: #f7f7f9;
-}
-.scoringSummaryContainer .desc.venue {
-  padding: 5px 11px 6px 11px;
-  text-align: right;
-}
-.scoringSummaryContainer .teamInfoTable {
-  clear: both;
-  float: right;
-  padding: 15px 10px 15px 0;
-}
-.scoringSummaryContainer .teamInfoTable .teamName {
-  text-align: right;
-  font-weight: bold;
-  font-size: 20px;
-  border-bottom: 1px solid black;
-}
-.scoringSummaryContainer .teamInfoTable > .row {
-  display: table-row;
-}
-.scoringSummaryContainer .teamInfoTable > .row table {
-  width: 580px;
-}
-.scoringSummaryContainer .teamInfoTable > .row table th {
-  text-align: right;
-  background: #f7f7f9;
-}
-.scoringSummaryContainer .teamInfoTable > .row table td {
-  text-align: right;
-}
-.scoringSummary {
-  text-align: right;
-}
-.scoringSummary > div:first-child {
-  background-color: rgba(247,247,249, 0.2);
-  padding: 10px 8px 10px 0;
-  font-weight: bold;
-  border-top: 1px solid #e1e1e8;
-  border-bottom: 1px solid #e1e1e8;
-  border-left: none;
-  border-right: none;
-}
-.scoringSummary .scorerInfo {
-  padding: 10px;
-}
-.scoringSummary .scorerInfo.threeStars {
-  width: 200px;
-  float: right;
-}
-.scoringSummary .scorerInfo.threeStars span {
-  float: left;
-}
-.scoringSummary .scorerInfo.threeStars span.starName {
-  float: right;
-}
-
-/*Game Modal MLB*/
-.boxScoreContainer .topBar {
-  font-size: 24px;
-  overflow: auto;
-}
-.boxScoreContainer .topBar .inningState {
-  border-bottom: 1px solid black;
-  font-weight: bold;
-}
-.boxScoreContainer .topBar .scoreBar {
-  clear: both;
-  padding: 5px 10px;
-  overflow: auto;
-  background: rgba(189, 30, 19, 0.1);
-}
-.boxScoreContainer .topBar .scoreBar:last-child {
-  background: rgba(218, 218, 218, 0.2);
-}
-.boxScoreContainer .topBar .scoreBar span {
-  float: left;
-}
-.boxScoreContainer .topBar .scoreBar span:first-child {
-  width: 200px;
-}
-.boxScoreContainer .topBar .scoreBar span:last-child {
-  font-weight: bold;
-}
-.headline {
-  font-weight: bold;
-  font-size: 18px;
-}
-.teamNames {
-  font-size: 24px;
-  font-weight: bold;
-}
-.startTime {
-  font-size: 16px;
-  font-weight: bold;
-}
-.boxScore {
-  font-size: 18px;
-}
-.boxScore .inningContainer {
-  float: left;
-  padding: 10px 0;
-  text-align: center;
-}
-.boxScore .inningContainer .inning {
-  font-weight: bold;
-  background-color: #FBFBFB;
-  font-family: "BentonSans", "Helvetica Neue", sans-serif;
-  color: #333;
-  border-top: 1px solid #f2f2f2;
-  border-left: 1px solid #f2f2f2;
-}
-.boxScore .inningContainer .scoreBox {
-  padding: 2px 5px;
-  border: 1px solid rgba(218, 218, 218, 0.5);
-  min-height: 32px;
-  width: 70px;
-}
-@media screen and (max-width: 1320px) {
-  .boxScore .inningContainer .scoreBox {
-      width: 58px;
-  }
-}
-@media screen and (max-width: 1130px) {
-  .boxScore .inningContainer .scoreBox {
-      width: 45px;
-  }
-}
-@media screen and (max-width: 950px) {
-  .boxScore .inningContainer .scoreBox {
-      width: 35px;
-  }
-}
-.boxScore .inningContainer .scoreBox.currentInning {
-  background: rgba(218, 218, 218, 0.3);
-  font-weight: bold;
-  border: 1px solid rgba(218, 218, 218, 1);
-
-}
-.boxScore .inningContainer .teamName {
-  font-weight: bold;
-  text-align: left;
-  padding: 4px 5px;
-  width: 55px;
-}
-.boxScore.totals {
-  overflow: auto;
-  color: #000;
-}
-.boxScore.totals .inningContainer:first-child div {
-  border-left: 1px solid rgba(189, 30, 19, 0.5);
-}
-.boxScore.totals .scoreBox {
-  background: rgba(153, 136, 136, 0.15);
-  font-weight: bold;
-}
-.activePlayerDataContainer {
-  overflow-y: scroll;
-}
-.activePlayerDataContainer.shortHeight {
-  height: 100%;
-}
-.activePlayerData {
-  overflow: auto;
-  clear: both;
-  padding: 0 0 15px;
-}
-.activePlayerData .bases {
-  padding: 0 20px 0px 0;
-  overflow: hidden;
-  float: left;
-}
-.activePlayerData .venueData {
-  clear: both;
-  padding: 10px 0 0;
-}
-.activePlayerData .bases .baseRow {
-  clear: both;
-}
-.activePlayerData .bases .baseRow.secondBase .base {
-  margin: 5px 10px 2px 13px;
-}
-.activePlayerData .bases .base {
-  border: 1px solid rgba(189, 30, 19, 1);
-  width: 15px;
-  height: 15px;
-  float: left;
-  margin: 0 10px 0 0;
-  -ms-transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-  transform: rotate(45deg);
-}
-.activePlayerData .bases .baseContainer {
-   float: left;
-   padding: 0 15px 0 4px;
- }
-.disable {
-  display: none;
-}
-.activePlayerData .bases .currentPitcherBatter {
-  float: left;
-}
-.activePlayerData .bases .winnerLoser {
-  float: left;
-}
-.activePlayerData .bases .winnerLoser table tr.pitcherData td:last-child {
-  padding: 0 0 0 15px;
-}
-.activePlayerData .bases .base.onBase {
-  background: rgba(189, 30, 19, 1);
-  cursor: pointer;
-}
-.activePlayerData .bases .onBasePlayer {
-  display: inline;
-}
-.activePlayerData .BSO {
-  overflow: hidden;
-  margin: 5px 0 0;
-}
-.activePlayerData .BSO .BSOContainer {
-  float: left;
-  margin: 0 10px 0 0;
-}
-.activePlayerData .BSO .lastPlayDesc {
-  padding: 26px 0 0;
-}
-.activePlayerData .BSO div .bsoName {
-  float: left;
-  margin: 0;
-  background: transparent;
-  border: none;
-  padding: 0 16px 0 0;
-}
-.activePlayerData .BSO .BSOContainer div {
-  float: left;
-  margin: 4px 3px;
-  border-radius: 35px;
-  border: 1px solid rgba(189, 30, 19, 1);
-  width: 13px;
-  height: 13px;
-}
-.activePlayerData .BSO .BSOContainer div:first-child {
-  border: none;
-  margin: 0;
-}
-.activePlayerData .BSO div div.countIt {
-  background: rgba(189, 30, 19, 1);
-}
-.batterData {
-  width: 100%;
-}
-.batterData .batterDataTable tr:nth-child(odd) {
-  background: rgba(218, 218, 218, 0.2);
-  border-top: 1px solid rgba(218, 218, 218, 0.5);
-  border-bottom: 1px solid rgba(218, 218, 218, 0.5);
-}
-.batterData .batterDataTable tr td,
-.batterData .batterDataTable tr th{
-  padding: 2px 0;
-  width: 1%;
-  text-align: right;
-}
-.batterData .batterDataTable tr th {
-  text-transform: uppercase;
-}
-.batterData .batterDataTable tr.teamNameRow {
-  background: none;
-  border-bottom: 1px solid black;
-  font-size: 18px;
-  font-weight: bold;
-}
-.batterData .batterDataTable tr.teamNameRow td {
-  text-align: left;
-}
-.batterData .batterDataTable tr th.notNumeric,
-.batterData .batterDataTable tr td.notNumeric {
-  text-align: left;
-  width: 2%;
-}
-.batterData .batterDataTable tr .notNumeric .playerPosition {
-  font-weight: bold;
-  padding: 0 0 0 5px;
-}
-.batterData .batterDataTable tr .pinchHitter {
-  padding: 0 0 0 10px;
-}
-.batterData .batterDataTable tr.pitcherTotalsRow td {
-  border-top: 1px solid #999;
 }
 
 /*Loading Spinner*/

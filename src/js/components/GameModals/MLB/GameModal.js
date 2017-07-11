@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import classNames from 'classnames';
 import {Tab, Tabs} from "react-bootstrap";
 import { connect } from 'react-redux'
+import _ from 'lodash'
 
 //Redux Store
 import store from '../../../store';
@@ -38,6 +39,9 @@ let tweenStyle = {
         opacity               : '0'
     }
 };
+
+//GameModal MLB SCSS
+require('./scss/GameModal.scss')
 
 //Connect to Redux Store.
 @connect((store) => {

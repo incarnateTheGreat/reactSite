@@ -6,7 +6,6 @@ import { compose, bindActionCreators } from 'redux';
 import { Provider, connect } from 'react-redux';
 import { syncHistoryWithStore } from 'react-router-redux';
 import * as actionCreators from './actions/gameStatus';
-
 import axios from 'axios';
 
 import Layout from "./pages/Layout";
@@ -19,7 +18,7 @@ import Scores_MLB from "./pages/Scores_MLB";
 import store from './store';
 
 //Base Style SCSS
-// require('../styles/style.scss')
+require('../styles/style.scss')
 
 //Create object for default data
 const history = syncHistoryWithStore(browserHistory, store),

@@ -1,6 +1,7 @@
 import { EventEmitter } from "events";
 
 import dispatcher from "../dispatcher";
+import _ from 'lodash'
 
 class TodoStore extends EventEmitter {
   constructor() {

@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
+import _ from 'lodash'
 
 const customStyles = {
     overlay : {
@@ -30,6 +31,9 @@ let tweenStyle = {
         opacity               : '0'
     }
 };
+
+//GameModal MLB SCSS
+require('./scss/GameModal.scss')
 
 export default class GameModal extends React.Component {
     constructor() {

@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import shallowCompare from 'react-addons-shallow-compare';
+import _ from 'lodash';
 
 //LeagueFilter SCSS
 require('./scss/Standings.scss')
@@ -18,7 +19,6 @@ export default class Standings extends React.Component {
       let self = this;
 
       axios.get('https://erikberg.com/mlb/standings.xml').then(function (standings) {
-        // axios.get('../testData/standings.xml').then(function (standings) {
           let parseString = require('xml2js').parseString;
           parseString(standings.data, function (err, result) {
               let standingsParsed = result['sports-content'].standing,

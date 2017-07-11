@@ -1,5 +1,6 @@
 import React from "react";
 import shallowCompare from 'react-addons-shallow-compare';
+import _ from 'lodash'
 
 export default class ScoreBox extends React.Component {
     constructor(props) {

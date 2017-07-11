@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import _ from 'lodash'
+
+//ScorePopOut SCSS
+require('./scss/ScorePopOut.scss')
 
 export default class ScorePopOut extends React.Component {
   constructor(props) {
