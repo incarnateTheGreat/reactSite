@@ -1,0 +1,31 @@
+//Standings SCSS
+
+//colors
+$mine_shaft_12_4: rgba(50,50,50,0.124);
+
+.standings {
+	margin: 10px 0;
+	width: 100%;
+	thead {
+		background: $mine_shaft_12_4;
+		th {
+			padding: 1px 5px;
+			text-align: right;
+			&:first-child {
+				text-align: left;
+			}
+		}
+	}
+	tr {
+		border-bottom: 1px solid $mine_shaft_12_4;
+		td {
+			width: 5%;
+			padding: 0 5px;
+			text-align: right;
+			&:first-child {
+				width: 11%;
+				text-align: left;
+			}
+		}
+	}
+}

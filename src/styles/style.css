@@ -501,67 +501,6 @@ h3 {
   border-top: 1px solid #999;
 }
 
-/*League Filter*/
-.leagueFilter {
-  background: rgba(39, 128, 227, 0.45);
-  padding: 5px;
-  margin: 0 0 5px;
-  overflow: auto;
-}
-.leagueFilter input[type='radio'] {
-  float: left;
-}
-.leagueFilter .leagueSelector {
-  float: left;
-  padding: 0 5px;
-}
-.leagueFilter .leagueSelector span {
-  padding: 0 0 0 6px;
-}
-
-/*Standings*/
-.standings {
-  margin: 10px 0;
-  width: 100%;
-}
-.standings thead {
-  background: rgba(50,50,50,0.124);
-}
-.standings thead th {
-  padding: 1px 5px;
-  text-align: right;
-}
-.standings thead th:first-child {
-  text-align: left;
-}
-.standings tr {
-  border-bottom: 1px solid rgba(50,50,50,0.124);
-}
-.standings tr td {
-  width: 5%;
-  padding: 0 5px;
-  text-align: right;
-}
-.standings tr td:first-child {
-  width: 11%;
-  text-align: left;
-}
-
-/*Score PopOut*/
-.scorePopOut {
-  position: fixed;
-  margin: 0 auto;
-  left: 0;
-  right: 0;
-  top: 20px;
-  background: red;
-  padding: 5px 10px;
-  width: 300px;
-}
-.scorePopOut.show {
-  top: 43px;
-}
-
 /*Loading Spinner*/
 @-webkit-keyframes spin {
   0% { -webkit-transform: rotate(0deg); }

@@ -1,0 +1,21 @@
+//LeagueFilter SCSS
+
+//colors
+$color_curious_blue_45_approx: rgba(39, 128, 227, 0.45);
+
+.leagueFilter {
+	background: $color_curious_blue_45_approx;
+	padding: 5px;
+	margin: 0 0 5px;
+	overflow: auto;
+	input[type='radio'] {
+		float: left;
+	}
+	.leagueSelector {
+		float: left;
+		padding: 0 5px;
+		span {
+			padding: 0 0 0 6px;
+		}
+	}
+}

@@ -2,6 +2,9 @@ import React from 'react';
 import axios from 'axios';
 import shallowCompare from 'react-addons-shallow-compare';
 
+//LeagueFilter SCSS
+require('./scss/Standings.scss')
+
 export default class Standings extends React.Component {
   constructor(props) {
     super(props);

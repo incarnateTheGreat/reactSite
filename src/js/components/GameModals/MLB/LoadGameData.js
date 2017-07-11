@@ -5,6 +5,9 @@ import { Tab, Tabs } from "react-bootstrap"
 //Redux Store
 import store from '../../../store'
 
+//SlideOut SCSS
+require('./scss/SlideOut.scss')
+
 //Connect to Redux Store.
 @connect((store) => {
   return {

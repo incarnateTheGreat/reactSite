@@ -12,9 +12,6 @@ import Standings from "../components/GameModals/MLB/Standings";
 import LoadGameData from "../components/GameModals/MLB/LoadGameData";
 import ScorePopOut from "../components/GameModals/MLB/ScorePopOut";
 
-//SlideOut SCSS
-require('../../styles/slideOut.scss')
-
 //Connect to Redux Store.
 @connect((store) => {
   return {

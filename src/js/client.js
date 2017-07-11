@@ -18,6 +18,9 @@ import Scores_MLB from "./pages/Scores_MLB";
 //Redux Store
 import store from './store';
 
+//Base Style SCSS
+// require('../styles/style.scss')
+
 //Create object for default data
 const history = syncHistoryWithStore(browserHistory, store),
       app = document.getElementById('app');

@@ -1,0 +1,604 @@
+//colors
+$color_wild_sand_approx: #f5f5f5;
+$white: white;
+$color_gray_nurse_approx: #eaeaea;
+$color_alto_approx: #dadada;
+$black_10: rgba(0,0,0,.1);
+$black_20: rgba(0,0,0,.2);
+$color_gallery_approx: #eee;
+$color_denim_approx: #1967be;
+$color_concrete_approx: #f3f3f3;
+$color_curious_blue_approx: #3498db;
+$black_5: rgba(0, 0, 0, 0.050);
+$color_red_berry_approx:  darkred;
+$color_black_haze_approx: #f7f7f9;
+$black:  black;
+$color_black_haze_20_approx: rgba(247,247,249, 0.2);
+$color_mercury_approx: #e1e1e8;
+$color_thunderbird_10_approx: rgba(189, 30, 19, 0.1);
+$color_alto_20_approx: rgba(218, 218, 218, 0.2);
+$color_alabaster_approx: #fbfbfb;
+$color_mine_shaft_approx: #333;
+$concrete: #f2f2f2;
+$color_alto_50_approx: rgba(218, 218, 218, 0.5);
+$color_alto_30_approx: rgba(218, 218, 218, 0.3);
+$color_thunderbird_50_approx: rgba(189, 30, 19, 0.5);
+$color_venus_15_approx: rgba(153, 136, 136, 0.15);
+$color_thunderbird_approx: rgba(189, 30, 19, 1);
+$color_mountain_mist_approx: #999;
+$color_curious_blue_45_approx: rgba(39, 128, 227, 0.45);
+$mine_shaft_12_4: rgba(50,50,50,0.124);
+$red: red;
+
+//fonts
+$font_0: Arial;
+$font_1: sans-serif;
+$font_2: BentonSans;
+$font_3: Helvetica Neue;
+
+html {
+	height: 100%;
+	margin: 0;
+}
+body {
+	height: 100%;
+	margin: 0;
+}
+hr {
+	margin: 10px 0;
+}
+h1 {
+	text-decoration: none;
+}
+h2 {
+	font-weight: bold;
+}
+header {
+	position: fixed;
+	width: 100%;
+	z-index: 100;
+}
+.navbar {
+	margin: 0;
+}
+footer {
+	position: absolute;
+	width: 100%;
+	height: 60px;
+	background-color: $color_wild_sand_approx;
+	.container .text-muted {
+		margin: 20px 0;
+	}
+}
+.navbar-collapse {
+	width: 100%;
+	float: left;
+}
+.navbar-nav {
+	float: right;
+	li a {
+		//Instead of the line below you could use @include transition($transition-1, $transition-2, $transition-3, $transition-4, $transition-5, $transition-6, $transition-7, $transition-8, $transition-9, $transition-10)
+		transition: all 0.3s ease;
+		height: 50px;
+		font: normal normal 700 1em/1.5em $font_0, $font_1;
+		overflow: hidden;
+		&.active {
+			color: $white;
+			background-color: $color_denim_approx;
+		}
+		span {
+			color: $white;
+			text-decoration: none;
+			text-align: center;
+			display: block;
+			height: 60px;
+		}
+		&:hover .navAnimBtn {
+			margin-top: -4em;
+		}
+	}
+}
+.logo {
+	color: $white;
+	float: left;
+	padding: 14px 10px;
+	font: normal normal 700 1.25em/1.25em $font_0, $font_1;
+}
+.scoreTableContainer {
+	overflow: auto;
+}
+.gameGroupContainer {
+	clear: both;
+	overflow: auto;
+	margin: 0 0 30px;
+	.completedGamesGroupContainer {
+		padding: 0 30px 0 0;
+		overflow: hidden;
+	}
+}
+h3 {
+	border-bottom: 1px solid $color_gray_nurse_approx;
+	font-weight: bold;
+}
+.scoreTable {
+	float: left;
+	background-color: $color_alto_approx;
+	padding: 10px 12px;
+	margin: 0 10px 5px 0;
+	width: 175px;
+	height: 60px;
+	cursor: pointer;
+	//Instead of the line below you could use @include transition($transition-1, $transition-2, $transition-3, $transition-4, $transition-5, $transition-6, $transition-7, $transition-8, $transition-9, $transition-10)
+	transition: all 0.2s linear;
+	&:hover {
+		//Instead of the line below you could use @include box-shadow($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10)
+		box-shadow: 0 0 0 1px $black_10, 0 2px 3px $black_20;
+		background: $color_gallery_approx;
+	}
+	.scores {
+		float: left;
+		.team {
+			float: left;
+			width: 65px;
+		}
+		.score {
+			float: left;
+			font-weight: bold;
+		}
+	}
+	.gameStatusContainer {
+		float: right;
+		.timeRemaining {
+			text-align: right;
+		}
+	}
+	&.blink_me {
+		animation: blinker 1s linear infinite;
+		animation-iteration-count: 2;
+	}
+}
+@keyframes blinker {
+	50% {
+		opacity: 0;
+	}
+}
+@media(max-width: 768px) {
+	.logo {
+		clear: both;
+	}
+	.navbar-nav {
+		clear: both;
+		float: left;
+		padding: 0 0 0 10px;
+		li {
+			float: left;
+		}
+	}
+}
+.navAnimBtn {
+	//Instead of the line below you could use @include transition($transition-1, $transition-2, $transition-3, $transition-4, $transition-5, $transition-6, $transition-7, $transition-8, $transition-9, $transition-10)
+	transition: 0.3s;
+	margin-top: 0;
+}
+.loader {
+	position: fixed;
+	top: 46%;
+	left: 46%;
+	border: 16px solid $color_concrete_approx;
+	//Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+	border-radius: 50%;
+	border-top: 16px solid $color_curious_blue_approx;
+	width: 120px;
+	height: 120px;
+	animation: spin 1s linear infinite;
+	//Instead of the line below you could use @include transition($transition-1, $transition-2, $transition-3, $transition-4, $transition-5, $transition-6, $transition-7, $transition-8, $transition-9, $transition-10)
+	transition: all 0.35s ease;
+	opacity: 0;
+	z-index: -1;
+}
+.status {
+	text-align: right;
+	padding: 8px 15px 7px 0;
+	font-weight: bold;
+	background-color: $black_5;
+	text-transform: uppercase;
+}
+.teamBlockContainer {
+	float: left;
+	width: 260px;
+}
+@media screen and(max-width: 1240px) {
+	.teamBlockContainer {
+		clear: both;
+		display: block;
+		width: 100%;
+	}
+	.teamBlock {
+		float: left;
+		width: 50%;
+	}
+	.scoringSummaryContainer {
+		clear: both;
+	}
+}
+.teamBlock {
+	height: 185px;
+	background-position: 20px 50%;
+	background-repeat: no-repeat;
+	background-size: 125px;
+	border-top: 0;
+	border-right: 1px solid $color_alto_approx;
+	border-bottom: 1px solid $color_alto_approx;
+	border-left: 0;
+	> div {
+		float: right;
+		padding: 46px 14px 14px 0;
+		span {
+			font-size: 60px;
+			font-weight: bold;
+		}
+	}
+}
+.scoringSummaryContainer {
+	overflow-y: auto;
+	height: 406px;
+	.desc {
+		font-weight: bold;
+		font-size: 18px;
+		text-align: right;
+		padding: 10px 11px 10px 0;
+		border-left: 5px solid $color_red_berry_approx;
+		background-color: $color_black_haze_approx;
+		&.venue {
+			padding: 5px 11px 6px;
+			text-align: right;
+		}
+	}
+	.teamInfoTable {
+		clear: both;
+		float: right;
+		padding: 15px 10px 15px 0;
+		.teamName {
+			text-align: right;
+			font-weight: bold;
+			font-size: 20px;
+			border-bottom: 1px solid $black;
+		}
+		> .row {
+			display: table-row;
+			table {
+				width: 580px;
+				th {
+					text-align: right;
+					background: $color_black_haze_approx;
+				}
+				td {
+					text-align: right;
+				}
+			}
+		}
+	}
+}
+.scoringSummary {
+	text-align: right;
+	.scorerInfo {
+		padding: 10px;
+		&.threeStars {
+			width: 200px;
+			float: right;
+			span {
+				float: left;
+				&.starName {
+					float: right;
+				}
+			}
+		}
+	}
+	> div:first-child {
+		background-color: $color_black_haze_20_approx;
+		padding: 10px 8px 10px 0;
+		font-weight: bold;
+		border-top: 1px solid $color_mercury_approx;
+		border-bottom: 1px solid $color_mercury_approx;
+		border-left: none;
+		border-right: none;
+	}
+}
+.headline {
+	font-weight: bold;
+	font-size: 18px;
+}
+.teamNames {
+	font-size: 24px;
+	font-weight: bold;
+}
+.startTime {
+	font-size: 16px;
+	font-weight: bold;
+}
+.boxScore {
+	font-size: 18px;
+	.inningContainer {
+		float: left;
+		padding: 10px 0;
+		text-align: center;
+		.inning {
+			font-weight: bold;
+			background-color: $color_alabaster_approx;
+			font-family: $font_2, $font_3, $font_1;
+			color: $color_mine_shaft_approx;
+			border-top: 1px solid $concrete;
+			border-left: 1px solid $concrete;
+		}
+		.scoreBox {
+			padding: 2px 5px;
+			border: 1px solid $color_alto_50_approx;
+			min-height: 32px;
+			width: 70px;
+			&.currentInning {
+				background: $color_alto_30_approx;
+				font-weight: bold;
+				border: 1px solid $color_alto_approx;
+			}
+		}
+		.teamName {
+			font-weight: bold;
+			text-align: left;
+			padding: 4px 5px;
+			width: 55px;
+		}
+	}
+	&.totals {
+		overflow: auto;
+		color: $black;
+		.scoreBox {
+			background: $color_venus_15_approx;
+			font-weight: bold;
+		}
+		.inningContainer:first-child div {
+			border-left: 1px solid $color_thunderbird_50_approx;
+		}
+	}
+}
+@media screen and(max-width: 1320px) {
+	.boxScore .inningContainer .scoreBox {
+		width: 58px;
+	}
+}
+@media screen and(max-width: 1130px) {
+	.boxScore .inningContainer .scoreBox {
+		width: 45px;
+	}
+}
+@media screen and(max-width: 950px) {
+	.boxScore .inningContainer .scoreBox {
+		width: 35px;
+	}
+}
+.activePlayerDataContainer {
+	overflow-y: scroll;
+	&.shortHeight {
+		height: 100%;
+	}
+}
+.activePlayerData {
+	overflow: auto;
+	clear: both;
+	padding: 0 0 15px;
+	.bases {
+		padding: 0 20px 0 0;
+		overflow: hidden;
+		float: left;
+		.baseRow {
+			clear: both;
+			&.secondBase .base {
+				margin: 5px 10px 2px 13px;
+			}
+		}
+		.base {
+			border: 1px solid $color_thunderbird_approx;
+			width: 15px;
+			height: 15px;
+			float: left;
+			margin: 0 10px 0 0;
+			//Instead of the line below you could use @include transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+			transform: rotate(45deg);
+			&.onBase {
+				background: $color_thunderbird_approx;
+				cursor: pointer;
+			}
+		}
+		.baseContainer {
+			float: left;
+			padding: 0 15px 0 4px;
+		}
+		.currentPitcherBatter {
+			float: left;
+		}
+		.winnerLoser {
+			float: left;
+			table tr.pitcherData td:last-child {
+				padding: 0 0 0 15px;
+			}
+		}
+		.onBasePlayer {
+			display: inline;
+		}
+	}
+	.venueData {
+		clear: both;
+		padding: 10px 0 0;
+	}
+	.BSO {
+		overflow: hidden;
+		margin: 5px 0 0;
+		.BSOContainer {
+			float: left;
+			margin: 0 10px 0 0;
+			div {
+				float: left;
+				margin: 4px 3px;
+				//Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+				border-radius: 35px;
+				border: 1px solid $color_thunderbird_approx;
+				width: 13px;
+				height: 13px;
+				&:first-child {
+					border: none;
+					margin: 0;
+				}
+			}
+		}
+		.lastPlayDesc {
+			padding: 26px 0 0;
+		}
+		div {
+			.bsoName {
+				float: left;
+				margin: 0;
+				background: transparent;
+				border: none;
+				padding: 0 16px 0 0;
+			}
+			div.countIt {
+				background: $color_thunderbird_approx;
+			}
+		}
+	}
+}
+.disable {
+	display: none;
+}
+.batterData {
+	width: 100%;
+	.batterDataTable tr {
+		&:nth-child(odd) {
+			background: $color_alto_20_approx;
+			border-top: 1px solid $color_alto_50_approx;
+			border-bottom: 1px solid $color_alto_50_approx;
+		}
+		td {
+			padding: 2px 0;
+			width: 1%;
+			text-align: right;
+			&.notNumeric {
+				text-align: left;
+				width: 2%;
+			}
+		}
+		th {
+			padding: 2px 0;
+			width: 1%;
+			text-align: right;
+			text-transform: uppercase;
+			&.notNumeric {
+				text-align: left;
+				width: 2%;
+			}
+		}
+		&.teamNameRow {
+			background: none;
+			border-bottom: 1px solid $black;
+			font-size: 18px;
+			font-weight: bold;
+			td {
+				text-align: left;
+			}
+		}
+		.pinchHitter {
+			padding: 0 0 0 10px;
+		}
+		.notNumeric .playerPosition {
+			font-weight: bold;
+			padding: 0 0 0 5px;
+		}
+		&.pitcherTotalsRow td {
+			border-top: 1px solid $color_mountain_mist_approx;
+		}
+	}
+}
+.standings {
+	margin: 10px 0;
+	width: 100%;
+	thead {
+		background: $mine_shaft_12_4;
+		th {
+			padding: 1px 5px;
+			text-align: right;
+			&:first-child {
+				text-align: left;
+			}
+		}
+	}
+	tr {
+		border-bottom: 1px solid $mine_shaft_12_4;
+		td {
+			width: 5%;
+			padding: 0 5px;
+			text-align: right;
+			&:first-child {
+				width: 11%;
+				text-align: left;
+			}
+		}
+	}
+}
+.scorePopOut {
+	position: fixed;
+	margin: 0 auto;
+	left: 0;
+	right: 0;
+	top: 20px;
+	background: $red;
+	padding: 5px 10px;
+	width: 300px;
+	&.show {
+		top: 43px;
+	}
+}
+@-webkit-keyframes spin {
+	0% {
+	}
+	100% {
+	}
+}
+@keyframes spin {
+	0% {
+		//Instead of the line below you could use @include transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+		transform: rotate(0deg);
+	}
+	100% {
+		//Instead of the line below you could use @include transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+		transform: rotate(360deg);
+	}
+}
+.container-fluid > div {
+	margin: 73px 0 0;
+	padding: 0 10px;
+}
+.boxScoreContainer .topBar {
+	font-size: 24px;
+	overflow: auto;
+	.inningState {
+		border-bottom: 1px solid $black;
+		font-weight: bold;
+	}
+	.scoreBar {
+		clear: both;
+		padding: 5px 10px;
+		overflow: auto;
+		background: $color_thunderbird_10_approx;
+		&:last-child {
+			background: $color_alto_20_approx;
+		}
+		span {
+			float: left;
+			&:first-child {
+				width: 200px;
+			}
+			&:last-child {
+				font-weight: bold;
+			}
+		}
+	}
+}

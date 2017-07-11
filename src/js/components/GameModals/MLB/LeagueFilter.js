@@ -1,6 +1,9 @@
 import React from "react";
 import shallowCompare from 'react-addons-shallow-compare';
 
+//LeagueFilter SCSS
+require('./scss/LeagueFilter.scss')
+
 export default class LeagueFilter extends React.Component {
     constructor(props) {
         super(props);
