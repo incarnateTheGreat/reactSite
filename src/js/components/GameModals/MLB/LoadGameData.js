@@ -29,7 +29,7 @@ export default class LoadGameData extends React.Component {
 
     render() {
         return (
-            <div className='slideOut'>
+            <div id='slideOut'>
               {this.props.loadGameData.gameData}
 
               {/* {(game.status.ind === 'I' || game.status.ind === 'MC' || game.status.ind === 'PW' || game.status.ind === 'F' || game.status.ind === 'O') ? (

@@ -281,7 +281,13 @@ export default class GameModalMLB extends React.Component {
                     <div className='activePlayerDataContainer shortHeight'>{activePlayerData}</div>
                 </div>);
 
-                self.setState({gameContentBody});
+                self.setState({gameContentBody}, function() {
+                  //Fire off Dispatch.
+                  store.dispatch({
+                    type: 'LOAD_GAME_DATA',
+                    payload: self.state.gameContentBody
+                  });
+                });
               });
             }
 
@@ -938,6 +944,7 @@ export default class GameModalMLB extends React.Component {
       let self = this;
 
       this.openModal();
+      document.getElementById('slideOut').classList.add('open');
     }
 
     render() {
