@@ -230,7 +230,13 @@ export default class GameModalMLB extends React.Component {
                     <div className='activePlayerDataContainer shortHeight'>{activePlayerData}</div>
                 </div>);
 
-                self.setState({gameContentBody});
+                self.setState({gameContentBody}, function() {
+                  //Fire off Dispatch.
+                  store.dispatch({
+                    type: 'LOAD_GAME_DATA',
+                    payload: self.state.gameContentBody
+                  });
+                });
             }
 
             // Display Pregame data
@@ -901,6 +907,11 @@ export default class GameModalMLB extends React.Component {
                         });
                       });
 
+                      //Fire off Dispatch.
+                      store.dispatch({
+                        type: 'LOAD_GAME_TAB_DATA',
+                        payload: self.state.game
+                      });
                   }
               });
             }
@@ -1005,7 +1016,6 @@ export default class GameModalMLB extends React.Component {
         });
 
         return (
-            // <div className={scoreTableClasses} onClick={this.openModal}>
             <div className={scoreTableClasses} onClick={this.slideOut.bind(this)}>
                 <div className="scores">
                     <div className="team">{game.away_name_abbrev}</div>

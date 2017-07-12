@@ -3,8 +3,6 @@ const initialState = {
   fetching: false,
   fetched: false,
   gameData: '',
-  boxScore_home: '',
-  boxscore_away: '',
   error: null
 };
 
@@ -24,6 +22,12 @@ const reducer = (state = initialState, action) => {
    }
    case 'LOAD_BOXSCORE_HOME': {
        state.boxScore_home = action.payload;
+
+       return {...state}
+       break;
+   }
+   case 'LOAD_GAME_TAB_DATA': {
+       state.gameTabData = action.payload;
 
        return {...state}
        break;
