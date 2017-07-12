@@ -1018,27 +1018,6 @@ export default class GameModalMLB extends React.Component {
                     <div className="timeRemaining">{gameStatus}</div>
                     <div>{outs}</div>
                 </div>
-
-                {/* <Modal
-                    isOpen={this.state.modalIsOpen}
-                    onAfterOpen={this.afterOpenModal}
-                    onRequestClose={this.closeModal}
-                    style={this.state.modalStyle}
-                    contentLabel="Game Modal MLB">
-
-                    {this.state.modalIsOpen ? (
-                        <div key={game.id}>
-                            {this.state.gameContentBody}
-
-                            {(game.status.ind === 'I' || game.status.ind === 'MC' || game.status.ind === 'PW' || game.status.ind === 'F' || game.status.ind === 'O') ? (
-                                <Tabs id='boxScoreTabs' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
-                                    <Tab eventKey={0} title={game.away_name_abbrev}>{this.state.boxScoreBody_awayTeam}</Tab>
-                                    <Tab eventKey={1} title={game.home_name_abbrev}>{this.state.boxScoreBody_homeTeam}</Tab>
-                                </Tabs>
-                            ) : ('')}
-                        </div>
-                    ) : ''}
-                </Modal> */}
             </div>
         );
     }

@@ -1,18 +1,18 @@
-import React from "react";
-import axios from 'axios';
-import { Tab, Tabs } from "react-bootstrap";
+import React from 'react'
+import axios from 'axios'
+import { Tab, Tabs } from 'react-bootstrap'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import _ from 'lodash'
 
 //Redux Store
-import store from '../store';
+import store from '../store'
 
-import GameModalMLB from "../components/GameModals/MLB/GameModal";
-import LeagueFilter from "../components/GameModals/MLB/LeagueFilter";
-import Standings from "../components/GameModals/MLB/Standings";
-import LoadGameData from "../components/GameModals/MLB/LoadGameData";
-import ScorePopOut from "../components/GameModals/MLB/ScorePopOut";
+import GameModalMLB from '../components/GameModals/MLB/GameModal'
+import LeagueFilter from '../components/GameModals/MLB/LeagueFilter'
+import Standings from '../components/GameModals/MLB/Standings'
+import LoadGameData from '../components/GameModals/MLB/LoadGameData'
+import ScorePopOut from '../components/GameModals/MLB/ScorePopOut'
 
 //Connect to Redux Store.
 @connect((store) => {
