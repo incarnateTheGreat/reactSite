@@ -207,12 +207,16 @@ export default class Scores_MLB extends React.Component {
     }
 
     refreshScoreboard() {
-      let self = this;
+      this.loadSpinnerHandler();
+    }
 
-      const loaderTimeoutIntervals = {
-        'liveGames': [30000, 32000],
-        'noLiveGames': [117000, 120000]
-      };
+    loadSpinnerHandler() {
+      let self = this,
+          loader = document.getElementsByClassName("loader")[0],
+          loaderTimeoutIntervals = {
+            'liveGames': [30000, 32000],
+            'noLiveGames': [117000, 120000]
+          };
 
       //Control the frequency of refresh intervals depending on whether there are Live Games in progress or not.
       function getTimeoutIntervals() {
@@ -220,7 +224,6 @@ export default class Scores_MLB extends React.Component {
       }
 
       //Display Loader.
-      let loader = document.getElementsByClassName("loader")[0];
       this.timeoutOpenLoader = setTimeout(() => {
           loader.style.opacity = "1";
           loader.style.zIndex = "1";
@@ -261,8 +264,10 @@ export default class Scores_MLB extends React.Component {
     slideOutClickListener(e) {
       let clickEventElem = e.target || e.srcElement,
           slideOutElem = document.getElementById('slideOut'),
+          bodyElem = document.body,
           openClass = 'open',
           scoreTableClass = 'scoreTable',
+          disableScrollClass = 'disableScroll',
           isSlideOutElemFound = false;
 
           //Traverse the DOM upwards until either 'slideOut' ID or 'scoreTable' class are found.
@@ -271,56 +276,79 @@ export default class Scores_MLB extends React.Component {
             if(clickEventElem.id === 'slideOut' || clickEventElem.classList.contains(scoreTableClass)) {
               isSlideOutElemFound = true;
             }
-            clickEventElem = clickEventElem.parentNode
+            clickEventElem = clickEventElem.parentNode;
           }
 
+          //Remove 'Disable Scroll' class from the body.
+          if(slideOutElem.classList.contains(openClass)) bodyElem.classList.add(disableScrollClass);
+
           //Close SlideOut.
-          if(!isSlideOutElemFound) slideOutElem.classList.remove(openClass);
+          if(!isSlideOutElemFound) {
+            slideOutElem.classList.remove(openClass);
+            bodyElem.classList.contains(disableScrollClass) ? bodyElem.classList.remove(disableScrollClass) : '';
+          }
     }
 
     render() {
-        return (
-            <div onClick={this.slideOutClickListener.bind(this)}>
-              <LoadGameData />
-              <ScorePopOut scoreEvent={this.props.gameStatus.name} />
-              <Tabs id='MLBScores' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
-                  <Tab eventKey={0} title='MLB Scores'>
-                    <div class="loader"></div>
-                    <h2>MLB Scores</h2>
-                    <h5>All games in EST</h5>
-                    <hr/>
-                    <div className="scoreTableContainer">
-                        <h2>Live</h2>
+      document.onkeydown = function(e) {
+        let isEscape = false,
+            slideOutElem = document.getElementById('slideOut');
 
-                        <button onClick={this.testScoreEvent}>Test Score Event</button>
+        e = e || window.event;
 
-                        <div className="gameGroupContainer">
-                            <LeagueFilter data={this.state.liveGameSection}></LeagueFilter>
-                        </div>
-                        <hr />
-                        <h2>Today's Games: {moment().format("dddd M/DD")}</h2>
-                        <div className="gameGroupContainer">
-                            <LeagueFilter data={this.state.todayGamesSection}></LeagueFilter>
-                        </div>
-                        <hr />
-                        <h2>Yesterday's Games: {moment().subtract(1, 'day').format("dddd M/DD")}</h2>
-                        <div className="gameGroupContainer">
-                            <LeagueFilter data={this.state.yesterdayGamesSection}></LeagueFilter>
-                        </div>
-                        <hr />
-                        <h2>Tomorrow's Games: {moment().add(1, 'day').format("dddd M/DD")}</h2>
-                        <div className="gameGroupContainer">
-                            <LeagueFilter data={this.state.tomorrowGamesSection}></LeagueFilter>
-                        </div>
-                    </div>
-                  </Tab>
-                  <Tab eventKey={1} title='MLB Standings'>
-                    <h2>MLB Standings</h2>
-                    <hr/>
-                    <Standings />
-                  </Tab>
-              </Tabs>
-            </div>
-        );
+        if ("key" in e) {
+            isEscape = (e.key == "Escape" || e.key == "Esc");
+        } else {
+            isEscape = (e.keyCode == 27);
+        }
+
+        if(isEscape) {
+          slideOutElem.classList.contains('open') ? slideOutElem.classList.remove('open') : '';
+        }
+      };
+
+      return (
+          <div onClick={this.slideOutClickListener.bind(this)}>
+            <LoadGameData />
+            <ScorePopOut scoreEvent={this.props.gameStatus.name} />
+            <Tabs id='MLBScores' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
+                <Tab eventKey={0} title='MLB Scores'>
+                  <div class="loader"></div>
+                  <h2>MLB Scores</h2>
+                  <h5>All games in EST</h5>
+                  <hr/>
+                  <div className="scoreTableContainer">
+                      <h2>Live</h2>
+
+                      <button onClick={this.testScoreEvent}>Test Score Event</button>
+
+                      <div className="gameGroupContainer">
+                          <LeagueFilter data={this.state.liveGameSection}></LeagueFilter>
+                      </div>
+                      <hr />
+                      <h2>Today's Games: {moment().format("dddd M/DD")}</h2>
+                      <div className="gameGroupContainer">
+                          <LeagueFilter data={this.state.todayGamesSection}></LeagueFilter>
+                      </div>
+                      <hr />
+                      <h2>Yesterday's Games: {moment().subtract(1, 'day').format("dddd M/DD")}</h2>
+                      <div className="gameGroupContainer">
+                          <LeagueFilter data={this.state.yesterdayGamesSection}></LeagueFilter>
+                      </div>
+                      <hr />
+                      <h2>Tomorrow's Games: {moment().add(1, 'day').format("dddd M/DD")}</h2>
+                      <div className="gameGroupContainer">
+                          <LeagueFilter data={this.state.tomorrowGamesSection}></LeagueFilter>
+                      </div>
+                  </div>
+                </Tab>
+                <Tab eventKey={1} title='MLB Standings'>
+                  <h2>MLB Standings</h2>
+                  <hr/>
+                  <Standings />
+                </Tab>
+            </Tabs>
+          </div>
+      );
     }
 }

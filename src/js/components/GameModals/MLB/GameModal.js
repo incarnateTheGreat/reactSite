@@ -111,51 +111,6 @@ export default class GameModalMLB extends React.Component {
       this.loader.style.zIndex = "-1";
     }
 
-    getBrowserSize(gameStatus) {
-      let self = this;
-
-        window.onresize = function() {
-          if(self.state.modalIsOpen) {
-            let browserWidth = 0,
-                browserHeight = 0;
-
-            if( typeof( window.innerWidth ) == 'number' ) {
-                //Non-IE
-                browserWidth = window.innerWidth;
-                browserHeight = window.innerHeight;
-            } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
-                //IE 6+ in 'standards compliant mode'
-                browserWidth = document.documentElement.clientWidth;
-                browserHeight = document.documentElement.clientHeight;
-            } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
-                //IE 4 compatible
-                browserWidth = document.body.clientWidth;
-                browserHeight = document.body.clientHeight;
-            }
-
-            let modalHeight = (browserHeight - 25),
-                headlineContainer_height = 0,
-                activePlayerDataContainer_height = 0;
-
-            //If Pre-game or PPD, reduce the height of the Modal. Otherwise, fit the proper height.
-            if(gameStatus === 'DR' || gameStatus === 'DI' || gameStatus === 'S' || gameStatus === 'P') {
-              activePlayerDataContainer_height = document.getElementsByClassName('headlineContainer')[0].offsetHeight;
-            } else {
-              headlineContainer_height = document.getElementsByClassName('headlineContainer')[0].offsetHeight;
-              activePlayerDataContainer_height = (modalHeight - headlineContainer_height) - 100 + 'px';
-              document.getElementsByClassName('ReactModal__Content ReactModal__Content--after-open')[0].style.height = modalHeight + 'px';
-            }
-
-            //Force-assign heights to Active Player Data Container.
-            if(self.state.activeTab == 0 || _.isUndefined(self.state.activeTab)) {
-              document.getElementsByClassName('activePlayerDataContainer')[0].style.height = activePlayerDataContainer_height;
-            } else {
-              document.getElementsByClassName('activePlayerDataContainer')[1].style.height = activePlayerDataContainer_height;
-            }
-        }
-      }
-    }
-
     handleSelect(selectedTab) {
         // The active tab must be set into the state so that the Tabs component knows about the change and re-renders.
         this.setState({
@@ -883,8 +838,8 @@ export default class GameModalMLB extends React.Component {
                           }
                       });
 
+                      //Set States and fire off Redux Dispatches.
                       self.setState({gameContentBody}, function() {
-                        //Fire off Dispatch.
                         store.dispatch({
                           type: 'LOAD_GAME_DATA',
                           payload: self.state.gameContentBody
@@ -892,7 +847,6 @@ export default class GameModalMLB extends React.Component {
                       });
 
                       self.setState({boxScoreBody_awayTeam}, function() {
-                        //Fire off Dispatch.
                         store.dispatch({
                           type: 'LOAD_BOXSCORE_AWAY',
                           payload: self.state.boxScoreBody_awayTeam
@@ -900,14 +854,12 @@ export default class GameModalMLB extends React.Component {
                       });
 
                       self.setState({boxScoreBody_homeTeam}, function() {
-                        //Fire off Dispatch.
                         store.dispatch({
                           type: 'LOAD_BOXSCORE_HOME',
                           payload: self.state.boxScoreBody_homeTeam
                         });
                       });
 
-                      //Fire off Dispatch.
                       store.dispatch({
                         type: 'LOAD_GAME_TAB_DATA',
                         payload: self.state.game
@@ -965,8 +917,6 @@ export default class GameModalMLB extends React.Component {
     render() {
         const game = this.props.gameData;
         this.state.game = game;
-
-        this.getBrowserSize(game.status.ind); //Might be deprecated.
 
         let gameStatus = '',
             outs = '',

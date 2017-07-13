@@ -6,14 +6,19 @@
   top: 60px;
   right: -100%;
   width: 98%;
-  height: 65%;
+  height: 75%;
   padding: 10px;
   z-index: 999;
+  overflow: hidden;
   -webkit-transition-duration: 0.3s;
   -moz-transition-duration: 0.3s;
   -o-transition-duration: 0.3s;
   transition-duration: 0.3s;
   &.open {
     right: 0;
+  }
+  #boxScoreTabs .tab-content {
+    overflow-y: scroll;
+    height: 500px;
   }
 }
