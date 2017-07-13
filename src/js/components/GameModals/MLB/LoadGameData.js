@@ -44,7 +44,7 @@ export default class LoadGameData extends React.Component {
 
     setDefaultHeight() {
       document.getElementById('slideOut').style.height = 'auto';
-      
+
       if(!_.isNull(document.getElementById('boxScoreTabs'))) {
         document.getElementById('boxScoreTabs').getElementsByClassName('tab-content')[0].style.height = 'auto';
       }
@@ -140,8 +140,8 @@ export default class LoadGameData extends React.Component {
                 || this.state.gameTabData.status.ind === 'O') ? (
                   <Tabs id='boxScoreTabs' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
                       <Tab eventKey={0} title='Score'>{this.props.loadGameData.gameData}</Tab>
-                      <Tab eventKey={1} title={this.state.gameTabData.away_name_abbrev}>{this.props.loadGameData.boxscore_away}</Tab>
-                      <Tab eventKey={2} title={this.state.gameTabData.home_name_abbrev}>{this.props.loadGameData.boxscore_home}</Tab>
+                      <Tab eventKey={1} title={this.state.gameTabData.away_name_abbrev}>{this.props.loadGameData.boxScore_away}</Tab>
+                      <Tab eventKey={2} title={this.state.gameTabData.home_name_abbrev}>{this.props.loadGameData.boxScore_home}</Tab>
                   </Tabs>
               ) : ('') :
             (this.props.loadGameData.gameData)}

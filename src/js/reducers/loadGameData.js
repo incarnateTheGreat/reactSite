@@ -15,7 +15,7 @@ const reducer = (state = initialState, action) => {
        break;
    }
    case 'LOAD_BOXSCORE_AWAY': {
-       state.boxscore_away = action.payload;
+       state.boxScore_away = action.payload;
 
        return {...state}
        break;

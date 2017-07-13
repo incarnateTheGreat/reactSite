@@ -127,7 +127,7 @@ export default class Scores_MLB extends React.Component {
     setGameDataOutput(callback) {
         const dateObj = {
             yesterday: {
-                day: moment().subtract(1, 'day')
+                day: moment().subtract(5, 'day')
             },
             today: {
                 day: moment()
@@ -262,13 +262,15 @@ export default class Scores_MLB extends React.Component {
     }
 
     slideOutClickListener(e) {
-      let clickEventElem = e.target || e.srcElement,
-          slideOutElem = document.getElementById('slideOut'),
+      let slideOutElem = document.getElementById('slideOut'),
           bodyElem = document.body,
           openClass = 'open',
           scoreTableClass = 'scoreTable',
           disableScrollClass = 'disableScroll',
           isSlideOutElemFound = false;
+
+      if(e.type === 'click') {
+          let clickEventElem = e.target || e.srcElement;
 
           //Traverse the DOM upwards until either 'slideOut' ID or 'scoreTable' class are found.
           //If either are identified, then do not close the SlideOut window.
@@ -278,18 +280,22 @@ export default class Scores_MLB extends React.Component {
             }
             clickEventElem = clickEventElem.parentNode;
           }
+      }
 
-          //Remove 'Disable Scroll' class from the body.
-          if(slideOutElem.classList.contains(openClass)) bodyElem.classList.add(disableScrollClass);
+      //Remove 'Disable Scroll' class from the body.
+      if(slideOutElem.classList.contains(openClass)) bodyElem.classList.add(disableScrollClass);
 
-          //Close SlideOut.
-          if(!isSlideOutElemFound) {
-            slideOutElem.classList.remove(openClass);
-            bodyElem.classList.contains(disableScrollClass) ? bodyElem.classList.remove(disableScrollClass) : '';
-          }
+      //Close SlideOut.
+      if(!isSlideOutElemFound) {
+        slideOutElem.classList.remove(openClass);
+        bodyElem.classList.contains(disableScrollClass) ? bodyElem.classList.remove(disableScrollClass) : '';
+        // slideOutElem.innerHTML = '';
+      }
     }
 
     render() {
+      let self = this;
+
       document.onkeydown = function(e) {
         let isEscape = false,
             slideOutElem = document.getElementById('slideOut');
@@ -302,9 +308,7 @@ export default class Scores_MLB extends React.Component {
             isEscape = (e.keyCode == 27);
         }
 
-        if(isEscape) {
-          slideOutElem.classList.contains('open') ? slideOutElem.classList.remove('open') : '';
-        }
+        if(isEscape) self.slideOutClickListener(e);
       };
 
       return (
