@@ -76,13 +76,13 @@ export default class Scores_MLB extends React.Component {
                 let gameData = dayData.data.data.games.game,
                     objectDay = dayData.data.data.games.day;
 
-                //If there's only one game to be displayed, then force it into an array to be read below.
+                //If there's only one game to be displayed, then force it into an array in order for it to be read below.
                 if(!_.isUndefined(gameData) && gameData instanceof Array === false) {
                   gameData = [gameData];
                 }
 
+                //Today's Game Data
                 if(objectDay == dateObj.today.day.format('DD')) {
-                    //Today's Game Data
                     _.forEach(gameData, function(game) {
                         if(self.isGameLive(game)) {
                             gameDataObjects.live.push(game);
@@ -91,8 +91,8 @@ export default class Scores_MLB extends React.Component {
                         }
                     });
                 }
-                 else if(objectDay == dateObj.tomorrow.day.format('DD')) {
-                    //Tomorrow's Game Data
+                //Tomorrow's Game Data
+                else if(objectDay == dateObj.tomorrow.day.format('DD')) {
                     _.forEach(gameData, function(game) {
                         if(self.isGameLive(game)) {
                             gameDataObjects.live.push(game);
@@ -101,8 +101,8 @@ export default class Scores_MLB extends React.Component {
                         }
                     });
                 }
+                //Yesterday's Game Data
                 else if(objectDay == dateObj.yesterday.day.format('DD')) {
-                    //Yesterday's Game Data
                     _.forEach(gameData, function(game) {
                         if(self.isGameLive(game)) {
                             gameDataObjects.live.push(game);
