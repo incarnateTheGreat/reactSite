@@ -1,7 +1,5 @@
-import React, { Component } from 'react';
-import classNames from 'classnames';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import React, { Component } from 'react'
+import classNames from 'classnames'
 import _ from 'lodash'
 
 //ScorePopOut SCSS

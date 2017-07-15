@@ -12,7 +12,12 @@ $red: red;
 	background: $red;
 	padding: 5px 10px;
 	width: 300px;
+	border-radius: 0 0 10px 10px;
+	-webkit-transition-duration: 0.3s;
+	-moz-transition-duration: 0.3s;
+	-o-transition-duration: 0.3s;
+	transition-duration: 0.3s;
 	&.show {
-		top: 43px;
+		top: 53px;
 	}
 }

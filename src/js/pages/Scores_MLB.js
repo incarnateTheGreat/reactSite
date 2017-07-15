@@ -14,11 +14,10 @@ import Standings from '../components/GameModals/MLB/Standings'
 import LoadGameData from '../components/GameModals/MLB/LoadGameData'
 import ScorePopOut from '../components/GameModals/MLB/ScorePopOut'
 
-var ReactToastr = require("react-toastr");
-var {ToastContainer} = ReactToastr; // This is a React Element.
-// For Non ES6...
-// var ToastContainer = ReactToastr.ToastContainer;
-var ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animation);
+//Apply react-toastr.
+let ReactToastr = require("react-toastr"),
+    { ToastContainer } = ReactToastr,
+    ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animation);
 
 
 //Connect to Redux Store.
@@ -126,9 +125,9 @@ export default class Scores_MLB extends React.Component {
           this.refs.container.error(
             "Connectivity Error",
             error.message, {
-            timeOut: 5000,
-            extendedTimeOut: 10000
-          });
+              timeOut: 5000,
+              extendedTimeOut: 10000
+            });
         });
     }
 
@@ -269,7 +268,7 @@ export default class Scores_MLB extends React.Component {
       //Fire off Dispatch.
       store.dispatch({
         type: 'UPDATE_GAME_STATUS',
-        payload: "Smoak singles to Center. Donaldson scores."
+        payload: "Smoak singles to Center. Donaldson scores.\n Cheesey"
       });
     }
 

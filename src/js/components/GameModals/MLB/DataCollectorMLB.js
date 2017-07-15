@@ -821,6 +821,9 @@ export default class DataCollectorMLB extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+      let returnStr = '',
+          score = '';
+
       if(this.state.game.status.ind == 'I') {
         //Check if Out has occured.
         if(this.state.game.status.o != nextProps.gameData.status.o) {
@@ -831,26 +834,33 @@ export default class DataCollectorMLB extends React.Component {
             }
         }
 
-        //Check for Run Scored
+        //Check for Away team Run Scored
         if(this.state.game.linescore.r.away != nextProps.gameData.linescore.r.away) {
           console.log(this.state.game.linescore.r.away, nextProps.gameData.linescore.r.away);
           console.log('away:', nextProps.gameData.pbp.last);
 
+          score = this.state.game.away_name_abbrev + ' ' + this.state.game.linescore.r.away + ' ' + this.state.game.home_name_abbrev + ' ' + this.state.game.linescore.r.home;
+          returnStr = '\n' + score + '\n' + this.state.game.away_name_abbrev + ': ' + nextProps.gameData.pbp.last;
+
           //Fire off Dispatch.
           store.dispatch({
             type: 'UPDATE_GAME_STATUS',
-            payload: 'away:' + nextProps.gameData.pbp.last
+            payload: returnStr
           });
         }
 
+        //Chec for Home team run scored.
         if(this.state.game.linescore.r.home != nextProps.gameData.linescore.r.home) {
           console.log(this.state.game.linescore.r.home, nextProps.gameData.linescore.r.home);
           console.log('home:', nextProps.gameData.pbp.last);
 
+          score = this.state.game.away_name_abbrev + ' ' + this.state.game.linescore.r.away + ' ' + this.state.game.home_name_abbrev + ' ' + this.state.game.linescore.r.home;
+          returnStr = '\n' + score + '\n' + this.state.game.home_name_abbrev + ': ' + nextProps.gameData.pbp.last;
+
           //Fire off Dispatch.
           store.dispatch({
             type: 'UPDATE_GAME_STATUS',
-            payload: 'home:' + nextProps.gameData.pbp.last
+            payload: returnStr
           });
         }
       }

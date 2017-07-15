@@ -176,12 +176,6 @@ footer {
 	opacity: 0;
 	z-index: -1;
 }
-@-webkit-keyframes spin {
-	0% {
-	}
-	100% {
-	}
-}
 @keyframes spin {
 	0% {
 		//Instead of the line below you could use @include transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
