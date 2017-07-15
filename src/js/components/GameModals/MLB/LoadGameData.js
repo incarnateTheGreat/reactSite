@@ -38,7 +38,7 @@ export default class LoadGameData extends React.Component {
     handleSelect(activeTab) {
         // The active tab must be set into the state so that the Tabs component knows about the change and re-renders.
         this.setState({ activeTab }, function() {
-          this.getBrowserSize();
+          this.setSlideOutHeight();
         });
     }
 
@@ -50,7 +50,7 @@ export default class LoadGameData extends React.Component {
       }
     }
 
-    getBrowserSize(gameStatus) {
+    setSlideOutHeight(gameStatus) {
       let self = this;
 
       //Programmatically set heights on containers depending on the selection.
@@ -59,43 +59,6 @@ export default class LoadGameData extends React.Component {
       } else {
         document.getElementById('slideOut').style.height = '75%';
         document.getElementById('boxScoreTabs').getElementsByClassName('tab-content')[0].style.height = 500 + 'px';
-      }
-
-      window.onresize = function() {
-        if(self.state.isOpen) {
-          let browserWidth = 0,
-              browserHeight = 0;
-
-          if( typeof( window.innerWidth ) == 'number' ) {
-              //Non-IE
-              browserWidth = window.innerWidth;
-              browserHeight = window.innerHeight;
-          } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
-              //IE 6+ in 'standards compliant mode'
-              browserWidth = document.documentElement.clientWidth;
-              browserHeight = document.documentElement.clientHeight;
-          } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
-              //IE 4 compatible
-              browserWidth = document.body.clientWidth;
-              browserHeight = document.body.clientHeight;
-          }
-
-          let headlineContainer_height = 0,
-              activePlayerDataContainer_height = 0,
-              offsetHeight = 25,
-              tabListHeight = document.getElementById('boxScoreTabs').getElementsByClassName('nav-tabs')[0].offsetHeight,
-              slideOutHeight = document.getElementById('slideOut').offsetHeight;
-
-          //If Pre-game or PPD, reduce the height of the Modal. Otherwise, fit the proper height.
-          if(gameStatus === 'DR' || gameStatus === 'DI' || gameStatus === 'S' || gameStatus === 'P') {
-            // activePlayerDataContainer_height = document.getElementsByClassName('headlineContainer')[0].offsetHeight;
-            // document.getElementsByClassName('tab-content')[0].style.height = slideOutHeight - tabListHeight - offsetHeight + 'px';
-          } else {
-            //Total SlideOut height - 'tabList'
-            // document.getElementsByClassName('tab-content')[0].style.height = slideOutHeight - tabListHeight - offsetHeight + 'px';
-          }
-          // document.getElementsByClassName('tab-content')[0].style.height = slideOutHeight - tabListHeight - offsetHeight + 'px';
-        }
       }
     }
 
@@ -128,7 +91,7 @@ export default class LoadGameData extends React.Component {
     }
 
     render() {
-      !_.isNull(this.state.gameTabData) ? this.getBrowserSize(this.state.gameTabData.status.ind) : '';
+      !_.isNull(this.state.gameTabData) ? this.setSlideOutHeight(this.state.gameTabData.status.ind) : '';
 
       return (
           <div id='slideOut'>

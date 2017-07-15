@@ -14,6 +14,13 @@ import Standings from '../components/GameModals/MLB/Standings'
 import LoadGameData from '../components/GameModals/MLB/LoadGameData'
 import ScorePopOut from '../components/GameModals/MLB/ScorePopOut'
 
+var ReactToastr = require("react-toastr");
+var {ToastContainer} = ReactToastr; // This is a React Element.
+// For Non ES6...
+// var ToastContainer = ReactToastr.ToastContainer;
+var ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animation);
+
+
 //Connect to Redux Store.
 @connect((store) => {
   return {
@@ -56,8 +63,6 @@ export default class Scores_MLB extends React.Component {
         // the Tabs component knows about the change and re-renders.
         this.setState({
             activeTab: selectedTab
-        }, function() {
-            window.onresize();
         });
     }
 
@@ -117,6 +122,13 @@ export default class Scores_MLB extends React.Component {
 
             //After all Promises have completed, build out the Scoreboards.
             self.buildScoreboard(gameDataObjects);
+        }, (error) => {
+          this.refs.container.error(
+            "Connectivity Error",
+            error.message, {
+            timeOut: 5000,
+            extendedTimeOut: 10000
+          });
         });
     }
 
@@ -313,6 +325,9 @@ export default class Scores_MLB extends React.Component {
 
       return (
           <div onClick={this.slideOutClickListener.bind(this)}>
+            <ToastContainer ref="container"
+                            toastMessageFactory={ToastMessageFactory}
+                            className="toast-top-right" />
             <LoadGameData />
             <ScorePopOut scoreEvent={this.props.gameStatus.name} />
             <Tabs id='MLBScores' activeKey={this.state.activeTab} onSelect={this.handleSelect}>

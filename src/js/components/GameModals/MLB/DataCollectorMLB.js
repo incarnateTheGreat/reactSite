@@ -66,8 +66,6 @@ export default class DataCollectorMLB extends React.Component {
         // The active tab must be set into the state so that the Tabs component knows about the change and re-renders.
         this.setState({
             activeTab: selectedTab
-        }, function() {
-            window.onresize();
         });
     }
 
