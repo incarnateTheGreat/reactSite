@@ -11,35 +11,6 @@ import store from '../../../store';
 
 import BaseRunnerOverlay from './BaseRunnerOverlay';
 
-let customStyles = {
-    overlay : {
-        zIndex                : '200'
-    },
-    content: {
-        WebkitBoxShadow       : '3px 3px 5px 0px rgba(0,0,0,0.40)',
-        MozBoxShadow          : '3px 3px 5px 0px rgba(0,0,0,0.40)',
-        BowShadow             : '3px 3px 5px 0px rgba(0,0,0,0.40)',
-        fontFamily            : 'sans-serif',
-        top                   : '50%',
-        left                  : '50%',
-        right                 : 'auto',
-        bottom                : 'auto',
-        marginRight           : '-50%',
-        transform             : 'translate(-50%, -50%)',
-        transition            : 'all 0.35s ease',
-        padding               : '10px 20px 10px',
-        borderRadius          : '7px 7px 0px 0px',
-        overflow              : 'hidden',
-        width                 : '90%'
-    }
-};
-
-let tweenStyle = {
-    content: {
-        opacity               : '0'
-    }
-};
-
 //DataCollector MLB SCSS
 require('./scss/DataCollectorMLB.scss')
 
@@ -64,41 +35,21 @@ export default class DataCollectorMLB extends React.Component {
             hasChanged: false,
             game: null,
             slideOutActive: false,
-            modalStyle: _.merge(customStyles, tweenStyle),
             activeTab: 0 // Takes active tab from props if it is defined there,
         };
 
         // Bind the handleSelect function already here (not in the render function)
         this.handleSelect = this.handleSelect.bind(this);
-
-        this.openModal = this.openModal.bind(this);
-        this.afterOpenModal = this.afterOpenModal.bind(this);
-        this.closeModal = this.closeModal.bind(this);
-
+        this.collectData = this.collectData.bind(this);
         this.loader = document.getElementsByClassName("loader")[0];
     }
 
-    openModal(callback) {
+    collectData(callback) {
       let self = this;
 
-      this.showLoadingSpinner();
       this.getBoxscoreData(this.state.game, this.state.game.game_data_directory, function() {
-        self.hideLoadingSpinner();
+        callback();
       });
-    }
-
-    afterOpenModal() {
-        tweenStyle['content'].opacity = '1';
-        this.setState({modalStyle: _.merge(customStyles, tweenStyle)});
-        this.hideLoadingSpinner();
-    }
-
-    closeModal() {
-        tweenStyle['content'].opacity = '0';
-        this.setState({modalStyle: _.merge(customStyles, tweenStyle)});
-        setTimeout(() => {
-            this.setState({modalIsOpen: false});
-        }, 350);
     }
 
     showLoadingSpinner() {
@@ -910,8 +861,14 @@ export default class DataCollectorMLB extends React.Component {
     slideOut() {
       let self = this;
 
-      this.openModal();
-      document.getElementById('slideOut').classList.add('open');
+      this.showLoadingSpinner();
+
+      this.collectData(function() {
+        setTimeout(() => {
+          self.hideLoadingSpinner();
+          document.getElementById('slideOut').classList.add('open');
+        }, 500);
+      });
     }
 
     render() {

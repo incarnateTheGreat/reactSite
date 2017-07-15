@@ -127,7 +127,7 @@ export default class Scores_MLB extends React.Component {
     setGameDataOutput(callback) {
         const dateObj = {
             yesterday: {
-                day: moment().subtract(5, 'day')
+                day: moment().subtract(1, 'day')
             },
             today: {
                 day: moment()

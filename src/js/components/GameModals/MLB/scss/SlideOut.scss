@@ -14,6 +14,10 @@
   -moz-transition-duration: 0.3s;
   -o-transition-duration: 0.3s;
   transition-duration: 0.3s;
+  // -webkit-transition-delay: 0.5s;
+  // -moz-transition-delay: 0.5s;
+  // -o-transition-delay: 0.5s;
+  // transition-delay: 0.5s;
   &.open {
     right: 0;
   }
