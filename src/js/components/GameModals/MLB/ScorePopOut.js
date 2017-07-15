@@ -10,26 +10,27 @@ export default class ScorePopOut extends React.Component {
     super(props);
 
     this.state = {
-      display: 'scorePopOut'
+      display: 'scorePopOut',
+      scoreEvent: null
     };
   }
 
-  componentWillReceiveProps(things) {
-    if(!_.isUndefined(things.scoreEvent)) {
-      let display = classNames({
-        'scorePopOut': true,
-        'show': things.scoreEvent.length > 0
-      });
+  componentWillReceiveProps(nextProps) {
+    if(!_.isUndefined(nextProps.scoreEvent)) {
+      let scoreEvent = nextProps.scoreEvent,
+          display = classNames({
+            'scorePopOut': true,
+            'show': nextProps.scoreEvent.length > 0
+          });
 
       this.setState({ display });
+      this.setState({ scoreEvent });
     }
   }
 
   render() {
-    let scoreEvent = this.props.scoreEvent;
-
     return (
-      <div className={this.state.display}>{scoreEvent}</div>
+      <div className={this.state.display}>{this.state.scoreEvent}</div>
     );
   }
 }

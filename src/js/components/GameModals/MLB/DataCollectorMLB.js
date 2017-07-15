@@ -821,7 +821,7 @@ export default class DataCollectorMLB extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-      let returnStr = '',
+      let updateGameStr = '',
           score = '';
 
       if(this.state.game.status.ind == 'I') {
@@ -839,13 +839,13 @@ export default class DataCollectorMLB extends React.Component {
           console.log(this.state.game.linescore.r.away, nextProps.gameData.linescore.r.away);
           console.log('away:', nextProps.gameData.pbp.last);
 
-          score = this.state.game.away_name_abbrev + ' ' + this.state.game.linescore.r.away + ' ' + this.state.game.home_name_abbrev + ' ' + this.state.game.linescore.r.home;
-          returnStr = '\n' + score + '\n' + this.state.game.away_name_abbrev + ': ' + nextProps.gameData.pbp.last;
+          score = this.state.game.status.inning_state.substring(0, 3) + ' ' + game.status.inning + ': ' + this.state.game.away_name_abbrev + ' ' + this.state.game.linescore.r.away + ' ' + this.state.game.home_name_abbrev + ' ' + this.state.game.linescore.r.home;
+          updateGameStr =  score + '\n' + this.state.game.away_name_abbrev + ': ' + nextProps.gameData.pbp.last;
 
           //Fire off Dispatch.
           store.dispatch({
             type: 'UPDATE_GAME_STATUS',
-            payload: returnStr
+            payload: updateGameStr
           });
         }
 
@@ -854,13 +854,13 @@ export default class DataCollectorMLB extends React.Component {
           console.log(this.state.game.linescore.r.home, nextProps.gameData.linescore.r.home);
           console.log('home:', nextProps.gameData.pbp.last);
 
-          score = this.state.game.away_name_abbrev + ' ' + this.state.game.linescore.r.away + ' ' + this.state.game.home_name_abbrev + ' ' + this.state.game.linescore.r.home;
-          returnStr = '\n' + score + '\n' + this.state.game.home_name_abbrev + ': ' + nextProps.gameData.pbp.last;
+          score = this.state.game.status.inning_state.substring(0, 3) + ' ' + game.status.inning + ': ' + this.state.game.away_name_abbrev + ' ' + this.state.game.linescore.r.away + ' ' + this.state.game.home_name_abbrev + ' ' + this.state.game.linescore.r.home;
+          updateGameStr = score + '\n' + this.state.game.home_name_abbrev + ': ' + nextProps.gameData.pbp.last;
 
           //Fire off Dispatch.
           store.dispatch({
             type: 'UPDATE_GAME_STATUS',
-            payload: returnStr
+            payload: updateGameStr
           });
         }
       }

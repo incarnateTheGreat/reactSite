@@ -17,6 +17,18 @@
   &.open {
     right: 0;
   }
+  .glyphicon-remove-sign {
+		float: right;
+		font-size: 18px;
+    -webkit-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    &:hover {
+      cursor: pointer;
+      color: rgba(0, 0, 0, 0.5)
+    }
+	}
   #boxScoreTabs .tab-content {
     overflow-y: scroll;
     height: 500px;

@@ -265,10 +265,12 @@ export default class Scores_MLB extends React.Component {
     }
 
     testScoreEvent() {
+      let one = 'thing thing',
+          two = 'Smoak singles to Center. Donaldson scores';
       //Fire off Dispatch.
       store.dispatch({
         type: 'UPDATE_GAME_STATUS',
-        payload: "Smoak singles to Center. Donaldson scores.\n Cheesey"
+        payload: one + '\n' + two
       });
     }
 
@@ -300,7 +302,6 @@ export default class Scores_MLB extends React.Component {
       if(!isSlideOutElemFound) {
         slideOutElem.classList.remove(openClass);
         bodyElem.classList.contains(disableScrollClass) ? bodyElem.classList.remove(disableScrollClass) : '';
-        // slideOutElem.innerHTML = '';
       }
     }
 

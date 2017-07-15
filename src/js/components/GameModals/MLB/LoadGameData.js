@@ -101,11 +101,14 @@ export default class LoadGameData extends React.Component {
                 || this.state.gameTabData.status.ind === 'PW'
                 || this.state.gameTabData.status.ind === 'F'
                 || this.state.gameTabData.status.ind === 'O') ? (
-                  <Tabs id='boxScoreTabs' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
-                      <Tab eventKey={0} title='Score'>{this.props.loadGameData.gameData}</Tab>
-                      <Tab eventKey={1} title={this.state.gameTabData.away_name_abbrev}>{this.props.loadGameData.boxScore_away}</Tab>
-                      <Tab eventKey={2} title={this.state.gameTabData.home_name_abbrev}>{this.props.loadGameData.boxScore_home}</Tab>
-                  </Tabs>
+                  <div>
+                    <span class='glyphicon glyphicon-remove-sign' id='closeIcon'></span>
+                    <Tabs id='boxScoreTabs' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
+                        <Tab eventKey={0} title='Score'>{this.props.loadGameData.gameData}</Tab>
+                        <Tab eventKey={1} title={this.state.gameTabData.away_name_abbrev}>{this.props.loadGameData.boxScore_away}</Tab>
+                        <Tab eventKey={2} title={this.state.gameTabData.home_name_abbrev}>{this.props.loadGameData.boxScore_home}</Tab>
+                    </Tabs>
+                  </div>
               ) : ('') :
             (this.props.loadGameData.gameData)}
           </div>
