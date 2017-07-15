@@ -40,8 +40,8 @@ let tweenStyle = {
     }
 };
 
-//GameModal MLB SCSS
-require('./scss/GameModal.scss')
+//DataCollector MLB SCSS
+require('./scss/DataCollectorMLB.scss')
 
 //Connect to Redux Store.
 @connect((store) => {
@@ -50,7 +50,7 @@ require('./scss/GameModal.scss')
   }
 })
 
-export default class GameModalMLB extends React.Component {
+export default class DataCollectorMLB extends React.Component {
     constructor() {
         super();
 

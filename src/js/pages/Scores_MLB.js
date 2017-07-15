@@ -8,7 +8,7 @@ import _ from 'lodash'
 //Redux Store
 import store from '../store'
 
-import GameModalMLB from '../components/GameModals/MLB/GameModal'
+import DataCollectorMLB from '../components/GameModals/MLB/DataCollectorMLB'
 import LeagueFilter from '../components/GameModals/MLB/LeagueFilter'
 import Standings from '../components/GameModals/MLB/Standings'
 import LoadGameData from '../components/GameModals/MLB/LoadGameData'
@@ -249,7 +249,7 @@ export default class Scores_MLB extends React.Component {
     //Build out HTML object of Scores.
     renderGameOutput(game, id) {
         return (
-            <GameModalMLB key={id} gameData={game} />
+            <DataCollectorMLB key={id} gameData={game} />
         )
     }
 
