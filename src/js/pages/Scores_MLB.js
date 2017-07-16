@@ -274,57 +274,11 @@ export default class Scores_MLB extends React.Component {
       });
     }
 
-    slideOutClickListener(e) {
-      let slideOutElem = document.getElementById('slideOut'),
-          bodyElem = document.body,
-          openClass = 'open',
-          scoreTableClass = 'scoreTable',
-          disableScrollClass = 'disableScroll',
-          isSlideOutElemFound = false;
-
-      if(e.type === 'click') {
-          let clickEventElem = e.target || e.srcElement;
-
-          //Traverse the DOM upwards until either 'slideOut' ID or 'scoreTable' class are found.
-          //If either are identified, then do not close the SlideOut window.
-          while (clickEventElem.parentNode && !isSlideOutElemFound) {
-            if(clickEventElem.id === 'slideOut' || clickEventElem.classList.contains(scoreTableClass)) {
-              isSlideOutElemFound = true;
-            }
-            clickEventElem = clickEventElem.parentNode;
-          }
-      }
-
-      //Remove 'Disable Scroll' class from the body.
-      if(slideOutElem.classList.contains(openClass)) bodyElem.classList.add(disableScrollClass);
-
-      //Close SlideOut.
-      if(!isSlideOutElemFound) {
-        slideOutElem.classList.remove(openClass);
-        bodyElem.classList.contains(disableScrollClass) ? bodyElem.classList.remove(disableScrollClass) : '';
-      }
-    }
-
     render() {
       let self = this;
 
-      document.onkeydown = function(e) {
-        let isEscape = false,
-            slideOutElem = document.getElementById('slideOut');
-
-        e = e || window.event;
-
-        if ("key" in e) {
-            isEscape = (e.key == "Escape" || e.key == "Esc");
-        } else {
-            isEscape = (e.keyCode == 27);
-        }
-
-        if(isEscape) self.slideOutClickListener(e);
-      };
-
       return (
-          <div onClick={this.slideOutClickListener.bind(this)}>
+          <div>
             <ToastContainer ref="container"
                             toastMessageFactory={ToastMessageFactory}
                             className="toast-top-right" />

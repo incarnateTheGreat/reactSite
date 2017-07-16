@@ -134,6 +134,11 @@ export default class DataCollectorMLB extends React.Component {
                     <div className='activePlayerDataContainer shortHeight'>{activePlayerData}</div>
                 </div>);
 
+                store.dispatch({
+                  type: 'LOAD_GAME_TAB_DATA',
+                  payload: self.state.game
+                });
+
                 self.setState({gameContentBody}, function() {
                   //Fire off Dispatch.
                   store.dispatch({
@@ -195,8 +200,12 @@ export default class DataCollectorMLB extends React.Component {
                     <div className='activePlayerDataContainer shortHeight'>{activePlayerData}</div>
                 </div>);
 
+                store.dispatch({
+                  type: 'LOAD_GAME_TAB_DATA',
+                  payload: self.state.game
+                });
+
                 self.setState({gameContentBody}, function() {
-                  //Fire off Dispatch.
                   store.dispatch({
                     type: 'LOAD_GAME_DATA',
                     payload: self.state.gameContentBody
@@ -875,6 +884,7 @@ export default class DataCollectorMLB extends React.Component {
         setTimeout(() => {
           self.hideLoadingSpinner();
           document.getElementById('slideOut').classList.add('open');
+          document.body.classList.add('disableScroll');
         }, 500);
       });
     }

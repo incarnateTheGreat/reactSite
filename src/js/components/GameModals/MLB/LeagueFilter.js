@@ -61,19 +61,24 @@ export default class LeagueFilter extends React.Component {
         <div>
           <form className='leagueFilter'>
               <div className='leagueSelector'>
-                <input type='radio' name='leagueFilter' onClick={this.updateSearch.bind(this)} value='AA' /> AL
+                <input type='radio' name='leagueFilter' onClick={this.updateSearch.bind(this)} value='AA' />
+                <span>AL</span>
               </div>
               <div className='leagueSelector'>
-                <input type='radio' name='leagueFilter' onClick={this.updateSearch.bind(this)} value='NN' /> NL
+                <input type='radio' name='leagueFilter' onClick={this.updateSearch.bind(this)} value='NN' />
+                <span>NL</span>
               </div>
               <div className='leagueSelector'>
-                <input type='radio' name='leagueFilter' onClick={this.updateSearch.bind(this)} value='NA' /> Interleague (AL)
+                <input type='radio' name='leagueFilter' onClick={this.updateSearch.bind(this)} value='NA' />
+                <span>Interleague (AL)</span>
               </div>
               <div className='leagueSelector'>
-                <input type='radio' name='leagueFilter' onClick={this.updateSearch.bind(this)} value='AN' /> Interleague (NL)
+                <input type='radio' name='leagueFilter' onClick={this.updateSearch.bind(this)} value='AN' />
+                <span>Interleague (NL)</span>
               </div>
               <div className='leagueSelector'>
-                <input type='radio' name='leagueFilter' onClick={this.updateSearch.bind(this)} value='' /> ALL
+                <input type='radio' name='leagueFilter' onClick={this.updateSearch.bind(this)} value='' />
+                <span>ALL</span>
               </div>
           </form>
 

@@ -90,11 +90,70 @@ export default class LoadGameData extends React.Component {
       }
     }
 
+    slideOutClickListener(e) {
+      let slideOutElem = document.getElementById('slideOut'),
+          bodyElem = document.body,
+          openClass = 'open',
+          scoreTableClass = 'scoreTable',
+          disableScrollClass = 'disableScroll',
+          isSlideOutElemFound = false;
+
+      if(e.type === 'mouseup') {
+          let clickEventElem = e.target || e.srcElement;
+
+          //Detect if Close (X) was clicked.
+          if(e.target.id === 'closeSlideOut') {
+            isSlideOutElemFound = false;
+          } else {
+            //Traverse the DOM upwards until either 'slideOut' ID or 'scoreTable' class are found.
+            //If either are identified, then do not close the SlideOut window.
+            while (clickEventElem.parentNode && !isSlideOutElemFound) {
+              if(clickEventElem.id === 'slideOut' || clickEventElem.classList.contains(scoreTableClass)) {
+                isSlideOutElemFound = true;
+              }
+              clickEventElem = clickEventElem.parentNode;
+            }
+          }
+      }
+
+      //Remove 'Disable Scroll' class from the body.
+      if(slideOutElem.classList.contains(openClass)) bodyElem.classList.add(disableScrollClass);
+
+      //Close SlideOut.
+      if(!isSlideOutElemFound) {
+        slideOutElem.classList.remove(openClass);
+        bodyElem.classList.contains(disableScrollClass) ? bodyElem.classList.remove(disableScrollClass) : '';
+      }
+    }
+
     render() {
+      let self = this;
+
       !_.isNull(this.state.gameTabData) ? this.setSlideOutHeight(this.state.gameTabData.status.ind) : '';
+
+      //Events
+      document.onmouseup = function(e) {
+        self.slideOutClickListener(e);
+      }
+
+      document.onkeydown = function(e) {
+        let isEscape = false,
+            slideOutElem = document.getElementById('slideOut');
+
+        e = e || window.event;
+
+        if ("key" in e) {
+            isEscape = (e.key == "Escape" || e.key == "Esc");
+        } else {
+            isEscape = (e.keyCode == 27);
+        }
+
+        if(isEscape) self.slideOutClickListener(e);
+      };
 
       return (
           <div id='slideOut'>
+            <span title='Close' class='glyphicon glyphicon-remove-circle' id='closeSlideOut'></span>
             {!_.isNull(this.state.gameTabData) ?
               (this.state.gameTabData.status.ind === 'I'
                 || this.state.gameTabData.status.ind === 'MC'
@@ -102,15 +161,14 @@ export default class LoadGameData extends React.Component {
                 || this.state.gameTabData.status.ind === 'F'
                 || this.state.gameTabData.status.ind === 'O') ? (
                   <div>
-                    <span class='glyphicon glyphicon-remove-sign' id='closeIcon'></span>
                     <Tabs id='boxScoreTabs' activeKey={this.state.activeTab} onSelect={this.handleSelect}>
                         <Tab eventKey={0} title='Score'>{this.props.loadGameData.gameData}</Tab>
                         <Tab eventKey={1} title={this.state.gameTabData.away_name_abbrev}>{this.props.loadGameData.boxScore_away}</Tab>
                         <Tab eventKey={2} title={this.state.gameTabData.home_name_abbrev}>{this.props.loadGameData.boxScore_home}</Tab>
                     </Tabs>
                   </div>
-              ) : ('') :
-            (this.props.loadGameData.gameData)}
+              ) : (this.props.loadGameData.gameData) :
+            ('')}
           </div>
       );
     }
