@@ -9,9 +9,11 @@ export default class Footer extends React.Component {
     const year = this.currentYear();
     return (
       <footer>
-        <div className="container">
-          <p class="text-muted"><Link to="Home">Home</Link> | <Link to="Who">Who</Link> | <Link to="What">What</Link> | <Link to="Where">Where</Link> | &copy; {year} React Site.</p>
-        </div>
+          <p class="text-muted">
+            <Link to="Home">Home</Link>
+            | <Link to="Scores_NHL">NHL</Link>
+            | <Link to="Scores_MLB">MLB</Link> &copy; {year} React Site.
+          </p>
       </footer>
     );
   }
