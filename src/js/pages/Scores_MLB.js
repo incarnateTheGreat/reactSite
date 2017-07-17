@@ -265,13 +265,14 @@ export default class Scores_MLB extends React.Component {
     }
 
     testScoreEvent() {
-      let one = 'thing thing',
-          two = 'Smoak singles to Center. Donaldson scores';
+      let score = 'TOP 5: TOR 5 BOS 3',
+          scoreEvent = 'Smoak singles to Center. Donaldson scores';
+
       //Fire off Dispatch.
       store.dispatch({
         type: 'UPDATE_GAME_STATUS',
-        payload: one + '\n' + two
-      });
+        payload: {score, scoreEvent}
+      })
     }
 
     render() {
@@ -292,9 +293,6 @@ export default class Scores_MLB extends React.Component {
                   <hr/>
                   <div className="scoreTableContainer">
                       <h2>Live</h2>
-
-                      <button onClick={this.testScoreEvent}>Test Score Event</button>
-
                       <div className="gameGroupContainer">
                           <LeagueFilter data={this.state.liveGameSection}></LeagueFilter>
                       </div>

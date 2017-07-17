@@ -32,6 +32,7 @@
     "chai": "^4.1.0",
     "cors": "^2.8.1",
     "css-loader": "^0.28.4",
+    "enzyme": "^2.9.1",
     "express": "^4.15.3",
     "lodash": "^4.17.4",
     "mocha": "^3.4.2",
@@ -39,10 +40,12 @@
     "node-sass": "^4.5.3",
     "path": "^0.12.7",
     "react-addons-shallow-compare": "^15.5.2",
+    "react-addons-test-utils": "^15.6.0",
     "react-bootstrap": "^0.30.8",
     "react-redux": "^5.0.5",
     "react-router-dom": "^4.1.1",
     "react-router-redux": "^4.0.8",
+    "react-shallow-render": "^1.0.1",
     "react-toastr": "^2.8.2",
     "redux": "^3.7.0",
     "redux-logger": "^3.0.6",
@@ -54,7 +57,7 @@
   },
   "scripts": {
     "dev": "webpack-dev-server --content-base src --inline --hot",
-    "test": "mocha --compilers js:babel-core/register src/js/components/**/*_test.js"
+    "test": "mocha --compilers js:babel-register src/js/components/**/*_test.js"
   },
   "author": "",
   "license": "ISC"

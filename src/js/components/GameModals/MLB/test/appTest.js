@@ -3,7 +3,7 @@ module.exports = {
     return first + second;
   },
   beveragesCheck: function() {
-    return beverages = { tea: ['chai', 'matcha', 'oolong'] };
+    return { tea: ['chai', 'matcha', 'oolong'] };
   },
   maybeFirst: function(array) {
     if (array && array.length) {

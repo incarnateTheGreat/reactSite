@@ -1,17 +1,17 @@
 //ScorePopOut SCSS
 
 //colors
-$red: red;
+$red: rgba(229, 44, 44, 0.8);
 
 .scorePopOut {
 	position: fixed;
 	margin: 0 auto;
 	left: 0;
 	right: 0;
-	top: 20px;
+	top: -30px;
 	white-space: pre-line;
 	background: $red;
-	padding: 5px 10px;
+	padding: 4px 10px;
 	width: 300px;
 	border-radius: 0 0 10px 10px;
 	-webkit-transition-duration: 0.3s;
@@ -20,5 +20,10 @@ $red: red;
 	transition-duration: 0.3s;
 	&.show {
 		top: 53px;
+	}
+	.scoreTitle {
+		font-weight: bold;
+		font-size: 18px;
+		clear: both;
 	}
 }

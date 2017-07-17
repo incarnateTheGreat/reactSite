@@ -104,7 +104,9 @@ export default class LoadGameData extends React.Component {
           //Detect if Close (X) was clicked.
           if(e.target.id === 'closeSlideOut') {
             isSlideOutElemFound = false;
+            closeSlideOut();
           } else {
+            //Detect click that happens outside the SlideOut component.
             //Traverse the DOM upwards until either 'slideOut' ID or 'scoreTable' class are found.
             //If either are identified, then do not close the SlideOut window.
             while (clickEventElem.parentNode && !isSlideOutElemFound) {
@@ -113,16 +115,24 @@ export default class LoadGameData extends React.Component {
               }
               clickEventElem = clickEventElem.parentNode;
             }
+
+            if(!isSlideOutElemFound) {
+              closeSlideOut();
+            }
           }
+      } else if(e.type === 'keydown') {
+        closeSlideOut();
       }
 
-      //Remove 'Disable Scroll' class from the body.
-      if(slideOutElem.classList.contains(openClass)) bodyElem.classList.add(disableScrollClass);
+      function closeSlideOut() {
+        //Remove 'Disable Scroll' class from the body.
+        if(slideOutElem.classList.contains(openClass)) bodyElem.classList.add(disableScrollClass);
 
-      //Close SlideOut.
-      if(!isSlideOutElemFound) {
-        slideOutElem.classList.remove(openClass);
-        bodyElem.classList.contains(disableScrollClass) ? bodyElem.classList.remove(disableScrollClass) : '';
+        //Close SlideOut.
+        if(!isSlideOutElemFound) {
+          slideOutElem.classList.remove(openClass);
+          bodyElem.classList.contains(disableScrollClass) ? bodyElem.classList.remove(disableScrollClass) : '';
+        }
       }
     }
 
