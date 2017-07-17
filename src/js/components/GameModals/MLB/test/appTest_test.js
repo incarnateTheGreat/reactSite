@@ -1,72 +1,84 @@
-// let assert = require('chai').assert,
-//     should = require('chai').should(),
-//     expect = require('chai').expect();
-
-import assert from 'chai'
+import React from 'react'
+import { mount, shallow } from 'enzyme'
+import {assert} from 'chai'
 import {should} from 'chai'
 import {expect} from 'chai'
+import sinon from 'sinon'
+import { JSDOM } from 'jsdom'
 
-// let assert = require('assert'); // Using Node Assert
-import React from 'react';
-import ScorePopOut from '../ScorePopOut';
-import { shallow } from 'enzyme';
-// import ShallowRenderer from 'react-shallow-render';
-// import TestUtils from "react-addons-test-utils";
+//Call test objects.
+import ScorePopOut from '../ScorePopOut'
+import LeagueFilter from '../LeagueFilter'
+import AppTest from './appTest'
 
-// const renderer = new ShallowRenderer();
-// let renderer = TestUtils.createRenderer();
-// renderer.render(<LoadGameData />);
-// const shallowRendererResult = renderer.getRenderOutput();
+//Results from AppTest
+const add = AppTest.addFunc,
+      beverage = AppTest.beveragesCheck,
+      maybeFirst = AppTest.maybeFirst,
+      jsdom = new JSDOM('<!doctype html><html><body></body></html>'),
+      { window } = jsdom;
 
-const app = require('./appTest_test');
+global.window = window;
+global.document = window.document;
 
-//Results
-const add = app.addFunc,
-      beverage = app.beveragesCheck,
-      maybeFirst = app.maybeFirst;
+let result = null;
 
+//MLB Tests
 describe('ScorePopOut',() => {
   const wrapper = shallow(<ScorePopOut />);
 
-  it('should successfully trigger ScorePopOut', () => {
-    expect(wrapper.props().id).to.equal('popper');
-  })
-
-  it('should accept a String input into scoreEvent', function() {
+  it('should accept a String input into scoreEvent', () => {
     wrapper.setState({ scoreEvent: 'A player scored.' });
     expect(wrapper.state('scoreEvent')).to.have.string('A player scored.');
   })
 })
 
-// describe('add', function() {
-//   let result = null;
-//
-//   it('should add two values and return 10', function() {
-//     result = add(5,5);
-//     assert.equal(result, 10);
-//   })
-//
-//   it('should add two values together and return a number', function() {
-//     result = add(10, 30);
-//     assert.typeOf(result, 'number');
-//   })
-//
-//   it('should add two values and be above 30', function() {
-//     result = add(29,2);
-//     assert.isAbove(result, 30);
-//   })
-// })
-//
-// describe('beveragesCheck', function() {
-//   it('returns if the array has the tea property', function() {
-//     let result = beverage();
-//     result.should.have.property('tea').with.length(3);
-//   })
-// })
-//
-// describe('maybeFirst', function() {
-//   it('returns the first element of the array', function() {
-//     let result = maybeFirst([3,4,1]);
-//     assert.equal(result, 3, 'maybeFirst first index is 3');
-//   })
-// })
+describe('LeagueFilter', () => {
+  const wrapper = shallow(<LeagueFilter />);
+
+  it('will have 5 .leagueSelector classes', () => {
+    expect(wrapper.find('.leagueSelector')).to.have.length(5);
+  })
+
+  it('test click event', () => {
+    const onButtonClick = sinon.spy(),
+          clickWrapper = mount((
+      <LeagueFilter onButtonClick={clickWrapper} />
+    ));
+
+    clickWrapper.find('input[value="AA"]').simulate('click');
+    expect(onButtonClick).to.have.property('name');
+  })
+})
+
+//Regular test functions.
+describe('add', () => {
+  it('should add two values and return 10', () => {
+    result = add(5,5);
+    assert.equal(result, 10);
+  })
+
+  it('should add two values together and return a number', () => {
+    result = add(10, 30);
+    assert.typeOf(result, 'number');
+  })
+
+  it('should add two values and be above 30', () => {
+    result = add(29,2);
+    assert.isAbove(result, 30);
+  })
+})
+
+describe('beveragesCheck', () => {
+  it('returns the array that has the tea property', () => {
+    result = beverage();
+    expect(result).to.have.property('tea')
+  })
+})
+
+describe('maybeFirst', () => {
+  it('returns the first element of the array', () => {
+    result = maybeFirst([3,4,1]);
+    assert.equal(result, 3, 'maybeFirst first index is 3');
+  })
+})
