@@ -1,10 +1,8 @@
 # ReactJS Boilerplate: NHL and MLB Score App.
 
 **Install & Run**
-- Run Node Install (have latest stable version)
-- Install Webpack.
-- npm install dependencies.
 - Pull latest from repo.
+- Run Node Install (have latest stable version)
 - Type "npm run dev".
 
 **To Run Tests**
